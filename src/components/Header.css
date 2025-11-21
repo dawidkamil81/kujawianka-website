@@ -1,0 +1,341 @@
+/* ======== NAGŁÓWEK KLUBU KUJAWIANKA (Wersja Nowoczesna) ======== */
+
+/* Definicja palety kolorów dla łatwiejszego zarządzania */
+:root {
+    --club-green: #174135;
+    --club-red: #8d1010;
+    /* Używamy półprzezroczystego tła dla efektu "szkła" */
+    --header-background: rgba(23, 65, 53, 0.9);
+    /* Ciemna zieleń z gradientu */
+    --white: #ffffff;
+    --gray-border: rgba(255, 255, 255, 0.15);
+    --acent-hover: rgba(255, 255, 255, 0.05);
+}
+
+.header {
+    /* Bardzo nowoczesny efekt "oszronionego szkła" */
+    /* Modern duotone gradient using club colors with subtle radial sheen */
+    background:
+        radial-gradient(600px 200px at 10% 10%, rgba(255, 255, 255, 0.06), transparent 20%),
+        linear-gradient(135deg, rgba(23, 65, 53, 0.95) 0%, rgba(141, 16, 16, 0.9) 60%);
+    /* background-color: var(--header-background); */
+    /* fallback */
+    background-blend-mode: overlay;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* Wsparcie dla Safari */
+
+    color: var(--white);
+    /* Zastępujemy cień subtelną dolną linią */
+    border-bottom: 1px solid var(--gray-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    /* Wyższy z-index, aby menu było na wierzchu */
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 2rem;
+    /* Nieco niższy nagłówek, bardziej zwarty */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    /* Potrzebne dla pozycjonowania menu mobilnego */
+}
+
+/* Logo i nazwa klubu */
+.header-logo-link {
+    text-decoration: none;
+    color: inherit;
+    /* Dziedziczy kolor tekstu (biały) */
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-image {
+    width: 65px;
+    /* Lekko zmniejszone dla smuklejszego wyglądu */
+    height: 65px;
+    transition: transform 0.3s ease-out;
+}
+
+/* Subtelny efekt na logo przy najechaniu */
+.header-logo:hover .logo-image {
+    transform: scale(1.1);
+}
+
+.club-name {
+    font-size: 1.2rem;
+    /* Lekko zmniejszone */
+    font-weight: 700;
+    /* Trochę lżejsza czcionka */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--white);
+}
+
+/* === Nawigacja Desktop === */
+.header-nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    /* Daje trochę przestrzeni do klikania */
+    position: relative;
+    /* Potrzebne dla animowanego podkreślenia */
+    transition: color 0.25s ease;
+}
+
+/* Nowoczesny efekt podkreślenia przy użyciu pseudo-elementu */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    /* Używamy drugiego koloru klubowego jako akcentu */
+    background-color: var(--header-background);
+    /* Zaczyna schowany (skalowany do 0) */
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    /* Kierunek animacji od prawej do lewej */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.nav-link:hover {
+    color: #f5f5f5;
+}
+
+/* Po najechaniu, animuj podkreślenie od lewej do prawej */
+.nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* === Przycisk Menu Mobilnego (Hamburger) === */
+.menu-toggle {
+    display: none;
+    /* Ukryty na desktopie */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 1rem;
+    /* Ułatwia trafienie palcem */
+    z-index: 110;
+    /* Musi być nad wysuwanym menu */
+}
+
+/* Style dla ikony hamburgera (czyste CSS) */
+.hamburger-box {
+    width: 30px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+}
+
+.hamburger-inner {
+    display: block;
+    top: 50%;
+    margin-top: -1.5px;
+    /* Połowa wysokości kreski */
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+    width: 30px;
+    height: 3px;
+    background-color: var(--white);
+    border-radius: 4px;
+    position: absolute;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+    content: "";
+    display: block;
+}
+
+.hamburger-inner::before {
+    top: -10px;
+    /* Odległość górnej kreski */
+}
+
+.hamburger-inner::after {
+    bottom: -10px;
+    /* Odległość dolnej kreski */
+}
+
+/* === Animacja przycisku hamburgera do "X" === */
+/* Obrót środkowej kreski */
+.menu-toggle[aria-expanded="true"] .hamburger-inner {
+    transform: rotate(45deg);
+}
+
+/* Górna kreska staje się częścią "X" */
+.menu-toggle[aria-expanded="true"] .hamburger-inner::before {
+    top: 0;
+    transform: rotate(-90deg);
+}
+
+/* Dolna kreska znika */
+.menu-toggle[aria-expanded="true"] .hamburger-inner::after {
+    opacity: 0;
+    bottom: 0;
+}
+
+/* === Media Query - Wersja Mobilna === */
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0.5rem 1rem;
+        /* Mniejszy padding na mobilce */
+    }
+
+    .club-name {
+        font-size: 1rem;
+        /* Mniejsza nazwa klubu */
+    }
+
+    .logo-image {
+        width: 45px;
+        height: 45px;
+    }
+
+    /* Pokaż przycisk hamburgera */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Ukryj nawigację i zmień ją w wysuwane menu */
+    .header-nav {
+        position: absolute;
+        top: 100%;
+        /* Pozycjonowanie tuż pod headerem */
+        left: 0;
+        width: 100%;
+        background: var(--header-background);
+        /* Kontynuacja tła */
+        border-top: 1px solid var(--gray-border);
+
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        padding: 1rem 0;
+
+        /* Animacja wysuwania menu */
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        visibility: hidden;
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+    }
+
+    /* Pokaż menu, gdy ma klasę "active" */
+    .header-nav.active {
+        max-height: 500px;
+        /* Wystarczająco dużo miejsca */
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Linki w menu mobilnym */
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+    }
+
+    /* Wyłącz animację podkreślenia na mobilce */
+    .nav-link::after {
+        display: none;
+    }
+
+    .nav-link:hover {
+        background-color: var(--acent-hover);
+        /* Lekkie podświetlenie */
+    }
+}
+
+/* ===== Dropdown menus ===== */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(8px);
+    min-width: 180px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-border);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 200;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.dropdown-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    display: block;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--acent-hover);
+}
+
+.nav-dropdown.open .dropdown-menu {
+    display: flex;
+}
+
+/* Dropdowns na mobilce — wypełniają szerokość */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+    }
+
+    .dropdown-menu a {
+        padding: 0.75rem;
+        text-align: center;
+    }
+}

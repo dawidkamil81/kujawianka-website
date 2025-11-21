@@ -1,0 +1,158 @@
+:root {
+    --club-green: #174135;
+    --club-red: #8d1010;
+    --club-bg: radial-gradient(circle at 20% 20%, rgba(23, 65, 53, 0.2), transparent 40%),
+        linear-gradient(135deg, #0e0e0e 0%, #1a1a1a 100%);
+    --club-text: #fff;
+}
+
+/* === SEKCJA GŁÓWNA === */
+.club {
+    background: var(--club-bg);
+    color: var(--club-text);
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.club::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.04), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(141, 16, 16, 0.05), transparent 40%);
+    z-index: 1;
+}
+
+.club-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* === NAGŁÓWEK === */
+.club-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.club-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--club-text);
+}
+
+.club-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    color: var(--club-red);
+}
+
+/* === SEKCJA INFORMACJI === */
+.club-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.club-heading {
+    font-size: 1.6rem;
+    color: var(--club-green);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    border-left: 4px solid var(--club-red);
+    padding-left: 0.75rem;
+}
+
+.club-info p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.club-image-wrapper {
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+}
+
+.club-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.club-image:hover {
+    transform: scale(1.05);
+}
+
+/* === STADION === */
+.stadium-section {
+    margin-top: 2rem;
+}
+
+.stadium-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.stadium-info p {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.stadium-details {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+}
+
+.stadium-details li {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+}
+
+.stadium-map {
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+}
+
+.stadium-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 900px) {
+
+    .club-section,
+    .stadium-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .club {
+        padding: 3rem 1.25rem;
+    }
+
+    .club-title {
+        font-size: 2rem;
+    }
+
+    .club-heading {
+        font-size: 1.3rem;
+    }
+}

@@ -1,0 +1,190 @@
+.players-section {
+    background: linear-gradient(180deg, rgba(18, 25, 21, 0) 0%, rgba(23, 65, 53, 0.15) 100%);
+    color: var(--text-main);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.players-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* === Nagłówek === */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.75rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--club-green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.section-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--club-red);
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.section-link:hover {
+    color: var(--bialy);
+    transform: translateX(5px);
+}
+
+/* === GRID === */
+.players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.5rem;
+}
+
+/* === KARTA === */
+.player-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.player-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 0 20px rgba(0, 255, 128, 0.15);
+}
+
+/* === ZDJĘCIE === */
+.player-image-wrapper {
+    position: relative;
+    aspect-ratio: 3 / 3.5;
+    overflow: hidden;
+}
+
+.player-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.player-card:hover .player-image {
+    transform: scale(1.08);
+}
+
+/* === PASEK Z NUMEREM I NAZWISKIEM === */
+.player-banner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: radial-gradient(600px 200px at 10% 10%, rgba(255, 255, 255, 0.06), transparent 20%),
+        linear-gradient(135deg, rgba(23, 65, 53, 0.95) 0%, rgba(141, 16, 16, 0.9) 60%);
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.player-card:hover .player-banner {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.player-number {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--bialy);
+    line-height: 1;
+}
+
+.player-name-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.player-surname {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--bialy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.player-name {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+}
+
+/* === OVERLAY Z POZYCJĄ === */
+.player-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 10%, transparent 90%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.player-card:hover .player-overlay {
+    opacity: 1;
+}
+
+.overlay-position {
+    font-size: 0.8rem;
+    color: var(--bialy);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 768px) {
+    .players-section {
+        padding: 2.5rem 1rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .player-banner {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .player-number {
+        font-size: 2.2rem;
+    }
+
+    .player-surname {
+        font-size: 1.05rem;
+    }
+
+    .player-name {
+        font-size: 0.75rem;
+    }
+
+    .players-grid {
+        gap: 1rem;
+    }
+}

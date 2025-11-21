@@ -1,0 +1,444 @@
+/* Plik: Results.css (Zaktualizowany) */
+
+/* ... Style nagłówka sekcji (.full-results-section, .container, .section-header...) ... */
+/* ... pozostają bez zmian ... */
+.full-results-section {
+    background: linear-gradient(180deg,
+            rgba(18, 25, 21, 0) 0%,
+            rgba(23, 65, 53, 0.15) 100%);
+    color: var(--text-main);
+    padding: 4rem 2rem;
+    min-height: 100vh;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.full-results-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.75rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--club-green);
+}
+
+.section-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--club-red);
+    text-decoration: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.section-link:hover {
+    color: var(--bialy);
+    transform: translateX(-3px);
+}
+
+/* === UKŁAD PIONOWY === */
+.results-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.results-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* === NAWIGATOR KOLEJEK === */
+/* ... (style .matchday-navigation, .nav-arrow, .round-select-wrapper, .round-select) ... */
+/* ... pozostają bez zmian ... */
+.matchday-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.nav-arrow {
+    background: transparent;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    color: var(--text-muted, #a0a0a0);
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.nav-arrow:hover {
+    border-color: var(--club-green);
+    color: var(--club-green);
+}
+
+.nav-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: var(--border-color, rgba(255, 255, 255, 0.1));
+    color: var(--text-muted, #a0a0a0);
+}
+
+.round-select-wrapper {
+    position: relative;
+    flex-grow: 1;
+    margin: 0 0.5rem;
+}
+
+.round-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-main, #fff);
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 0.75rem 3rem 0.75rem 1.5rem;
+    cursor: pointer;
+}
+
+.round-select-wrapper::after {
+    content: '▼';
+    font-size: 0.8rem;
+    color: var(--text-muted, #a0a0a0);
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* === GRUPA KOLEJKI (bez zmian) === */
+.matchday-group {
+    background: #1a1a1a;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ... (style .matchday-header, .matchday-list, .match-result-card, .team-info, .score-box etc.) ... */
+/* ... pozostają bez zmian ... */
+.matchday-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.matchday-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.matchday-date {
+    font-size: 0.9rem;
+    color: var(--text-muted, #a0a0a0);
+}
+
+.matchday-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.match-result-card {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+    transition: background-color 0.2s ease;
+}
+
+.matchday-list .match-result-card:last-child {
+    border-bottom: none;
+}
+
+.match-result-card:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.team-info.home {
+    justify-content: flex-end;
+}
+
+.team-info.away {
+    justify-content: flex-start;
+}
+
+.team-logo-small {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.team-info.home .team-logo-small {
+    order: 2;
+}
+
+.team-info.home .team-name {
+    order: 1;
+}
+
+.team-info.away .team-logo-small {
+    order: 1;
+}
+
+.team-info.away .team-name {
+    order: 2;
+}
+
+.match-score-center {
+    text-align: center;
+}
+
+.score-box {
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.25rem 1rem;
+    border-radius: 6px;
+    min-width: 90px;
+    text-align: center;
+}
+
+.score-box.upcoming {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted, #a0a0a0);
+    background: none;
+}
+
+.highlight-kujawianka {
+    background: rgba(23, 65, 53, 0.4);
+    border-color: var(--club-green);
+}
+
+.highlight-kujawianka .team-name {
+    font-weight: 700;
+    color: #fff;
+}
+
+.no-data-info {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 3rem;
+    background: #1a1a1a;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+
+/* === SEKCJA TABELI (ZAKTUALIZOWANA) === */
+.results-table-section {
+    width: 100%;
+    /* KROK 1: Ograniczenie szerokości i wyśrodkowanie */
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.column-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-muted, #a0a0a0);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.table-wrapper {
+    background: #1a1a1a;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    overflow-x: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.league-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-main);
+    font-size: 0.85rem;
+}
+
+.league-table th,
+.league-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.league-table th {
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted, #a0a0a0);
+    font-size: 0.8rem;
+}
+
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 180px;
+}
+
+.league-table .team-logo-small {
+    width: 24px;
+    height: 24px;
+}
+
+.league-table th:first-child,
+.league-table td:first-child {
+    text-align: center;
+    width: 35px;
+}
+
+.league-table .stat-col,
+.league-table .goals-col {
+    text-align: center;
+    width: 50px;
+}
+
+.league-table th.stat-col,
+.league-table th.goals-col {
+    text-align: center;
+}
+
+.league-table .goals-col {
+    width: 70px;
+}
+
+/* KROK 2: Wyróżnienie kolumny "Pkt" */
+.league-table .points-col {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.9rem;
+    /* Lekko większa czcionka */
+    text-align: center;
+    width: 60px;
+}
+
+/* Dodanie separatora */
+.league-table th.points-col,
+.league-table .points-col {
+    border-left: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+
+/* Kolory wierszy (bez zmian) */
+.promotion {
+    background: rgba(23, 65, 53, 0.4);
+}
+
+.relegation {
+    background: rgba(141, 16, 16, 0.35);
+}
+
+.highlight {
+    background: rgba(255, 255, 255, 0.15);
+    font-weight: 700;
+    color: #fff;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+
+    /* Ukrywanie kolumn Z,R,P,Bramki na mobilce */
+    .league-table .stat-col,
+    .league-table .goals-col {
+        display: none;
+    }
+
+    /* Separator punktów musi być też ukryty, jeśli kolumna obok (Bramki) znika */
+    .league-table th.points-col,
+    .league-table .points-col {
+        border-left: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .matchday-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .match-result-card {
+        grid-template-columns: 1fr auto 1fr;
+        gap: 0.5rem;
+        padding: 1rem 0.75rem;
+    }
+
+    .team-info .team-name {
+        font-size: 0.85rem;
+    }
+
+    .score-box {
+        min-width: 70px;
+        font-size: 1.1rem;
+    }
+
+    .league-table .team-logo-small {
+        display: none;
+    }
+
+    .league-table th,
+    .league-table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .nav-arrow {
+        width: 44px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .round-select {
+        font-size: 1rem;
+        padding: 0.75rem 2.5rem 0.75rem 1rem;
+    }
+
+    .round-select-wrapper::after {
+        right: 0.75rem;
+    }
+}

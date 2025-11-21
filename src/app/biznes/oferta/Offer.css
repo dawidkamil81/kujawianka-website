@@ -1,0 +1,365 @@
+/* Plik: Offer.css */
+
+/* === USTAWIENIA OGÓLNE (Bez zmian) === */
+.offer-page {
+    background: linear-gradient(180deg,
+            rgba(18, 25, 21, 0) 0%,
+            rgba(23, 65, 53, 0.15) 100%);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+.offer-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.offer-page .section-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.offer-page .section-text {
+    font-size: 1.1rem;
+    color: var(--text-muted, #a0a0a0);
+    line-height: 1.7;
+    max-width: 600px;
+}
+
+.offer-page .text-center {
+    text-align: center;
+}
+
+.offer-page .section-title.text-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.offer-page .section-text.text-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* === SEKCJA 1: HERO (Bez zmian) === */
+.offer-hero {
+    text-align: center;
+    padding: 6rem 1.5rem;
+    background: radial-gradient(circle at top,
+            rgba(23, 65, 53, 0.3),
+            transparent 70%);
+}
+
+.offer-hero .container {
+    max-width: 800px;
+}
+
+.hero-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+    text-transform: uppercase;
+}
+
+.hero-subtitle {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+}
+
+/* === SEKCJA 2: DLACZEGO WARTO (Bez zmian) === */
+.offer-value-section {
+    padding: 5rem 0;
+}
+
+.offer-value-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 3rem;
+}
+
+.offer-value-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.offer-value-content .section-text {
+    margin-bottom: 1rem;
+}
+
+/* === SEKCJA 3: PAKIETY SPONSORSKIE (Bez zmian) === */
+.packages-section {
+    padding: 5rem 0;
+    background: rgba(18, 25, 21, 0.2);
+    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,
+            minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.package-card {
+    background: #1a1a1a;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 1rem;
+    padding: 2rem;
+    border-top: 4px solid var(--club-green);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.package-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(23, 65, 53, 0.3);
+}
+
+.package-header {
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.package-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.package-price {
+    font-size: 0.9rem;
+    color: var(--text-muted, #a0a0a0);
+}
+
+.package-description {
+    font-size: 0.95rem;
+    color: var(--text-muted, #a0a0a0);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.package-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.package-benefits li {
+    position: relative;
+    padding-left: 1.75rem;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.package-benefits li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* === SEKCJA 4: STATYSTYKI (Bez zmian) === */
+.offer-stats {
+    padding: 6rem 2rem 5rem;
+    text-align: center;
+}
+
+.offer-stats .section-title {
+    margin-bottom: 3rem;
+}
+
+.stats-line-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem 0;
+}
+
+.stat-line-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.stat-line-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.stat-line-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === SEKCJA 5: ZMIANA - USUNIĘTE .offer-cta-section i .cta-button === */
+
+/* === NOWE STYLE: SEKCJA KONTAKTOWA === */
+.contact-section {
+    padding: 6rem 0;
+    background: radial-gradient(circle at bottom,
+            rgba(23, 65, 53, 0.3),
+            transparent 70%);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    /* Wyśrodkowanie w pionie */
+    gap: 3rem;
+}
+
+.contact-details .section-text {
+    margin-bottom: 2.5rem;
+}
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.contact-icon {
+    font-size: 1.75rem;
+    color: var(--club-green);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-info strong {
+    font-size: 0.9rem;
+    color: var(--text-muted, #a0a0a0);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.contact-info span,
+.contact-info a {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.contact-info a:hover {
+    color: var(--club-green);
+}
+
+.map-container {
+    width: 100%;
+    height: 400px;
+    border-radius: 1rem;
+    overflow: hidden;
+    /* Klipsowanie rogów iframe */
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    /* Filtr dopasowujący mapę do ciemnego motywu */
+    filter: invert(90%) grayscale(60%);
+}
+
+/* === RESPONSIVE (Aktualizacja) === */
+@media (max-width: 900px) {
+    .offer-value-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .offer-value-image {
+        order: 2;
+    }
+
+    .offer-value-content {
+        order: 1;
+        text-align: center;
+    }
+
+    .offer-value-content .section-text {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Stackowanie sekcji kontaktowej */
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-container {
+        /* Na mobilce mapa ląduje na górze */
+        order: -1;
+        margin-bottom: 2rem;
+        height: 300px;
+        /* Niższa mapa */
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .offer-page .section-title {
+        font-size: 1.75rem;
+    }
+
+    .stat-line-value {
+        font-size: 2.2rem;
+    }
+
+    .stats-line-container {
+        gap: 2rem;
+        padding: 2rem 0;
+    }
+}

@@ -1,0 +1,150 @@
+.footer {
+    background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 3rem 2rem 2rem;
+    font-family: "Inter", sans-serif;
+    border-top: 2px solid var(--club-green);
+}
+
+/* === Sekcja herbu === */
+.footer-crest-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.footer-crest {
+    width: 90px;
+    height: auto;
+    filter: drop-shadow(0 0 6px rgba(0, 255, 100, 0.25));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-crest:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(0, 255, 100, 0.4));
+}
+
+/* === Kolumny === */
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+    align-items: start;
+    text-align: center;
+}
+
+.footer-col h4 {
+    color: var(--club-green);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+/* === Nawigacja === */
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-col a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.footer-col a:hover {
+    color: var(--club-red);
+    transform: translateX(4px);
+}
+
+/* === Social media === */
+.footer-socials {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 0.8rem;
+}
+
+.social-icons a {
+    color: var(--club-green);
+    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: translateY(-4px);
+    color: var(--club-red);
+    text-shadow: 0 0 10px var(--club-green);
+}
+
+/* === Kontakt === */
+.footer-contact ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.footer-contact svg {
+    flex-shrink: 0;
+    color: var(--club-green);
+}
+
+.footer-contact span {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.4;
+}
+
+/* === Dolny pasek === */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-bottom .dev a {
+    color: var(--club-green);
+    text-decoration: none;
+}
+
+.footer-bottom .dev a:hover {
+    color: var(--club-red);
+}
+
+/* === Responsywność === */
+@media (max-width: 768px) {
+    .footer-columns {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .footer-contact li {
+        justify-content: center;
+        text-align: center;
+    }
+}
