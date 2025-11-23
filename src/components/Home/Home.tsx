@@ -7,7 +7,6 @@ import ResultsTable from "./ResultsTable";
 import MatchCenter from "./MatchCenter";
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
-import Footer from "../Footer";
 
 export default function Home() {
     return (
@@ -17,7 +16,6 @@ export default function Home() {
             <ResultsTable />
             <PlayersTeaser />
             <SponsorsTeaser />
-            <Footer />
         </>
     );
 }

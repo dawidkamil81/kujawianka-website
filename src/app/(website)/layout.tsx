@@ -1,5 +1,6 @@
 import "./globals.css";
-import Header from "../components/Header";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export const metadata = {
   title: "Kujawianka – Oficjalna Strona Klubu",
@@ -17,9 +18,7 @@ export default function RootLayout({
       <body className="bg-neutral-50 text-neutral-900">
         <Header />
         <main className="max-w-6xl mx-auto px-6 py-10">{children}</main>
-        <footer className="bg-[#174135] text-white text-center text-sm py-4">
-          © {new Date().getFullYear()} Kujawianka – Wszystkie prawa zastrzeżone.
-        </footer>
+        <Footer />
       </body>
     </html>
   );
