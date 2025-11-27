@@ -1,6 +1,6 @@
 import { defineQuery } from "next-sanity";
 
-// 1. Zawodnicy (pobranie 4 do strony głównej)
+
 export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
   *[_type == "player"] | order(number asc)[0...4] {
     _id,
@@ -12,7 +12,7 @@ export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
   }
 `);
 
-// 2. Wszyscy zawodnicy (do podstrony Kadra)
+
 export const ALL_PLAYERS_QUERY = defineQuery(`
   *[_type == "player"] | order(number asc) {
     _id,
@@ -24,26 +24,30 @@ export const ALL_PLAYERS_QUERY = defineQuery(`
   }
 `);
 
-// 3. Mecze (ostatnie i nadchodzące - np. 5 sztuk)
-export const MATCHES_QUERY = defineQuery(`
-  *[_type == "match"] | order(date desc)[0...5] {
+// ... poprzednie importy i zapytania
+
+// 3. Zapytanie do NEWSÓW NA STRONĘ GŁÓWNĄ
+// Pobiera 3 najnowsze wpisy
+// ... (poprzednie importy i zapytania do zawodników)
+
+// 3. NEWSY NA STRONĘ GŁÓWNĄ (Teaser - 3 najnowsze)
+export const HOMEPAGE_NEWS_QUERY = defineQuery(`
+  *[_type == "news"] | order(publishedAt desc)[0...2] {
     _id,
-    homeTeam,
-    awayTeam,
-    homeScore,
-    awayScore,
-    date,
-    isFinished,
-    competition
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url
   }
 `);
 
-// 4. Aktualności (do sekcji News)
-export const HOMEPAGE_NEWS_QUERY = defineQuery(`
-  *[_type == "news"] | order(publishedAt desc)[0...3] {
+// 4. WSZYSTKIE NEWSY (Dla strony /aktualnosci)
+export const ALL_NEWS_QUERY = defineQuery(`
+  *[_type == "news"] | order(publishedAt desc) {
     _id,
     title,
-    slug,
+    "slug": slug.current,
     publishedAt,
     excerpt,
     "imageUrl": mainImage.asset->url

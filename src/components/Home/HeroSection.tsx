@@ -3,41 +3,17 @@
 import { useState, useEffect } from "react";
 import "./HeroSection.css";
 import NewsTeaser from "./NewsTeaser";
-
-// Przykładowe dane dla karuzeli
-const newsData = [
-    {
-        slug: "/aktualnosci/derby-wygrane",
-        imageUrl: "/art3.jpg",
-        title: "Kujawianka wygrywa derbowy pojedynek!",
-        excerpt:
-            "Świetne spotkanie na stadionie w Izbicy Kujawskiej – nasi zawodnicy pokonali Włocłavię 3:1.",
-    },
-    {
-        slug: "/aktualnosci/nowy-transfer",
-        imageUrl: "/hero.jpg",
-        title: "Nowy napastnik wzmacnia szeregi Kujawianki",
-        excerpt:
-            "Do klubu dołącza doświadczony zawodnik, który ma pomóc w walce o najwyższe cele.",
-    },
-    {
-        slug: "/aktualnosci/akademia-zaprasza",
-        imageUrl: "/art2.jpg",
-        title: "Akademia zaprasza na testy młodych adeptów",
-        excerpt:
-            "Rusza nabór do wszystkich grup młodzieżowych. Czekamy na przyszłe gwiazdy!",
-    },
-];
+import { NewsItem } from "@/types/index";
 
 const SLIDE_DURATION_MS = 5000;
 
-export default function HeroSection() {
+export default function HeroSection({ news }: { news: NewsItem[] }) {
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
             // Automatycznie przechodzi do następnego slajdu
-            setActiveIndex((current) => (current + 1) % newsData.length);
+            setActiveIndex((current) => (current + 1) % news.length);
         }, SLIDE_DURATION_MS);
 
         // Ważne: restartuje timer przy każdej zmianie activeIndex (też manualnej)
@@ -51,12 +27,12 @@ export default function HeroSection() {
 
     // === KROK 1: Nowe funkcje nawigacyjne ===
     const goToNext = () => {
-        setActiveIndex((current) => (current + 1) % newsData.length);
+        setActiveIndex((current) => (current + 1) % news.length);
     };
 
     const goToPrev = () => {
         // Modulo % w JS może dać ujemne liczby, stąd ten zapis
-        setActiveIndex((current) => (current - 1 + newsData.length) % newsData.length);
+        setActiveIndex((current) => (current - 1 + news.length) % news.length);
     };
 
     return (
@@ -75,7 +51,7 @@ export default function HeroSection() {
                     <div className="news-carousel-container">
                         {/* Kontener na slajdy */}
                         <div className="news-carousel-wrapper">
-                            {newsData.map((news, index) => (
+                            {news.map((news, index) => (
                                 <div
                                     key={news.slug}
                                     className={`news-slide ${index === activeIndex ? "active" : ""
@@ -84,7 +60,7 @@ export default function HeroSection() {
                                     <NewsTeaser
                                         title={news.title}
                                         excerpt={news.excerpt}
-                                        imageUrl={news.imageUrl}
+                                        imageUrl={news.imageUrl || "/placeholder-image.jpg"}
                                         slug={news.slug}
                                     />
                                 </div>
@@ -116,7 +92,7 @@ export default function HeroSection() {
 
                     {/* Wskaźniki (kropki) */}
                     <div className="carousel-indicators">
-                        {newsData.map((_, index) => (
+                        {news.map((_, index) => (
                             <button
                                 key={index}
                                 className={`indicator-dot ${index === activeIndex ? "active" : ""

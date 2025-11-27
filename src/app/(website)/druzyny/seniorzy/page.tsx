@@ -1,59 +1,28 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { client } from "@/sanity/lib/client";
+import { ALL_PLAYERS_QUERY } from "@/sanity/lib/queries";
+import { Player } from "@/types";
+import { urlFor } from "@/sanity/lib/image"; // Opcjonalnie, jeśli używasz helpera
 import "./Squad.css";
 
-type Player = {
-    name: string;
-    surname: string;
-    position: string;
-    image: string;
-    number?: number;
-};
+// Funkcja pomocnicza do grupowania zawodników
+function groupPlayersByPosition(players: Player[]) {
+    return {
+        bramkarze: players.filter((p) => p.position === "Bramkarz"),
+        obroncy: players.filter((p) => p.position === "Obrońca"),
+        pomocnicy: players.filter((p) => p.position === "Pomocnik"),
+        napastnicy: players.filter((p) => p.position === "Napastnik"),
+        sztab: players.filter((p) => p.position === "Sztab"),
+    };
+}
 
-type Squad = {
-    bramkarze: Player[];
-    obroncy: Player[];
-    pomocnicy: Player[];
-    napastnicy: Player[];
-    sztab: Player[];
-};
+export default async function KadraPage() {
+    // 1. Pobieramy wszystkich z Sanity
+    const players = await client.fetch<Player[]>(ALL_PLAYERS_QUERY);
 
-const squad: Squad = {
-    bramkarze: [
-        { name: "Imie", surname: "Nazwisko", number: 1, position: "Bramkarz", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 12, position: "Bramkarz", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 12, position: "Bramkarz", image: "/player.png" },
-    ],
-    obroncy: [
-        { name: "Imie", surname: "Nazwisko", number: 4, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 3, position: "Obrońca", image: "/player.png" },
-    ],
-    pomocnicy: [
-        { name: "Imie", surname: "Nazwisko", number: 8, position: "Pomocnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 6, position: "Pomocnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 6, position: "Pomocnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 6, position: "Pomocnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 6, position: "Pomocnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 6, position: "Pomocnik", image: "/player.png" },
-    ],
-    napastnicy: [
-        { name: "Imie", surname: "Nazwisko", number: 9, position: "Napastnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 11, position: "Napastnik", image: "/player.png" },
-        { name: "Imie", surname: "Nazwisko", number: 11, position: "Napastnik", image: "/player.png" }
-    ],
-    sztab: [
-        { name: "Imie", surname: "Nazwisko", position: "Trener Główny", image: "/coach.png" },
-        { name: "Imie", surname: "Nazwisko", position: "Asystent Trenera", image: "/coach.png" },
-    ],
-};
+    // 2. Grupujemy ich wg pozycji
+    const squad = groupPlayersByPosition(players);
 
-export default function KadraPage() {
+    // 3. Renderujemy (tak jak w Twoim szkicu)
     return (
         <section className="squad-section">
             <div className="squad-container">
@@ -61,26 +30,30 @@ export default function KadraPage() {
                     <h2 className="squad-title">Kadra Kujawianki</h2>
                 </header>
 
-                {Object.entries(squad).map(([groupKey, players]) => (
-                    <div key={groupKey} className="squad-group">
-                        <h3 className="squad-group-title">{groupKey.toUpperCase()}</h3>
-                        <div className="squad-grid">
-                            {players.map((player, i) => (
-                                <motion.div
-                                    key={`${player.surname}-${player.name}`}
-                                    className="squad-card"
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1, duration: 0.5 }}
-                                >
-                                    <div className="squad-image-wrapper">
-                                        <img
-                                            src={player.image}
-                                            alt={`${player.name} ${player.surname}`}
-                                            className="squad-image"
-                                        />
+                {/* Mapujemy grupy (bramkarze, obrońcy...) */}
+                {Object.entries(squad).map(([groupKey, groupPlayers]) => {
+                    // Jeśli w danej grupie nie ma nikogo, nie wyświetlaj jej
+                    if (groupPlayers.length === 0) return null;
 
-                                        {player.number && (
+                    return (
+                        <div key={groupKey} className="squad-group">
+                            <h3 className="squad-group-title">{groupKey.toUpperCase()}</h3>
+                            <div className="squad-grid">
+                                {groupPlayers.map((player) => (
+                                    <div key={player._id} className="squad-card">
+                                        <div className="squad-image-wrapper">
+                                            {player.imageUrl ? (
+                                                <img
+                                                    src={player.imageUrl}
+                                                    alt={`${player.name} ${player.surname}`}
+                                                    className="squad-image"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                                    ⚽
+                                                </div>
+                                            )}
+
                                             <div className="squad-banner">
                                                 <span className="squad-number">{player.number}</span>
                                                 <div className="squad-name-block">
@@ -88,17 +61,17 @@ export default function KadraPage() {
                                                     <span className="squad-name">{player.name}</span>
                                                 </div>
                                             </div>
-                                        )}
 
-                                        <div className="squad-overlay">
-                                            <span className="squad-position">{player.position}</span>
+                                            <div className="squad-overlay">
+                                                <span className="squad-position">{player.position}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </section>
     );

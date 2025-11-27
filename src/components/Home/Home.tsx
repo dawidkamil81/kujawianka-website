@@ -7,16 +7,24 @@ import ResultsTable from "./ResultsTable";
 import MatchCenter from "./MatchCenter";
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
+import Footer from "../Footer";
+import { Player, NewsItem } from "@/types/index"; // <--- Import NewsItem
 
-export default function Home() {
+interface HomeProps {
+    players: Player[];
+    news: NewsItem[]; // <--- Dodaj ten props
+}
+
+export default function Home({ players, news }: HomeProps) {
     return (
         <>
-            <HeroSection />
+            {/* Przekazujemy newsy do HeroSection */}
+            <HeroSection news={news} />
+
             <MatchCenter />
             <ResultsTable />
-            <PlayersTeaser />
+            <PlayersTeaser players={players} />
             <SponsorsTeaser />
         </>
     );
 }
-
