@@ -21,7 +21,7 @@ export const table = defineType({
                     name: 'tableRow',
                     title: 'Wiersz',
                     fields: [
-                        defineField({ name: 'teamName', title: 'Pozycja', type: 'number' }),
+                        defineField({ name: 'teamName', title: 'Nazwa drużyny', type: 'string' }),
                         defineField({ name: 'position', title: 'Pozycja', type: 'number' }),
                         defineField({ name: 'matches', title: 'Mecze (M)', type: 'number' }),
                         defineField({ name: 'points', title: 'Punkty (Pkt)', type: 'number' }),

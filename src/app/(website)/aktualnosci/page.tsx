@@ -1,116 +1,103 @@
-"use client";
-import "./News.css";
+import { client } from "@/sanity/lib/client";
+import { ALL_NEWS_QUERY } from "@/sanity/lib/queries";
+import { NewsItem } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
+import "./News.css";
 
-export default function News() {
-    const featured = {
-        id: 1,
-        title: "Kujawianka wygrywa derby 3:1 z LKS Brześć!",
-        date: "25 października 2025",
-        excerpt:
-            "Nasi seniorzy pokazali charakter w derbowym meczu, zdobywając ważne 3 punkty! Sprawdź relację z tego emocjonującego spotkania.",
-        image: "/art3.jpg",
-        slug: "kujawianka-wygrywa-derby",
-    };
+// Funkcja pomocnicza do formatowania daty
+const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("pl-PL", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+};
 
-    const newsList = [
-        {
-            id: 2,
-            title: "Trampkarze kończą sezon na podium!",
-            date: "22 października 2025",
-            image: "/art2.jpg",
-            slug: "trampkarze-na-podium",
-        },
-        {
-            id: 3,
-            title: "Nowe stroje meczowe dla seniorów",
-            date: "18 października 2025",
-            image: "/art1.jpg",
-            slug: "nowe-stroje-dla-seniorow",
-        },
-        {
-            id: 4,
-            title: "Kujawianka II wygrywa na wyjeździe!",
-            date: "15 października 2025",
-            image: "/art4.jpg",
-            slug: "kujawianka-ii-wyjazdowe-zwyciestwo",
-        },
-        {
-            id: 5,
-            title: "Kujawianka U13 melduje się w półfinale turnieju!",
-            date: "12 października 2025",
-            image: "/art5.jpg",
-            slug: "kujawianka-u13-polfinal",
-        },
-        {
-            id: 6,
-            title: "Nowy partner klubu – witamy sponsora!",
-            date: "8 października 2025",
-            image: "/art6.jpg",
-            slug: "nowy-partner-klubu",
-        },
-        {
-            id: 7,
-            title: "Plan sparingów przed rundą wiosenną",
-            date: "2 października 2025",
-            image: "/art7.jpg",
-            slug: "plan-sparingow-wiosna",
-        },
-    ];
+export default async function NewsPage() {
+    // Pobieramy dane z Sanity
+    const newsList = await client.fetch<NewsItem[]>(ALL_NEWS_QUERY);
+
+    // Wyodrębniamy najnowszy news jako "Featured" (jeśli istnieje)
+    const featured = newsList.length > 0 ? newsList[0] : null;
+    // Reszta newsów (od drugiego w dół)
+    const otherNews = newsList.length > 1 ? newsList.slice(1) : [];
 
     return (
         <section className="news-page">
             <h1 className="news-title">Aktualności</h1>
 
             {/* --- FEATURED NEWS --- */}
-            <div className="featured-news">
-                <div className="featured-image-wrapper">
-                    <Image
-                        src={featured.image}
-                        alt={featured.title}
-                        fill
-                        className="featured-image"
-                    />
+            {featured && (
+                <div className="featured-news">
+                    <div className="featured-image-wrapper">
+                        {featured.imageUrl ? (
+                            <Image
+                                src={featured.imageUrl}
+                                alt={featured.title}
+                                fill
+                                className="featured-image"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                ⚽
+                            </div>
+                        )}
+                    </div>
+                    <div className="featured-content">
+                        <p className="news-date">{formatDate(featured.publishedAt)}</p>
+                        <h2>{featured.title}</h2>
+                        {featured.excerpt && <p className="news-excerpt">{featured.excerpt}</p>}
+                        <Link
+                            href={`/aktualnosci/${featured.slug}`}
+                            className="see-more-btn"
+                        >
+                            Zobacz więcej →
+                        </Link>
+                    </div>
                 </div>
-                <div className="featured-content">
-                    <p className="news-date">{featured.date}</p>
-                    <h2>{featured.title}</h2>
-                    <p className="news-excerpt">{featured.excerpt}</p>
-                    <Link href={`/aktualnosci/${featured.slug}`} className="see-more-btn">
-                        Zobacz więcej →
-                    </Link>
-                </div>
-            </div>
+            )}
 
             {/* --- DIVIDER --- */}
-            <div className="news-divider">
-                <span>Więcej aktualności</span>
-            </div>
+            {otherNews.length > 0 && (
+                <div className="news-divider">
+                    <span>Więcej aktualności</span>
+                </div>
+            )}
 
             {/* --- GRID OF SMALL NEWS --- */}
             <div className="news-grid">
-                {newsList.map((item) => (
+                {otherNews.map((item) => (
                     <Link
                         href={`/aktualnosci/${item.slug}`}
-                        key={item.id}
+                        key={item._id}
                         className="small-news-card"
                     >
                         <div className="small-image-wrapper">
-                            <Image
-                                src={item.image}
-                                alt={item.title}
-                                fill
-                                className="small-image"
-                            />
+                            {item.imageUrl ? (
+                                <Image
+                                    src={item.imageUrl}
+                                    alt={item.title}
+                                    fill
+                                    className="small-image"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                    ⚽
+                                </div>
+                            )}
                         </div>
                         <div className="small-news-content">
-                            <p className="news-date">{item.date}</p>
+                            <p className="news-date">{formatDate(item.publishedAt)}</p>
                             <h3>{item.title}</h3>
                         </div>
                     </Link>
                 ))}
             </div>
+
+            {newsList.length === 0 && (
+                <p className="text-center text-gray-400 py-10">Brak aktualności.</p>
+            )}
         </section>
     );
 }

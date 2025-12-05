@@ -8,23 +8,27 @@ import MatchCenter from "./MatchCenter";
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
 import Footer from "../Footer";
-import { Player, NewsItem } from "@/types/index"; // <--- Import NewsItem
+// ... importy ...
+import { Player, NewsItem, Sponsor } from "@/types/index"; // Dodaj Sponsor
 
 interface HomeProps {
     players: Player[];
-    news: NewsItem[]; // <--- Dodaj ten props
+    news: NewsItem[];
+    sponsors: Sponsor[]; // Dodaj ten props
 }
 
-export default function Home({ players, news }: HomeProps) {
+export default function Home({ players, news, sponsors }: HomeProps) {
     return (
         <>
-            {/* Przekazujemy newsy do HeroSection */}
             <HeroSection news={news} />
-
             <MatchCenter />
             <ResultsTable />
             <PlayersTeaser players={players} />
-            <SponsorsTeaser />
+
+            {/* Przekazujemy sponsorów */}
+            <SponsorsTeaser sponsors={sponsors} />
+
+            <Footer />
         </>
     );
 }

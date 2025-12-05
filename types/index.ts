@@ -6,11 +6,7 @@ export type Player = {
     position: "Bramkarz" | "Obrońca" | "Pomocnik" | "Napastnik" | "Sztab";
     imageUrl: string;
 };
-// src/types/index.ts
 
-// ... (Player i inne typy)
-
-// src/types/index.ts
 
 export type NewsItem = {
     _id: string;
@@ -21,4 +17,14 @@ export type NewsItem = {
     imageUrl?: string; // <--- Dodaj tę linię!
 };
 
-// (Reszta typów bez zmian)
+
+
+export type Sponsor = {
+    _id: string;
+    name: string;
+    tier: "main" | "strategic" | "technical" | "partner";
+    logoUrl: string;
+    website?: string;
+    description?: string; // Tylko dla głównych
+    backgroundImageUrl?: string; // Tylko dla głównych
+};

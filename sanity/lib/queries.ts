@@ -53,3 +53,17 @@ export const ALL_NEWS_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url
   }
 `);
+
+// ... (poprzednie zapytania)
+
+export const ALL_SPONSORS_QUERY = defineQuery(`
+  *[_type == "sponsor"] {
+    _id,
+    name,
+    tier,
+    "logoUrl": logo.asset->url,
+    website,
+    description,
+    "backgroundImageUrl": backgroundImage.asset->url
+  }
+`);
