@@ -67,3 +67,71 @@ export const ALL_SPONSORS_QUERY = defineQuery(`
     "backgroundImageUrl": backgroundImage.asset->url
   }
 `);
+
+// ... inne zapytania
+
+export const RESULTS_PAGE_QUERY = defineQuery(`
+  {
+    "table": *[_id == "tabela-ligowa-glowna"][0] {
+      season,
+      rows[] {
+        "_key": _key,
+        position,
+        teamName,
+        matches,
+        points,
+        won,
+        drawn,
+        lost,
+        goals
+      }
+    },
+    // ZMIANA: Szukamy 'result', a nie 'match'
+    "matches": *[_type == "result"] | order(round asc) {
+      _id,
+      round,
+      date,
+      homeTeam,
+      awayTeam,
+      homeScore,
+      awayScore,
+      // TWORZYMY POLE W LOCIE: Jeśli homeScore jest zdefiniowane, to mecz jest zakończony
+      "isFinished": defined(homeScore)
+    },
+    "teams": *[_type == "team"] {
+      name,
+      "logoUrl": logo.asset->url
+    }
+  }
+`);
+
+// ... (poprzednie zapytania)
+
+// 8. DANE DO SEKCJI WYNIKÓW NA STRONIE GŁÓWNEJ
+export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
+  {
+    "table": *[_id == "tabela-ligowa-glowna"][0] {
+      rows[] {
+        "_key": _key,
+        position,
+        teamName,
+        matches,
+        points
+      }
+    },
+    // Pobieramy 5 ostatnich ZAKOŃCZONYCH meczów
+    "lastMatches": *[_type == "match" && isFinished == true] | order(date desc)[0...5] {
+      _id,
+      homeTeam,
+      awayTeam,
+      homeScore,
+      awayScore,
+      date
+    },
+    // Pobieramy loga zespołów
+    "teams": *[_type == "team"] {
+      name,
+      "logoUrl": logo.asset->url
+    }
+  }
+`);

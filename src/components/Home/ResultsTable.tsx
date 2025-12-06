@@ -1,73 +1,87 @@
 "use client";
 import "./ResultsTable.css";
 import Link from "next/link";
+import { LeagueTable, Match, Team } from "@/types/index";
 
-export default function ResultsTable() {
-    const lastResults = [
-        { opponent: "Team4", score: "2:1", result: "W", logo: "/l1.png" },
-        { opponent: "Team1", score: "1:1", result: "D", logo: "/l1.png" },
-        { opponent: "Team2", score: "0:2", result: "L", logo: "/l1.png" },
-        { opponent: "Team3", score: "3:0", result: "W", logo: "/l1.png" },
-        { opponent: "Team5", score: "4:2", result: "W", logo: "/l1.png" },
-    ];
+type ResultsTableProps = {
+    table: LeagueTable;
+    matches: Match[];
+    teams: Team[];
+};
 
-    const fullTable = [
-        { pos: 1, team: "Team1", played: 18, pts: 42, logo: "/l1.png" },
-        { pos: 2, team: "Team2", played: 18, pts: 39, logo: "/l1.png" },
-        { pos: 3, team: "Team3", played: 18, pts: 36, logo: "/l1.png" },
-        { pos: 4, team: "Team4", played: 18, pts: 35, logo: "/l1.png" },
-        { pos: 5, team: "Kujawianka Izbica", played: 18, pts: 34, logo: "/logo.png" },
-        { pos: 6, team: "Team5", played: 18, pts: 32, logo: "/l1.png" },
-        { pos: 7, team: "Team6", played: 18, pts: 31, logo: "/l1.png" },
-        { pos: 8, team: "Team7", played: 18, pts: 29, logo: "/l1.png" },
-        { pos: 9, team: "Team8", played: 18, pts: 27, logo: "/l1.png" },
-        { pos: 17, team: "Team9", played: 18, pts: 10, logo: "/l1.png" },
-        { pos: 18, team: "Team10", played: 18, pts: 8, logo: "/l1.png" },
-    ];
+export default function ResultsTable({ table, matches, teams }: ResultsTableProps) {
 
-    const kujawiankaIndex = fullTable.findIndex(t => t.team === "Kujawianka Izbica");
-    const start = Math.max(0, kujawiankaIndex - 3);
-    const end = Math.min(fullTable.length, kujawiankaIndex + 3);
-    const teaserTable = fullTable.slice(start, end);
+    // 1. Funkcja do szukania loga
+    const getTeamLogo = (teamName: string) => {
+        const found = teams.find((t) => t.name === teamName);
+        return found?.logoUrl || "/l1.png"; // Domyślne logo
+    };
+
+    // 2. Logika wycinania tabeli (Teaser)
+    // Szukamy drużyny, która ma "Kujawianka" w nazwie
+    const rows = table?.rows || [];
+    const kujawiankaIndex = rows.findIndex(row => row.teamName.includes("Kujawianka"));
+
+    // Jeśli nie znaleziono (np. błąd w nazwie), pokaż początek tabeli
+    const targetIndex = kujawiankaIndex !== -1 ? kujawiankaIndex : 0;
+
+    // Wycinamy: 2 miejsca przed i 2 po (łącznie 5 wierszy), ale pilnujemy granic tablicy
+    const start = Math.max(0, targetIndex - 2);
+    const end = Math.min(rows.length, targetIndex + 3);
+
+    // Jeśli jesteśmy na samym początku, pokaż więcej w dół
+    const adjustedStart = start === 0 ? 0 : start;
+    const adjustedEnd = start === 0 ? Math.min(rows.length, 5) : end;
+
+    const teaserTable = rows.slice(adjustedStart, adjustedEnd);
+
+    // 3. Logika ostatnich meczów
+    // Jeśli nie ma meczów z bazy, używamy pustej tablicy (nie crashuje strony)
+    const recentMatches = matches || [];
 
     return (
         <section className="results-table-section">
             <div className="container">
-                {/* Nagłówek sekcji */}
                 <header className="section-header">
                     <h2 className="section-title">Wyniki i Tabela</h2>
-                    <Link href="/tabela" className="section-link">
+                    <Link href="/wyniki/seniorzy" className="section-link">
                         Pełna tabela &rarr;
                     </Link>
                 </header>
 
                 <div className="results-layout">
-                    {/* Lewa kolumna — ostatnie mecze */}
+                    {/* === Lewa kolumna: Ostatnie Mecze === */}
                     <div className="results-column">
                         <h3 className="column-title">Ostatnie Mecze</h3>
                         <div className="results-list">
-                            {lastResults.map((match, idx) => (
-                                <div key={idx} className="result-item">
-                                    <div className="result-left">
-                                        <img src={match.logo} alt={match.opponent} className="team-logo" />
-                                        <span className="result-opponent">{match.opponent}</span>
+                            {recentMatches.length > 0 ? (
+                                recentMatches.map((match) => (
+                                    <div key={match._id} className="result-item">
+                                        <div className="result-left">
+                                            {/* Logo przeciwnika (zakładamy, że szukamy loga dla drużyny, która NIE jest Kujawianką) */}
+                                            {/* Ale prościej pokazać po prostu obie nazwy lub logo gospodarza */}
+                                            <img
+                                                src={getTeamLogo(match.homeTeam)}
+                                                alt={match.homeTeam}
+                                                className="team-logo"
+                                            />
+                                            <span className="result-opponent">
+                                                {match.homeTeam} vs {match.awayTeam}
+                                            </span>
+                                        </div>
+                                        <span className="result-score form-win">
+                                            {/* Klasę koloru (win/loss) można obliczyć dynamicznie, jeśli wiemy która drużyna jest nasza */}
+                                            {match.homeScore}:{match.awayScore}
+                                        </span>
                                     </div>
-                                    <span
-                                        className={`result-score ${match.result === "W"
-                                            ? "form-win"
-                                            : match.result === "D"
-                                                ? "form-draw"
-                                                : "form-loss"
-                                            }`}
-                                    >
-                                        {match.score}
-                                    </span>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-gray-400 text-sm">Brak rozegranych meczów.</p>
+                            )}
                         </div>
                     </div>
 
-                    {/* Prawa kolumna — tabela */}
+                    {/* === Prawa kolumna: Tabela (Teaser) === */}
                     <div className="results-column">
                         <h3 className="column-title">Tabela Ligowa</h3>
                         <div className="table-wrapper">
@@ -81,26 +95,28 @@ export default function ResultsTable() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {teaserTable.map((team) => (
+                                    {teaserTable.map((row) => (
                                         <tr
-                                            key={team.pos}
+                                            key={row._key}
                                             className={
-                                                team.team === "Kujawianka Izbica"
+                                                row.teamName.includes("Kujawianka")
                                                     ? "highlight"
-                                                    : team.pos === 1
+                                                    : row.position === 1
                                                         ? "promotion"
-                                                        : team.pos >= 17
-                                                            ? "relegation"
-                                                            : ""
+                                                        : ""
                                             }
                                         >
-                                            <td>{team.pos}</td>
+                                            <td>{row.position}</td>
                                             <td className="team-cell">
-                                                <img src={team.logo} alt={team.team} className="team-logo" />
-                                                <span>{team.team}</span>
+                                                <img
+                                                    src={getTeamLogo(row.teamName)}
+                                                    alt={row.teamName}
+                                                    className="team-logo"
+                                                />
+                                                <span>{row.teamName}</span>
                                             </td>
-                                            <td>{team.played}</td>
-                                            <td>{team.pts}</td>
+                                            <td>{row.matches}</td>
+                                            <td>{row.points}</td>
                                         </tr>
                                     ))}
                                 </tbody>

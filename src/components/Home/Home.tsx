@@ -2,33 +2,42 @@
 
 import "./Home.css";
 import HeroSection from "./HeroSection";
-import NewsTeaser from "./NewsTeaser";
-import ResultsTable from "./ResultsTable";
 import MatchCenter from "./MatchCenter";
+import ResultsTable from "./ResultsTable"; // <--- To będziemy karmić danymi
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
 import Footer from "../Footer";
-// ... importy ...
-import { Player, NewsItem, Sponsor } from "@/types/index"; // Dodaj Sponsor
+import { Player, NewsItem, Sponsor, LeagueTable, Match, Team } from "@/types/index";
+
+// Typ dla paczki danych z wynikami
+type ResultsDataPacket = {
+    table: LeagueTable;
+    lastMatches: Match[];
+    teams: Team[];
+};
 
 interface HomeProps {
     players: Player[];
     news: NewsItem[];
-    sponsors: Sponsor[]; // Dodaj ten props
+    sponsors: Sponsor[];
+    resultsData: ResultsDataPacket; // <--- Nowy props
 }
 
-export default function Home({ players, news, sponsors }: HomeProps) {
+export default function Home({ players, news, sponsors, resultsData }: HomeProps) {
     return (
         <>
             <HeroSection news={news} />
             <MatchCenter />
-            <ResultsTable />
+
+            {/* Przekazujemy dane do tabeli */}
+            <ResultsTable
+                table={resultsData.table}
+                matches={resultsData.lastMatches}
+                teams={resultsData.teams}
+            />
+
             <PlayersTeaser players={players} />
-
-            {/* Przekazujemy sponsorów */}
             <SponsorsTeaser sponsors={sponsors} />
-
-            <Footer />
         </>
     );
 }

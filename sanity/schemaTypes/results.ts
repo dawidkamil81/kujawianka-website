@@ -4,6 +4,24 @@ export const result = defineType({
     name: 'result',
     title: 'Wyniki',
     type: 'document',
+    // Dodajemy domyślne sortowanie (najpierw po kolejce, potem po dacie)
+    orderings: [
+        {
+            title: 'Kolejka (Rosnąco)',
+            name: 'roundAsc',
+            by: [
+                { field: 'round', direction: 'asc' },
+                { field: 'date', direction: 'asc' }
+            ]
+        },
+        {
+            title: 'Data Meczu (Chronologicznie)',
+            name: 'dateAsc',
+            by: [
+                { field: 'date', direction: 'asc' }
+            ]
+        }
+    ],
     fields: [
         // Pola informacyjne
         defineField({
@@ -20,8 +38,7 @@ export const result = defineType({
             description: 'Jeśli dokładna godzina nie jest znana, ustaw domyślną.'
         }),
 
-        // Drużyny (Referencje do schematu 'team' lub wpisane ręcznie)
-        // Jeśli scrapujesz, na początku łatwiej użyć Stringów, chyba że napiszesz logikę mapowania nazw na ID drużyn w bazie
+        // Drużyny
         defineField({ name: 'homeTeam', title: 'Gospodarz', type: 'string' }),
         defineField({ name: 'awayTeam', title: 'Gość', type: 'string' }),
 
@@ -29,16 +46,14 @@ export const result = defineType({
         defineField({ name: 'homeScore', title: 'Gole Gospodarzy', type: 'number' }),
         defineField({ name: 'awayScore', title: 'Gole Gości', type: 'number' }),
 
-
-
         // KLUCZOWE DLA SCRAPINGU
         defineField({
             name: 'externalId',
             title: 'ID Zewnętrzne (90minut)',
             type: 'string',
-            description: 'Unikalny identyfikator meczu z serwisu źródłowego. Służy do aktualizacji wyników.',
-            readOnly: true, // Żeby nikt ręcznie tego nie popsuł w panelu
-            hidden: true // Możesz to ukryć, redaktorom to niepotrzebne
+            description: 'Unikalny identyfikator meczu. Służy do aktualizacji wyników.',
+            readOnly: true,
+            hidden: true
         }),
     ],
     preview: {
@@ -54,11 +69,15 @@ export const result = defineType({
             const score = (hScore !== undefined && aScore !== undefined)
                 ? `${hScore}:${aScore}`
                 : 'vs';
-            const dateStr = date ? new Date(date).toLocaleDateString('pl-PL') : '';
+
+            // Formatujemy datę, jeśli istnieje
+            const dateStr = date
+                ? new Date(date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : '';
 
             return {
-                title: `Kolejka ${round}: ${home} ${score} ${away}`,
-                subtitle: dateStr
+                title: `${home} ${score} ${away}`,
+                subtitle: `Kolejka ${round} | ${dateStr}`
             }
         }
     }

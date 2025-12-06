@@ -28,3 +28,50 @@ export type Sponsor = {
     description?: string; // Tylko dla głównych
     backgroundImageUrl?: string; // Tylko dla głównych
 };
+
+// src/types/index.ts
+
+// ... (Player, NewsItem, Sponsor, Match - upewnij się, że masz Match)
+
+export type Team = {
+    name: string;
+    logoUrl: string;
+};
+
+// src/types/index.ts
+
+// ... (Team, NewsItem, Sponsor itd. bez zmian)
+
+// Typ dla wiersza tabeli
+export type TableRow = {
+    _key: string;
+    position: number;
+    teamName: string;
+    matches: number;
+    points: number;
+    won: number;
+    drawn: number;
+    lost: number;
+    goals: string;
+};
+
+// Typ dla całej tabeli
+export type LeagueTable = {
+    _id: string;
+    season: string;
+    rows: TableRow[];
+};
+
+// ZAKTUALIZOWANY TYP MECZU
+// Musi pasować do tego, co zwraca zapytanie RESULTS_PAGE_QUERY
+export type Match = {
+    _id: string;
+    round: number;        // To pole jest teraz kluczowe dla terminarza!
+    date: string;         // Data meczu
+    homeTeam: string;
+    awayTeam: string;
+    homeScore?: number;   // Opcjonalne (może być null przed meczem)
+    awayScore?: number;
+    isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
+};
+
