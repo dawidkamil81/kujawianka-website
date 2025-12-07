@@ -86,7 +86,6 @@ export const RESULTS_PAGE_QUERY = defineQuery(`
         goals
       }
     },
-    // ZMIANA: Szukamy 'result', a nie 'match'
     "matches": *[_type == "result"] | order(round asc) {
       _id,
       round,
@@ -95,17 +94,15 @@ export const RESULTS_PAGE_QUERY = defineQuery(`
       awayTeam,
       homeScore,
       awayScore,
-      // TWORZYMY POLE W LOCIE: Jeśli homeScore jest zdefiniowane, to mecz jest zakończony
       "isFinished": defined(homeScore)
     },
+    // Pobieramy bazę zespołów, żeby dopasować loga
     "teams": *[_type == "team"] {
       name,
       "logoUrl": logo.asset->url
     }
   }
 `);
-
-// ... (poprzednie zapytania)
 
 // 8. DANE DO SEKCJI WYNIKÓW NA STRONIE GŁÓWNEJ
 export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
@@ -119,8 +116,7 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
         points
       }
     },
-    // Pobieramy 5 ostatnich ZAKOŃCZONYCH meczów
-    "lastMatches": *[_type == "match" && isFinished == true] | order(date desc)[0...5] {
+    "lastMatches": *[_type == "result" && defined(homeScore)] | order(date desc)[0...5] {
       _id,
       homeTeam,
       awayTeam,
@@ -128,7 +124,6 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
       awayScore,
       date
     },
-    // Pobieramy loga zespołów
     "teams": *[_type == "team"] {
       name,
       "logoUrl": logo.asset->url
