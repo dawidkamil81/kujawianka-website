@@ -1,5 +1,5 @@
 "use client";
-import "./ResultsTable.css";
+
 import Link from "next/link";
 import { LeagueTable, Match, Team } from "@/types/index";
 
@@ -17,61 +17,78 @@ export default function ResultsTable({ table, matches, teams }: ResultsTableProp
         return found?.logoUrl || "/l1.png"; // Domyślne logo
     };
 
-    // 2. Logika wycinania tabeli (Teaser)
-    // Szukamy drużyny, która ma "Kujawianka" w nazwie
+    // 2. Logika wycinania tabeli
     const rows = table?.rows || [];
     const kujawiankaIndex = rows.findIndex(row => row.teamName.includes("Kujawianka"));
-
-    // Jeśli nie znaleziono (np. błąd w nazwie), pokaż początek tabeli
     const targetIndex = kujawiankaIndex !== -1 ? kujawiankaIndex : 0;
-
-    // Wycinamy: 2 miejsca przed i 2 po (łącznie 5 wierszy), ale pilnujemy granic tablicy
     const start = Math.max(0, targetIndex - 2);
     const end = Math.min(rows.length, targetIndex + 3);
-
-    // Jeśli jesteśmy na samym początku, pokaż więcej w dół
     const adjustedStart = start === 0 ? 0 : start;
     const adjustedEnd = start === 0 ? Math.min(rows.length, 5) : end;
-
     const teaserTable = rows.slice(adjustedStart, adjustedEnd);
 
     // 3. Logika ostatnich meczów
-    // Jeśli nie ma meczów z bazy, używamy pustej tablicy (nie crashuje strony)
     const recentMatches = matches || [];
 
     return (
-        <section className="results-table-section">
-            <div className="container">
-                <header className="section-header">
-                    <h2 className="section-title">Wyniki i Tabela</h2>
-                    <Link href="/wyniki/seniorzy" className="section-link">
+        // .results-table-section
+        <section className="bg-[linear-gradient(180deg,rgba(18,25,21,0)_0%,rgba(23,65,53,0.1)_100%)] text-white border-y border-white/5">
+            {/* .container */}
+            <div className="mx-auto max-w-[1200px] px-8 py-12">
+
+                {/* .section-header */}
+                <header className="flex justify-between items-center mb-8 border-b border-white/10 pb-3">
+                    {/* .section-title */}
+                    <h2 className="text-[2rem] font-bold text-[#174135] m-0">
+                        Wyniki i Tabela
+                    </h2>
+                    {/* .section-link */}
+                    <Link
+                        href="/wyniki/seniorzy"
+                        className="text-[0.9rem] font-medium text-[#da1818] no-underline transition-all duration-200 hover:text-white hover:translate-x-[3px]"
+                    >
                         Pełna tabela &rarr;
                     </Link>
                 </header>
 
-                <div className="results-layout">
+                {/* .results-layout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
                     {/* === Lewa kolumna: Ostatnie Mecze === */}
-                    <div className="results-column">
-                        <h3 className="column-title">Ostatnie Mecze</h3>
-                        <div className="results-list">
+                    {/* .results-column */}
+                    <div className="flex flex-col gap-4">
+                        {/* .column-title */}
+                        <h3 className="text-[1.25rem] font-semibold text-[#a0a0a0] text-center uppercase tracking-[0.5px] m-0">
+                            Ostatnie Mecze
+                        </h3>
+
+                        {/* .results-list */}
+                        <div className="flex flex-col gap-[0.8rem]">
                             {recentMatches.length > 0 ? (
                                 recentMatches.map((match) => (
-                                    <div key={match._id} className="result-item">
-                                        <div className="result-left">
-                                            {/* Logo przeciwnika (zakładamy, że szukamy loga dla drużyny, która NIE jest Kujawianką) */}
-                                            {/* Ale prościej pokazać po prostu obie nazwy lub logo gospodarza */}
+                                    // .result-item
+                                    <div
+                                        key={match._id}
+                                        className="flex justify-between items-center bg-[#1a1a1a] py-[0.3rem] px-[0.75rem] rounded-[1rem] border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.3)] transition-all duration-250 max-w-[400px] ml-auto md:ml-20 hover:bg-white/[0.08] hover:-translate-y-[2px]"
+                                    >
+                                        {/* .result-left */}
+                                        <div className="flex items-center gap-[0.6rem]">
                                             <img
                                                 src={getTeamLogo(match.homeTeam)}
                                                 alt={match.homeTeam}
-                                                className="team-logo"
+                                                // .team-logo
+                                                className="w-[28px] h-[28px] object-contain"
                                             />
-                                            <span className="result-opponent">
+                                            {/* .result-opponent */}
+                                            <span className="font-medium text-white">
                                                 {match.homeTeam} vs {match.awayTeam}
                                             </span>
                                         </div>
-                                        <span className="result-score form-win">
-                                            {/* Klasę koloru (win/loss) można obliczyć dynamicznie, jeśli wiemy która drużyna jest nasza */}
-                                            {match.homeScore}:{match.awayScore}
+                                        {/* .result-score + fix dla undefined */}
+                                        <span className="font-bold text-[1rem] text-[#174135]">
+                                            {match.homeScore !== undefined && match.awayScore !== undefined
+                                                ? `${match.homeScore}:${match.awayScore}`
+                                                : "-:-"}
                                         </span>
                                     </div>
                                 ))
@@ -82,16 +99,24 @@ export default function ResultsTable({ table, matches, teams }: ResultsTableProp
                     </div>
 
                     {/* === Prawa kolumna: Tabela (Teaser) === */}
-                    <div className="results-column">
-                        <h3 className="column-title">Tabela Ligowa</h3>
-                        <div className="table-wrapper">
-                            <table className="league-table">
+                    {/* .results-column */}
+                    <div className="flex flex-col gap-4">
+                        {/* .column-title */}
+                        <h3 className="text-[1.25rem] font-semibold text-[#a0a0a0] text-center uppercase tracking-[0.5px] m-0">
+                            Tabela Ligowa
+                        </h3>
+
+                        {/* .table-wrapper */}
+                        <div className="bg-[#1a1a1a] rounded-[1rem] border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.4)] overflow-hidden">
+                            {/* .league-table */}
+                            <table className="w-full border-collapse text-white text-[0.75rem]">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Drużyna</th>
-                                        <th>M</th>
-                                        <th>Pkt</th>
+                                        {/* th */}
+                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">#</th>
+                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">Drużyna</th>
+                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">M</th>
+                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">Pkt</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -100,23 +125,27 @@ export default function ResultsTable({ table, matches, teams }: ResultsTableProp
                                             key={row._key}
                                             className={
                                                 row.teamName.includes("Kujawianka")
-                                                    ? "highlight"
+                                                    ? "bg-white/[0.15] font-bold text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.15)] hover:bg-white/[0.25] transition-all" // .highlight
                                                     : row.position === 1
-                                                        ? "promotion"
+                                                        ? "bg-[rgba(23,65,53,0.4)]" // .promotion
                                                         : ""
                                             }
                                         >
-                                            <td>{row.position}</td>
-                                            <td className="team-cell">
-                                                <img
-                                                    src={getTeamLogo(row.teamName)}
-                                                    alt={row.teamName}
-                                                    className="team-logo"
-                                                />
-                                                <span>{row.teamName}</span>
+                                            {/* td */}
+                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.position}</td>
+                                            {/* .team-cell */}
+                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">
+                                                <div className="flex items-center gap-[0.4rem]">
+                                                    <img
+                                                        src={getTeamLogo(row.teamName)}
+                                                        alt={row.teamName}
+                                                        className="w-[28px] h-[28px] object-contain"
+                                                    />
+                                                    <span>{row.teamName}</span>
+                                                </div>
                                             </td>
-                                            <td>{row.matches}</td>
-                                            <td>{row.points}</td>
+                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.matches}</td>
+                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.points}</td>
                                         </tr>
                                     ))}
                                 </tbody>

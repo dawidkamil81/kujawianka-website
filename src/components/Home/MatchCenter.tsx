@@ -1,19 +1,17 @@
-"use client"; // Krok 1: Konieczna zmiana na komponent kliencki
+"use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // Krok 2: Import hooków
-import "./MatchCenter.css";
+import { useState, useEffect } from "react";
 
-// Krok 3: Przykładowe dane (dodajemy isoDate dla timera i dane poprzedniego meczu)
+// --- DANE (Twoje dane) ---
 const nextMatch = {
     homeTeam: "Kujawianka Izbica Kuj.",
     homeLogo: "/logo.png",
-    awayTeam: "Włocławia Włocławek",
+    awayTeam: "Włocłavia Włocławek",
     awayLogo: "/logo2.png",
     competition: "Klasa okręgowa gr. 2, Kolejka 12",
     date: "Sobota, 25 Października 2025",
     time: "15:00",
-    // Musimy podać datę w formacie ISO dla logiki JavaScript
     isoDate: "2025-10-25T15:00:00",
     stadium: "Stadion Miejski w Izbicy Kuj.",
 };
@@ -22,153 +20,172 @@ const previousMatch = {
     homeTeam: "Kujawianka Izbica Kuj.",
     homeLogo: "/logo.png",
     awayTeam: "Gopło Kruszwica",
-    awayLogo: "/logo-lider.png", // Przykładowe inne logo
+    awayLogo: "/logo-lider.png", // Upewnij się, że masz ten plik lub zmień na dostępny
     competition: "Klasa okręgowa gr. 2, Kolejka 11",
     status: "Zakończony",
     homeScore: 3,
     awayScore: 1,
 };
 
-// Krok 4: Komponent odliczający czas
+// --- KOMPONENT TIMERA ---
 const CountdownTimer = ({ targetDate }: { targetDate: string }) => {
     const calculateTimeLeft = () => {
         const difference = +new Date(targetDate) - +new Date();
-        let timeLeft = {
-            dni: 0,
-            godziny: 0,
-            minuty: 0,
-            sekundy: 0,
-        };
+        if (difference <= 0) return { dni: 0, godziny: 0, minuty: 0, sekundy: 0 };
 
-        if (difference > 0) {
-            timeLeft = {
-                dni: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                godziny: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minuty: Math.floor((difference / 1000 / 60) % 60),
-                sekundy: Math.floor((difference / 1000) % 60),
-            };
-        }
-        return timeLeft;
+        return {
+            dni: Math.floor(difference / (1000 * 60 * 60 * 24)),
+            godziny: Math.floor((difference / (1000 * 60 * 60)) % 24),
+            minuty: Math.floor((difference / 1000 / 60) % 60),
+            sekundy: Math.floor((difference / 1000) % 60),
+        };
     };
 
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     useEffect(() => {
-        // Używamy setTimeout zamiast setInterval dla lepszej wydajności
         const timer = setTimeout(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
-
-        // Czyszczenie timera
         return () => clearTimeout(timer);
     });
 
     const format = (value: number) => String(value).padStart(2, "0");
 
+    // Style dla jednostek timera (odpowiadające .timer-unit, .timer-value)
     return (
-        <div className="countdown-timer">
-            <div className="timer-unit">
-                <span className="timer-value">{format(timeLeft.dni)}</span>
-                <span className="timer-label">Dni</span>
+        <div className="flex justify-center items-baseline gap-3 text-white">
+            <div className="flex flex-col items-center">
+                <span className="text-4xl font-bold leading-none text-[#174135]">{format(timeLeft.dni)}</span>
+                <span className="text-xs font-medium text-[#a0a0a0] uppercase">Dni</span>
             </div>
-            <div className="timer-separator">:</div>
-            <div className="timer-unit">
-                <span className="timer-value">{format(timeLeft.godziny)}</span>
-                <span className="timer-label">Godzin</span>
+            <div className="text-3xl font-bold text-[#174135] leading-none pb-4">:</div>
+            <div className="flex flex-col items-center">
+                <span className="text-4xl font-bold leading-none text-[#174135]">{format(timeLeft.godziny)}</span>
+                <span className="text-xs font-medium text-[#a0a0a0] uppercase">Godzin</span>
             </div>
-            <div className="timer-separator">:</div>
-            <div className="timer-unit">
-                <span className="timer-value">{format(timeLeft.minuty)}</span>
-                <span className="timer-label">Minut</span>
+            <div className="text-3xl font-bold text-[#174135] leading-none pb-4">:</div>
+            <div className="flex flex-col items-center">
+                <span className="text-4xl font-bold leading-none text-[#174135]">{format(timeLeft.minuty)}</span>
+                <span className="text-xs font-medium text-[#a0a0a0] uppercase">Minut</span>
             </div>
-            <div className="timer-separator">:</div>
-            <div className="timer-unit">
-                <span className="timer-value">{format(timeLeft.sekundy)}</span>
-                <span className="timer-label">Sekund</span>
+            <div className="text-3xl font-bold text-[#174135] leading-none pb-4">:</div>
+            <div className="flex flex-col items-center">
+                <span className="text-4xl font-bold leading-none text-[#174135]">{format(timeLeft.sekundy)}</span>
+                <span className="text-xs font-medium text-[#a0a0a0] uppercase">Sekund</span>
             </div>
         </div>
     );
 };
 
-// --- Główny komponent MatchCenter ---
+// --- GŁÓWNY KOMPONENT ---
 export default function MatchCenter() {
     return (
-        <section className="match-center-section">
-            <div className="container">
-                {/* Nagłówek sekcji */}
-                <header className="section-header">
-                    {/* Tytuł zmieniony na bardziej ogólny */}
-                    <h2 className="section-title">Centrum Meczowe</h2>
-                    <Link href="/terminarz" className="section-link">
+        // .match-center-section
+        <section className="bg-gradient-to-b from-[rgba(18,25,21,0)] to-[rgba(23,65,53,0.1)] text-white border-y border-white/5">
+            <div className="mx-auto max-w-[1200px] px-8 py-12">
+
+                {/* .section-header */}
+                <header className="flex justify-between items-center mb-8 border-b border-white/10 pb-3">
+                    <h2 className="text-3xl font-bold text-[#174135] m-0">Centrum Meczowe</h2>
+                    <Link
+                        href="/terminarz"
+                        className="text-sm font-medium text-[#da1818] no-underline transition-all duration-200 hover:text-white hover:translate-x-1"
+                    >
                         Pełny terminarz &rarr;
                     </Link>
                 </header>
 
-                {/* Krok 5: Nowa siatka (grid) na dwie kolumny */}
-                {/* === Nowy układ === */}
-                <div className="match-layout">
-                    {/* Wiersz z timerem */}
-                    <div className="match-timer-row">
-                        <div className="timer-spacer" /> {/* pusta przestrzeń nad lewą kartą */}
-                        <div className="timer-right">
+                {/* .match-layout */}
+                <div className="flex flex-col gap-4">
+
+                    {/* .match-timer-row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 items-end">
+                        <div className="hidden md:block h-full" /> {/* .timer-spacer */}
+                        {/* .timer-right */}
+                        <div className="flex justify-center md:justify-end md:mr-[9.5rem]">
                             <CountdownTimer targetDate={nextMatch.isoDate} />
                         </div>
                     </div>
 
-                    {/* Wiersz z dwiema kartami */}
-                    <div className="match-grid">
-                        <div className="match-column">
-                            <h3 className="match-column-title">Poprzedni Mecz</h3>
-                            <div className="match-card previous-match">
-                                <div className="match-body">
-                                    <div className="team team-home">
-                                        <img src={previousMatch.homeLogo} alt={previousMatch.homeTeam} className="team-logo" />
-                                        <h3 className="team-name">{previousMatch.homeTeam}</h3>
+                    {/* .match-grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+
+                        {/* Kolumna 1: Poprzedni Mecz */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-xl font-semibold text-[#a0a0a0] m-0 text-center uppercase tracking-wide">
+                                Poprzedni Mecz
+                            </h3>
+                            {/* .match-card.previous-match */}
+                            <div className="bg-[#161616] text-white rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.4)] overflow-hidden border border-white/10 w-full flex-grow opacity-80">
+                                {/* .match-body */}
+                                <div className="grid grid-cols-3 items-center p-6 gap-4 h-full">
+                                    {/* Home Team */}
+                                    <div className="flex flex-col items-center gap-3 text-center">
+                                        <img src={previousMatch.homeLogo} alt={previousMatch.homeTeam} className="w-20 h-20 object-contain" />
+                                        <h3 className="text-base font-semibold text-white leading-snug">{previousMatch.homeTeam}</h3>
                                     </div>
-                                    <div className="match-info-score">
-                                        <span className="match-competition">{previousMatch.competition}</span>
-                                        <div className="score-display">
+
+                                    {/* Info Score */}
+                                    <div className="flex flex-col items-center gap-1 text-center border-x border-white/10 py-4 px-1 h-full justify-center">
+                                        <span className="text-xs font-semibold text-[#da1818] uppercase tracking-wide">
+                                            {previousMatch.competition}
+                                        </span>
+                                        <div className="text-4xl font-bold text-white leading-none my-1 flex gap-2">
                                             <span>{previousMatch.homeScore}</span>
-                                            <span className="score-separator">-</span>
+                                            <span className="text-[#174135]">-</span>
                                             <span>{previousMatch.awayScore}</span>
                                         </div>
-                                        <span className="match-status">{previousMatch.status}</span>
+                                        <span className="text-sm font-normal text-white/60">{previousMatch.status}</span>
                                     </div>
-                                    <div className="team team-away">
-                                        <img src={previousMatch.awayLogo} alt={previousMatch.awayTeam} className="team-logo" />
-                                        <h3 className="team-name">{previousMatch.awayTeam}</h3>
+
+                                    {/* Away Team */}
+                                    <div className="flex flex-col items-center gap-3 text-center">
+                                        <img src={previousMatch.awayLogo} alt={previousMatch.awayTeam} className="w-20 h-20 object-contain" />
+                                        <h3 className="text-base font-semibold text-white leading-snug">{previousMatch.awayTeam}</h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="match-column">
-                            <h3 className="match-column-title">Następny Mecz</h3>
-                            <div className="match-card">
-                                <div className="match-body">
-                                    <div className="team team-home">
-                                        <img src={nextMatch.homeLogo} alt={nextMatch.homeTeam} className="team-logo" />
-                                        <h3 className="team-name">{nextMatch.homeTeam}</h3>
+                        {/* Kolumna 2: Następny Mecz */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-xl font-semibold text-[#a0a0a0] m-0 text-center uppercase tracking-wide">
+                                Następny Mecz
+                            </h3>
+                            {/* .match-card */}
+                            <div className="bg-[#1a1a1a] text-white rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.4)] overflow-hidden border border-white/10 w-full flex-grow">
+                                {/* .match-body */}
+                                <div className="grid grid-cols-3 items-center p-6 gap-4 h-full">
+                                    {/* Home Team */}
+                                    <div className="flex flex-col items-center gap-3 text-center">
+                                        <img src={nextMatch.homeLogo} alt={nextMatch.homeTeam} className="w-20 h-20 object-contain" />
+                                        <h3 className="text-base font-semibold text-white leading-snug">{nextMatch.homeTeam}</h3>
                                     </div>
-                                    <div className="match-info">
-                                        <span className="match-competition">{nextMatch.competition}</span>
-                                        <span className="match-time">{nextMatch.time}</span>
-                                        <span className="match-date">{nextMatch.date}</span>
-                                        <span className="match-stadium">{nextMatch.stadium}</span>
+
+                                    {/* Match Info */}
+                                    <div className="flex flex-col items-center gap-1 text-center border-x border-white/10 py-4 px-1 h-full justify-center">
+                                        <span className="text-xs font-semibold text-[#da1818] uppercase tracking-wide">
+                                            {nextMatch.competition}
+                                        </span>
+                                        <span className="text-[1.75rem] font-bold text-white leading-none my-1">
+                                            {nextMatch.time}
+                                        </span>
+                                        <span className="text-sm font-normal text-white/60">{nextMatch.date}</span>
+                                        <span className="text-sm font-normal text-white/60">{nextMatch.stadium}</span>
                                     </div>
-                                    <div className="team team-away">
-                                        <img src={nextMatch.awayLogo} alt={nextMatch.awayTeam} className="team-logo" />
-                                        <h3 className="team-name">{nextMatch.awayTeam}</h3>
+
+                                    {/* Away Team */}
+                                    <div className="flex flex-col items-center gap-3 text-center">
+                                        <img src={nextMatch.awayLogo} alt={nextMatch.awayTeam} className="w-20 h-20 object-contain" />
+                                        <h3 className="text-base font-semibold text-white leading-snug">{nextMatch.awayTeam}</h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
-
-
-                {/* Wezwanie do działania (CTA) */}
-
             </div>
         </section>
     );

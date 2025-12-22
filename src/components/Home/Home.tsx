@@ -6,7 +6,7 @@ import MatchCenter from "./MatchCenter";
 import ResultsTable from "./ResultsTable"; // <--- To będziemy karmić danymi
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
-import Footer from "../Footer";
+import Footer from "../layout/Footer";
 import { Player, NewsItem, Sponsor, LeagueTable, Match, Team } from "@/types/index";
 
 // Typ dla paczki danych z wynikami

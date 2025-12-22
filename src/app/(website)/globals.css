@@ -39,7 +39,7 @@ body {
 
 /* Upewnij się, że linki też mają domyślny kolor */
 a {
-  color: inherit;
+  /* color: inherit; */
   text-decoration: none;
 }
 
