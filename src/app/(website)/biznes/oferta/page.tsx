@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import ContactSection from "@/components/common/ContactSection"; // Importujemy nowy komponent
+import ContactSection from "@/components/common/ContactSection";
+// Importujemy nasze nowe komponenty UI
+import { Button } from "@/components/ui/button";
+import { GlassCard, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/glass-card";
 
 export default function OfferPage() {
     const sponsorPackages = [
@@ -48,7 +51,6 @@ export default function OfferPage() {
         },
     ];
 
-    // Statystyki
     const stats = [
         { value: "15+", label: "Sponsorów i Partnerów" },
         { value: "1200+", label: "Kibiców w sezonie" },
@@ -57,42 +59,44 @@ export default function OfferPage() {
     ];
 
     return (
-        <main className="overflow-x-hidden min-h-screen bg-gradient-to-b from-[#121915]/0 to-[#174135]/15 text-[var(--text-main)]">
+        <main className="min-h-screen">
 
             {/* === HERO === */}
-            <motion.section
-                className="text-center py-24 px-6 bg-[radial-gradient(circle_at_top,rgba(23,65,53,0.3),transparent_70%)]"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
-                <div className="mx-auto max-w-[800px]">
-                    <h1 className="text-[2.75rem] font-extrabold text-[var(--text-main)] uppercase leading-tight mb-4">
-                        Oferta Sponsorska
-                    </h1>
-                    <p className="text-[1.15rem] text-white/75 leading-relaxed mt-4">
+            <section className="relative py-32 px-6 text-center overflow-hidden">
+                {/* Tło gradientowe */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(23,65,53,0.4),transparent_70%)] -z-10" />
+
+                <div className="container mx-auto max-w-4xl">
+                    <motion.h1
+                        className="text-4xl md:text-6xl font-extrabold text-white uppercase tracking-tight mb-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        Oferta <span className="text-club-green">Sponsorska</span>
+                    </motion.h1>
+                    <motion.p
+                        className="text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         Zostań częścią sukcesu Kujawianki. Oferujemy elastyczne pakiety współpracy,
                         dopasowane do potrzeb Twojego biznesu.
-                    </p>
+                    </motion.p>
                 </div>
-            </motion.section>
+            </section>
 
-            {/* === WARTOŚCI === */}
+            {/* === DLACZEGO MY (Bento Grid Style) === */}
             <section className="py-20">
-                <div className="mx-auto max-w-[1200px] px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
 
-                        <motion.div
-                            className="text-center md:text-left order-1 md:order-1"
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <h2 className="text-[2.25rem] font-bold text-[var(--text-main)] uppercase mb-6">
+                        {/* Tekst */}
+                        <GlassCard className="p-8 flex flex-col justify-center" hoverEffect={false}>
+                            <h2 className="text-3xl font-bold text-white uppercase mb-6">
                                 Dlaczego My?
                             </h2>
-                            <div className="text-[1.1rem] text-[#a0a0a0] leading-[1.7] space-y-4">
+                            <div className="space-y-4 text-gray-400 text-lg">
                                 <p>
                                     Kujawianka to nie tylko klub piłkarski, to społeczność. Wspierając nas,
                                     docierasz do tysięcy zaangażowanych kibiców w regionie i budujesz
@@ -100,81 +104,81 @@ export default function OfferPage() {
                                 </p>
                                 <p>
                                     Nasz stadion tętni życiem, a nasze media społecznościowe generują
-                                    dziesiątki tysięcy zasięgu miesięcznie. To idealne miejsce na reklamę
-                                    Twoich usług i produktów.
+                                    dziesiątki tysięcy zasięgu miesięcznie.
                                 </p>
                             </div>
-                        </motion.div>
+                        </GlassCard>
 
-                        <motion.div
-                            className="order-2 md:order-2"
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                        >
+                        {/* Zdjęcie w karcie */}
+                        <GlassCard className="relative h-[100] lg:h-auto p-0 border-0" hoverEffect={false}>
                             <img
                                 src="/hero.jpg"
                                 alt="Mecz Kujawianki"
-                                className="w-full h-[400px] object-cover rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
+                                className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-500"
                             />
-                        </motion.div>
+                            <div className="absolute inset-0 bg-linear-to-t from-[#0e0e0e] to-transparent" />
+                        </GlassCard>
                     </div>
                 </div>
             </section>
 
             {/* === PAKIETY === */}
-            <section className="py-20 bg-[#121915]/20 border-y border-white/10">
-                <div className="mx-auto max-w-[1200px] px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-[2.25rem] font-bold text-[var(--text-main)] uppercase mb-6">
+            <section className="py-20 bg-white/2">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white uppercase mb-4">
                             Pakiety Współpracy
                         </h2>
-                        <p className="text-[1.1rem] text-[#a0a0a0] leading-[1.7] max-w-[600px] mx-auto">
-                            Wybierz poziom zaangażowania, który najlepiej odpowiada celom Twojej firmy.
+                        <p className="text-gray-400 text-lg">
+                            Wybierz poziom zaangażowania odpowiedni dla Twojej firmy.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {sponsorPackages.map((pkg, i) => (
                             <motion.div
                                 key={i}
-                                className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-8 border-t-4 border-t-[#174135] transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(23,65,53,0.3)] flex flex-col"
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
+                                className="h-full"
                             >
-                                <div className="border-b border-white/10 pb-4 mb-4">
-                                    <h3 className="text-[1.5rem] font-bold text-[var(--text-main)] uppercase m-0">
-                                        {pkg.title}
-                                    </h3>
-                                    <div className="text-[0.9rem] text-[#a0a0a0] mt-1">
-                                        {pkg.price}
-                                    </div>
-                                </div>
+                                <GlassCard className={`h-full flex flex-col ${pkg.isPopular ? "border-club-green/50 shadow-[0_0_30px_rgba(23,65,53,0.15)]" : ""}`}>
+                                    <CardHeader>
+                                        {pkg.isPopular && (
+                                            <span className="bg-club-green text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-2 uppercase tracking-wide">
+                                                Polecany
+                                            </span>
+                                        )}
+                                        <CardTitle className="text-2xl uppercase mb-1">{pkg.title}</CardTitle>
+                                        <p className="text-club-green font-bold text-xl">{pkg.price}</p>
+                                    </CardHeader>
 
-                                <p className="text-[0.95rem] text-[#a0a0a0] leading-[1.6] mb-6">
-                                    {pkg.description}
-                                </p>
+                                    <CardContent className="grow">
+                                        <p className="text-gray-400 mb-6 text-sm">{pkg.description}</p>
+                                        <ul className="space-y-3">
+                                            {pkg.benefits.map((benefit, idx) => (
+                                                <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
+                                                    <CheckCircle className="w-5 h-5 text-club-green shrink-0" />
+                                                    <span>{benefit}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </CardContent>
 
-                                <ul className="flex-grow space-y-3 mb-8">
-                                    {pkg.benefits.map((benefit, idx) => (
-                                        <li key={idx} className="relative pl-7 text-[0.9rem] text-[var(--text-main)]">
-                                            <span className="absolute left-0 top-0 text-[1rem] font-bold text-white">✔</span>
-                                            {benefit}
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="text-center mt-auto">
-                                    <Link
-                                        href="#contact"
-                                        className="inline-block w-full py-3 px-6 rounded-lg font-bold uppercase tracking-wide bg-white/5 text-white border border-white/10 transition-all duration-300 hover:bg-[#174135] hover:border-[#174135]"
-                                    >
-                                        Zapytaj o pakiet
-                                    </Link>
-                                </div>
+                                    <CardFooter>
+                                        <Link href="#contact" className="w-full">
+                                            <Button
+                                                variant={pkg.isPopular ? "club" : "outline"}
+                                                size="lg"
+                                                className="w-full"
+                                            >
+                                                Wybieram
+                                            </Button>
+                                        </Link>
+                                    </CardFooter>
+                                </GlassCard>
                             </motion.div>
                         ))}
                     </div>
@@ -182,40 +186,28 @@ export default function OfferPage() {
             </section>
 
             {/* === STATYSTYKI === */}
-            <section className="py-24 px-8 text-center">
-                <div className="mx-auto max-w-[1200px]">
-                    <h2 className="text-[2.25rem] font-bold text-[var(--text-main)] uppercase mb-12">
-                        Kujawianka w liczbach
-                    </h2>
-
-                    <div className="flex flex-wrap justify-center gap-16 max-w-[1000px] mx-auto border-y border-white/10 py-10">
+            <section className="py-24 border-y border-white/5">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         {stats.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                className="flex flex-col items-center gap-1.5"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                            >
-                                <span className="text-[3rem] font-extrabold text-white tracking-wide">
+                            <div key={i} className="flex flex-col gap-2">
+                                <span className="text-5xl md:text-6xl font-black text-white/90 tracking-tighter">
                                     {item.value}
                                 </span>
-                                <span className="text-[1rem] font-medium text-white/80 uppercase tracking-wide">
+                                <span className="text-sm font-bold text-club-green uppercase tracking-widest">
                                     {item.label}
                                 </span>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* === KONTAKT (Używamy komponentu) === */}
+            {/* === KONTAKT === */}
             <ContactSection
-                title="Skontaktuj się"
-                description="Zainteresowała Cię nasza oferta? Masz pytania lub własny pomysł na współpracę? Jesteśmy do Twojej dyspozycji."
+                title="Dołącz do gry"
+                description="Zainteresowała Cię nasza oferta? Skontaktuj się z nami i omówmy szczegóły."
             />
-
         </main>
     );
 }
