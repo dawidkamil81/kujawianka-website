@@ -59,6 +59,11 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                backgroundImage: {
+                    // Subtelniejszy, nowoczesny gradient klubowy
+                    'club-gradient': 'linear-gradient(135deg, rgba(23,65,53,0.95) 0%, rgba(14,14,14,0.95) 100%)',
+                    'hero-overlay': 'linear-gradient(to right, rgba(14,14,14, 0.9) 0%, rgba(14,14,14, 0.4) 100%)',
+                },
             },
             // === TWOJE CZCIONKI ===
             fontFamily: {
