@@ -50,3 +50,19 @@ header {
 img {
   display: block;
 }
+
+@theme {
+  /* Definiujemy własną animację 'scroll' */
+  --animate-scroll: scroll 35s linear infinite;
+
+  /* Definiujemy klatki kluczowe (keyframes) dla tej animacji */
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
