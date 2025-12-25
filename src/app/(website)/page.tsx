@@ -5,7 +5,7 @@ import {
   ALL_SPONSORS_QUERY,
   HOMEPAGE_RESULTS_QUERY // <--- Nowy import
 } from "@/sanity/lib/queries";
-import Home from "@/components/Home/Home";
+import Home from "@/components/home/Home";
 
 export default async function Page() {
   // Pobieramy wszystko równolegle (szybciej)
