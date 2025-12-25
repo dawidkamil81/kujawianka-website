@@ -1,102 +1,105 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { ArrowRight, Users } from "lucide-react";
 import { Player } from "@/types/index";
-
-// 1. Usuwamy import "./PlayersTeaser.css"; - style są teraz w klasach
+import { cn } from "@/lib/utils";
 
 export default function PlayersTeaser({ players }: { players: Player[] }) {
     return (
-        // .players-section -> bg-gradient..., border-y...
-        <section className="relative overflow-hidden py-16 px-4 md:px-8 border-y border-white/5 bg-gradient-to-b from-[#121915]/0 to-[#174135]/15 text-[var(--text-main)]">
+        <section className="relative w-full py-16 bg-[#0e0e0e] border-t border-white/5 overflow-hidden">
+            {/* Tło gradientowe (Glow) */}
+            <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-club-green/5 blur-[150px] rounded-full pointer-events-none" />
 
-            {/* .container */}
-            <div className="mx-auto max-w-[1200px]">
+            <div className="container mx-auto px-4 relative z-10">
 
-                {/* .section-header */}
-                <header className="flex items-center justify-between mb-8 border-b border-white/10 pb-3">
-                    {/* .section-title */}
-                    <h2 className="text-2xl md:text-[2rem] font-extrabold text-[var(--club-green)] uppercase tracking-wider">
-                        Kadra Kujawianki
-                    </h2>
+                {/* --- NAGŁÓWEK --- */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-white/10 pb-4 gap-4">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-3xl md:text-4xl font-black text-white font-montserrat uppercase tracking-tight">
+                            Kadra <span className="text-emerald-500">Kujawianki</span>
+                        </h2>
+                    </div>
 
-                    {/* .section-link */}
                     <Link
                         href="/druzyny/seniorzy"
-                        className="text-sm font-semibold text-[var(--club-red)] transition-all duration-200 hover:text-white hover:translate-x-1"
+                        className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-white transition-colors"
                     >
-                        Zobacz kadrę &rarr;
+                        Zobacz pełną kadrę
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform text-club-green" />
                     </Link>
-                </header>
+                </div>
 
-                {/* .players-grid */}
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-6">
+                {/* --- GRID ZAWODNIKÓW --- */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {players && players.length > 0 ? (
                         players.map((player, i) => (
                             <motion.div
                                 key={player._id}
-                                // .player-card - Dodajemy 'group', aby dzieci mogły reagować na hover rodzica
-                                className="group relative rounded-[1.25rem] border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-350 hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,255,128,0.15)]"
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
                                 transition={{ delay: i * 0.1, duration: 0.5 }}
+                                className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/5 bg-[#121212] hover:border-club-green/40 hover:shadow-[0_0_20px_rgba(23,65,53,0.2)] transition-all duration-300"
                             >
-                                {/* .player-image-wrapper */}
-                                <div className="relative aspect-[3/3.5] overflow-hidden">
+                                {/* ZDJĘCIE (Kolorowe) */}
+                                <div className="absolute inset-0 z-0 bg-neutral-900">
                                     {player.imageUrl ? (
-                                        <img
+                                        <Image
                                             src={player.imageUrl}
                                             alt={`${player.name} ${player.surname}`}
-                                            // .player-image - group-hover:scale-110 obsługuje zoom
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-all duration-500"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white text-4xl">
-                                            ⚽
+                                        <div className="w-full h-full flex items-center justify-center text-white/10">
+                                            <Users size={48} />
                                         </div>
                                     )}
+                                </div>
 
-                                    {/* .player-banner */}
-                                    {/* Używamy arbitrary values dla skomplikowanego gradientu tła */}
-                                    <div className="absolute bottom-0 left-0 right-0 flex items-end gap-2 px-3 py-2 
-                    bg-[radial-gradient(600px_200px_at_10%_10%,rgba(255,255,255,0.06),transparent_20%),linear-gradient(135deg,rgba(23,65,53,0.95)_0%,rgba(141,16,16,0.9)_60%)]
-                    transition-colors duration-300 group-hover:bg-black/85"
-                                    >
-                                        {/* .player-number */}
-                                        <span className="text-[2.2rem] md:text-[2.8rem] font-black text-white leading-none">
-                                            {player.number}
-                                        </span>
+                                {/* POZYCJA (Badge na górze) */}
+                                <div className="absolute top-4 right-4 z-10">
+                                    <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
+                                        {player.position}
+                                    </span>
+                                </div>
 
-                                        {/* .player-name-block */}
-                                        <div className="flex flex-col leading-[1.1]">
-                                            {/* .player-surname */}
-                                            <span className="text-[1.05rem] md:text-[1.2rem] font-bold text-white uppercase tracking-[0.5px]">
+                                {/* PASEK Z GRADIENTEM NA DOLE (KLUBOWY) */}
+                                <div className="absolute bottom-0 left-0 w-full z-20">
+                                    {/* Tło paska: Gradient klubowy */}
+                                    <div className="absolute inset-0 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md border-t border-white/10" />
+
+                                    {/* Zawartość paska */}
+                                    <div className="relative p-4 flex items-center justify-between">
+
+                                        {/* Imię i Nazwisko - ANIMACJA PRZESUNIĘCIA */}
+                                        <div className="flex flex-col">
+                                            <h3 className="text-lg font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-2">
                                                 {player.surname}
-                                            </span>
-                                            {/* .player-name */}
-                                            <span className="text-[0.75rem] md:text-[0.8rem] text-white/70 uppercase">
+                                            </h3>
+                                            <p className="text-xs font-medium text-gray-200 uppercase tracking-wide mt-1 transition-all duration-300 group-hover:translate-x-2">
                                                 {player.name}
+                                            </p>
+                                        </div>
+
+                                        {/* Numer */}
+                                        <div className="flex items-center justify-center">
+                                            <span className="text-3xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
+                                                {player.number}
                                             </span>
                                         </div>
-                                    </div>
-
-                                    {/* .player-overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent 
-                    flex items-start justify-end p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                                    >
-                                        {/* .overlay-position */}
-                                        <span className="text-[0.8rem] text-white bg-white/10 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                                            {player.position}
-                                        </span>
                                     </div>
                                 </div>
                             </motion.div>
                         ))
                     ) : (
-                        <p className="text-center text-gray-400 w-full col-span-full">
-                            Ładowanie zawodników...
-                        </p>
+                        <div className="col-span-full py-12 text-center text-gray-500 bg-[#121212] rounded-2xl border border-white/5">
+                            Trwa ładowanie kadry zawodników...
+                        </div>
                     )}
                 </div>
             </div>

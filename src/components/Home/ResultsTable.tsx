@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, Trophy, Table2 } from "lucide-react";
 import { LeagueTable, Match, Team } from "@/types/index";
+import { cn } from "@/lib/utils";
 
 type ResultsTableProps = {
     table: LeagueTable;
@@ -17,141 +20,187 @@ export default function ResultsTable({ table, matches, teams }: ResultsTableProp
         return found?.logoUrl || "/l1.png"; // Domyślne logo
     };
 
-    // 2. Logika wycinania tabeli
+    // 2. Logika wycinania tabeli (Teaser - np. 5-7 pozycji wokół Kujawianki lub góra tabeli)
     const rows = table?.rows || [];
     const kujawiankaIndex = rows.findIndex(row => row.teamName.includes("Kujawianka"));
     const targetIndex = kujawiankaIndex !== -1 ? kujawiankaIndex : 0;
-    const start = Math.max(0, targetIndex - 2);
-    const end = Math.min(rows.length, targetIndex + 3);
-    const adjustedStart = start === 0 ? 0 : start;
-    const adjustedEnd = start === 0 ? Math.min(rows.length, 5) : end;
+
+    // Ustawiamy zakres tak, aby pasował wysokością do listy wyników (ok. 7 pozycji)
+    const start = Math.max(0, targetIndex - 4);
+    const end = Math.min(rows.length, targetIndex + 4);
+
+    // Korekta zakresu (żeby zawsze było min. 7 pozycji jeśli tabela na to pozwala)
+    const adjustedStart = start === 0 ? 0 : (end === rows.length ? Math.max(0, rows.length - 7) : start);
+    const adjustedEnd = start === 0 ? Math.min(rows.length, 7) : end;
+
     const teaserTable = rows.slice(adjustedStart, adjustedEnd);
 
-    // 3. Logika ostatnich meczów
+    // 3. Używamy prawdziwych danych z Sanity
+    // Zakładamy, że 'matches' zawiera mecze z ostatniej kolejki
     const recentMatches = matches || [];
 
     return (
-        // .results-table-section
-        <section className="bg-[linear-gradient(180deg,rgba(18,25,21,0)_0%,rgba(23,65,53,0.1)_100%)] text-white border-y border-white/5">
-            {/* .container */}
-            <div className="mx-auto max-w-[1200px] px-8 py-12">
+        <section className="relative w-full py-16 bg-[#0e0e0e] border-t border-white/5 overflow-hidden">
+            {/* Tło gradientowe (Glow) */}
+            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-club-green/5 blur-[150px] rounded-full pointer-events-none" />
 
-                {/* .section-header */}
-                <header className="flex justify-between items-center mb-8 border-b border-white/10 pb-3">
-                    {/* .section-title */}
-                    <h2 className="text-[2rem] font-bold text-[#174135] m-0">
-                        Wyniki i Tabela
-                    </h2>
-                    {/* .section-link */}
+            <div className="container mx-auto px-4 relative z-10">
+
+                {/* --- NAGŁÓWEK --- */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-white/10 pb-4 gap-4">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-3xl md:text-4xl font-black text-white font-montserrat uppercase tracking-tight">
+                            Wyniki i <span className="text-emerald-500">Tabela</span>
+                        </h2>
+                    </div>
+
                     <Link
                         href="/wyniki/seniorzy"
-                        className="text-[0.9rem] font-medium text-[#da1818] no-underline transition-all duration-200 hover:text-white hover:translate-x-[3px]"
+                        className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-white transition-colors"
                     >
-                        Pełna tabela &rarr;
+                        Pełna tabela i wyniki
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform text-club-green" />
                     </Link>
-                </header>
+                </div>
 
-                {/* .results-layout */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* --- UKŁAD GRID --- */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
 
-                    {/* === Lewa kolumna: Ostatnie Mecze === */}
-                    {/* .results-column */}
-                    <div className="flex flex-col gap-4">
-                        {/* .column-title */}
-                        <h3 className="text-[1.25rem] font-semibold text-[#a0a0a0] text-center uppercase tracking-[0.5px] m-0">
-                            Ostatnie Mecze
-                        </h3>
+                    {/* === LEWA KOLUMNA: OSTATNIA KOLEJKA (Dane z Sanity) === */}
+                    <div className="flex flex-col gap-6">
+                        {/* Tytuł kolumny */}
+                        <div className="flex items-center gap-2 px-2">
+                            <Trophy size={16} className="text-club-green" />
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                Ostatnia kolejka
+                            </span>
+                        </div>
 
-                        {/* .results-list */}
-                        <div className="flex flex-col gap-[0.8rem]">
+                        {/* Lista meczów */}
+                        <div className="flex flex-col gap-3">
                             {recentMatches.length > 0 ? (
                                 recentMatches.map((match) => (
-                                    // .result-item
                                     <div
                                         key={match._id}
-                                        className="flex justify-between items-center bg-[#1a1a1a] py-[0.3rem] px-[0.75rem] rounded-[1rem] border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.3)] transition-all duration-250 max-w-[400px] ml-auto md:ml-20 hover:bg-white/[0.08] hover:-translate-y-[2px]"
+                                        className="group relative flex items-center justify-between py-4 px-3 sm:px-5 rounded-2xl bg-[#121212] border border-white/5 hover:border-club-green/30 hover:bg-white/5 transition-all duration-300 shadow-lg"
                                     >
-                                        {/* .result-left */}
-                                        <div className="flex items-center gap-[0.6rem]">
-                                            <img
-                                                src={getTeamLogo(match.homeTeam)}
-                                                alt={match.homeTeam}
-                                                // .team-logo
-                                                className="w-[28px] h-[28px] object-contain"
-                                            />
-                                            {/* .result-opponent */}
-                                            <span className="font-medium text-white">
-                                                {match.homeTeam} vs {match.awayTeam}
+                                        {/* LEWA STRONA: Nazwa + Herb (Gospodarz) */}
+                                        <div className="flex items-center justify-end gap-3 w-[40%]">
+                                            <span className="text-xs sm:text-sm font-bold text-white text-right group-hover:text-club-green-light transition-colors line-clamp-1 leading-tight">
+                                                {match.homeTeam}
+                                            </span>
+                                            <div className="relative w-8 h-8 flex-shrink-0 grayscale group-hover:grayscale-0 transition-all duration-300">
+                                                <Image
+                                                    src={getTeamLogo(match.homeTeam)}
+                                                    alt={match.homeTeam}
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* ŚRODEK: Wynik */}
+                                        <div className="flex items-center justify-center w-[20%]">
+                                            <div className="flex items-center justify-center min-w-[50px] sm:min-w-[64px] h-9 rounded-lg bg-black/40 border border-white/10 font-montserrat font-black text-base sm:text-lg text-white shadow-inner group-hover:border-white/20 transition-colors">
+                                                {match.homeScore !== undefined && match.awayScore !== undefined ? (
+                                                    <>
+                                                        <span className={match.homeScore > match.awayScore ? "text-emerald-400" : "text-white"}>{match.homeScore}</span>
+                                                        <span className="mx-0.5 text-gray-600">:</span>
+                                                        <span className={match.awayScore > match.homeScore ? "text-emerald-400" : "text-white"}>{match.awayScore}</span>
+                                                    </>
+                                                ) : "-:-"}
+                                            </div>
+                                        </div>
+
+                                        {/* PRAWA STRONA: Herb + Nazwa (Gość) */}
+                                        <div className="flex items-center justify-start gap-3 w-[40%]">
+                                            <div className="relative w-8 h-8 flex-shrink-0 grayscale group-hover:grayscale-0 transition-all duration-300">
+                                                <Image
+                                                    src={getTeamLogo(match.awayTeam)}
+                                                    alt={match.awayTeam}
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            </div>
+                                            <span className="text-xs sm:text-sm font-bold text-white text-left group-hover:text-club-green-light transition-colors line-clamp-1 leading-tight">
+                                                {match.awayTeam}
                                             </span>
                                         </div>
-                                        {/* .result-score + fix dla undefined */}
-                                        <span className="font-bold text-[1rem] text-[#174135]">
-                                            {match.homeScore !== undefined && match.awayScore !== undefined
-                                                ? `${match.homeScore}:${match.awayScore}`
-                                                : "-:-"}
-                                        </span>
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-gray-400 text-sm">Brak rozegranych meczów.</p>
+                                <div className="p-8 text-center bg-[#121212] rounded-2xl border border-white/5">
+                                    <p className="text-gray-400 text-sm italic">
+                                        Brak wyników ostatniej kolejki.
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </div>
 
-                    {/* === Prawa kolumna: Tabela (Teaser) === */}
-                    {/* .results-column */}
-                    <div className="flex flex-col gap-4">
-                        {/* .column-title */}
-                        <h3 className="text-[1.25rem] font-semibold text-[#a0a0a0] text-center uppercase tracking-[0.5px] m-0">
-                            Tabela Ligowa
-                        </h3>
+                    {/* === PRAWA KOLUMNA: TABELA (TEASER) === */}
+                    <div className="flex flex-col gap-6">
+                        {/* Tytuł kolumny */}
+                        <div className="flex items-center gap-2 px-2">
+                            <Table2 size={16} className="text-club-green" />
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                Tabela Ligowa
+                            </span>
+                        </div>
 
-                        {/* .table-wrapper */}
-                        <div className="bg-[#1a1a1a] rounded-[1rem] border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.4)] overflow-hidden">
-                            {/* .league-table */}
-                            <table className="w-full border-collapse text-white text-[0.75rem]">
-                                <thead>
+                        {/* Tabela */}
+                        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-white/5 text-[10px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">
                                     <tr>
-                                        {/* th */}
-                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">#</th>
-                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">Drużyna</th>
-                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">M</th>
-                                        <th className="text-left p-[0.7rem] border-b border-white/[0.15] text-[#a0a0a0] font-semibold uppercase">Pkt</th>
+                                        <th className="px-4 py-4 text-center">#</th>
+                                        <th className="px-4 py-4 w-full">Drużyna</th>
+                                        <th className="px-2 py-4 text-center">M</th>
+                                        <th className="px-4 py-4 text-center text-white">PKT</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {teaserTable.map((row) => (
-                                        <tr
-                                            key={row._key}
-                                            className={
-                                                row.teamName.includes("Kujawianka")
-                                                    ? "bg-white/[0.15] font-bold text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.15)] hover:bg-white/[0.25] transition-all" // .highlight
-                                                    : row.position === 1
-                                                        ? "bg-[rgba(23,65,53,0.4)]" // .promotion
-                                                        : ""
-                                            }
-                                        >
-                                            {/* td */}
-                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.position}</td>
-                                            {/* .team-cell */}
-                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">
-                                                <div className="flex items-center gap-[0.4rem]">
-                                                    <img
-                                                        src={getTeamLogo(row.teamName)}
-                                                        alt={row.teamName}
-                                                        className="w-[28px] h-[28px] object-contain"
-                                                    />
-                                                    <span>{row.teamName}</span>
-                                                </div>
-                                            </td>
-                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.matches}</td>
-                                            <td className="p-[0.5rem] border-b border-white/[0.05] align-middle">{row.points}</td>
-                                        </tr>
-                                    ))}
+                                <tbody className="divide-y divide-white/5">
+                                    {teaserTable.map((row) => {
+                                        const isKujawianka = row.teamName.includes("Kujawianka");
+                                        return (
+                                            <tr
+                                                key={row._key}
+                                                className={cn(
+                                                    "transition-colors hover:bg-white/5",
+                                                    isKujawianka ? "bg-club-green/10 hover:bg-club-green/20" : "" // Podświetlenie naszej drużyny
+                                                )}
+                                            >
+                                                <td className="px-4 py-3 text-center font-medium text-gray-500">
+                                                    {row.position}.
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="relative w-6 h-6 flex-shrink-0">
+                                                            <Image
+                                                                src={getTeamLogo(row.teamName)}
+                                                                alt={row.teamName}
+                                                                fill
+                                                                className="object-contain"
+                                                            />
+                                                        </div>
+                                                        <span className={cn(
+                                                            "font-semibold truncate max-w-[140px] sm:max-w-none block",
+                                                            isKujawianka ? "text-club-green-light" : "text-gray-300"
+                                                        )}>
+                                                            {row.teamName}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-2 py-3 text-center text-gray-500 font-medium">{row.matches}</td>
+                                                <td className="px-4 py-3 text-center font-black text-white text-base font-montserrat">{row.points}</td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
