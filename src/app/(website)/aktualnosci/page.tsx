@@ -27,7 +27,7 @@ export default async function NewsPage() {
     return (
         // === TŁO I GŁÓWNY WRAPPER (Identyczne jak w Home.tsx) ===
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
-        bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
+        bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]">
 
             {/* Ozdobny particle (opcjonalnie, dla spójności) */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
@@ -72,7 +72,7 @@ export default async function NewsPage() {
                                 )}
                                 {/* Badge na zdjęciu */}
                                 <div className="absolute top-4 left-4 z-20 bg-club-red text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                    NAJNOWSZE
+                                    WYRÓŻNIONE
                                 </div>
                             </div>
 

@@ -1,6 +1,8 @@
 import { client } from "@/sanity/lib/client";
 import { ALL_PLAYERS_QUERY } from "@/sanity/lib/queries";
 import { Player } from "@/types";
+import Image from "next/image";
+import { Users } from "lucide-react";
 
 // Funkcja pomocnicza do grupowania zawodników
 function groupPlayersByPosition(players: Player[]) {
@@ -22,85 +24,95 @@ export default async function KadraPage() {
 
     // 3. Renderujemy
     return (
-        // .squad-section
-        <section className="min-h-screen py-16 px-4 md:px-8 border-y border-white/5 bg-[#0e0e0e] bg-gradient-to-b from-[#121915]/0 to-[#174135]/15 text-white">
+        // === TŁO I GŁÓWNY WRAPPER (Identyczne jak w NewsPage) ===
+        //rgba(141,16,16,0.05)
+        //#1a1a1a_100%
+        <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
+        bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]">
 
-            {/* .squad-container */}
-            <div className="mx-auto max-w-[1200px]">
+            {/* Ozdobny particle (Identyczny jak w NewsPage) */}
+            <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
+            bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]" />
 
-                {/* .squad-header */}
-                <header className="flex justify-between items-center mb-12 border-b border-white/10 pb-3">
-                    {/* .squad-title */}
-                    <h2 className="text-2xl md:text-[2rem] font-extrabold text-[#174135] uppercase tracking-widest">
-                        Kadra Kujawianki
-                    </h2>
-                </header>
+            <div className="relative z-10 container mx-auto px-4 py-16">
 
-                {/* Mapujemy grupy (bramkarze, obrońcy...) */}
+                {/* --- NAGŁÓWEK STRONY --- */}
+                <div className="flex flex-col items-center justify-center mb-12 space-y-3">
+                    <span className="inline-block py-1 px-3 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-[10px] uppercase tracking-widest backdrop-blur-md">
+                        Sezon 2025/2026
+                    </span>
+                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
+                        Kadra <span className="text-emerald-500">Kujawianki</span>
+                    </h1>
+                </div>
+
+                {/* --- GRUPY ZAWODNIKÓW --- */}
                 {Object.entries(squad).map(([groupKey, groupPlayers]) => {
-                    // Jeśli w danej grupie nie ma nikogo, nie wyświetlaj jej
                     if (groupPlayers.length === 0) return null;
 
                     return (
-                        // .squad-group
-                        <div key={groupKey} className="mt-12 first:mt-0">
-                            {/* .squad-group-title */}
-                            <h3 className="text-[1.5rem] font-bold text-[#174135] mb-6 uppercase border-l-4 border-[#8d1010] pl-3">
-                                {groupKey.toUpperCase()}
-                            </h3>
+                        <div key={groupKey} className="mb-16 last:mb-0">
+                            {/* Nagłówek Grupy */}
+                            <div className="flex items-center gap-4 mb-6">
+                                <h3 className="text-xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-club-red">
+                                    {groupKey}
+                                </h3>
+                                <div className="h-[1px] flex-grow bg-white/10"></div>
+                            </div>
 
-                            {/* .squad-grid */}
-                            {/* Używamy grid-cols z minmax, aby idealnie odwzorować Twoje 230px */}
-                            <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] justify-center gap-6">
+                            {/* Grid Kart - (Zachowano zmniejszone karty z poprzedniego kroku) */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 {groupPlayers.map((player) => (
                                     <div
                                         key={player._id}
-                                        // .squad-card (group pozwala na sterowanie dziećmi przy hoverze)
-                                        className="group relative w-full bg-white/5 rounded-[1.25rem] border border-white/10 overflow-hidden backdrop-blur-md transition-all duration-350 hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,255,128,0.15)]"
+                                        className="group relative aspect-[3/4] rounded-xl overflow-hidden border border-white/5 bg-[#121212] hover:border-club-green/40 hover:shadow-[0_0_15px_rgba(23,65,53,0.2)] transition-all duration-300"
                                     >
-                                        {/* .squad-image-wrapper */}
-                                        <div className="relative aspect-[3/3.5] overflow-hidden">
+                                        {/* ZDJĘCIE */}
+                                        <div className="absolute inset-0 z-0 bg-neutral-900">
                                             {player.imageUrl ? (
-                                                <img
+                                                <Image
                                                     src={player.imageUrl}
                                                     alt={`${player.name} ${player.surname}`}
-                                                    // .squad-image
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-all duration-500"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center text-4xl">
-                                                    ⚽
+                                                <div className="w-full h-full flex items-center justify-center text-white/10">
+                                                    <Users size={40} />
                                                 </div>
                                             )}
+                                        </div>
 
-                                            {/* .squad-banner */}
-                                            <div className="absolute bottom-0 left-0 right-0 flex items-end gap-2.5 px-3 py-2 min-h-[45px]
-                        bg-[linear-gradient(135deg,rgba(23,65,53,0.95)_0%,rgba(141,16,16,0.9)_60%)]"
-                                            >
-                                                {/* .squad-number */}
-                                                <span className="text-[2.2rem] md:text-[2.2rem] font-extrabold text-white leading-none drop-shadow-md">
-                                                    {player.number}
-                                                </span>
+                                        {/* POZYCJA (Badge mniejszy) */}
+                                        <div className="absolute top-3 right-3 z-10">
+                                            <span className="px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white bg-black/50 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
+                                                {player.position}
+                                            </span>
+                                        </div>
 
-                                                {/* .squad-name-block */}
-                                                <div className="flex flex-col leading-[1.1]">
-                                                    {/* .squad-surname */}
-                                                    <span className="text-[1.05rem] font-bold text-white uppercase tracking-[0.5px]">
+                                        {/* PASEK DOLNY (Mniejszy padding) */}
+                                        <div className="absolute bottom-0 left-0 w-full z-20">
+                                            <div className="absolute inset-0 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md border-t border-white/10" />
+
+                                            <div className="relative p-3 flex items-center justify-between">
+                                                <div className="flex flex-col">
+                                                    {/* Nazwisko */}
+                                                    <h3 className="text-base font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-1">
                                                         {player.surname}
-                                                    </span>
-                                                    {/* .squad-name */}
-                                                    <span className="text-[0.75rem] text-white/80 uppercase tracking-[0.5px]">
+                                                    </h3>
+                                                    {/* Imię */}
+                                                    <p className="text-[10px] font-medium text-gray-200 uppercase tracking-wide mt-0.5 transition-all duration-300 group-hover:translate-x-1">
                                                         {player.name}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex items-center justify-center">
+                                                    {/* Numer */}
+                                                    <span className="text-2xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
+                                                        {player.number}
                                                     </span>
                                                 </div>
-                                            </div>
-
-                                            {/* .squad-overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent flex items-start justify-end p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                                {/* .squad-position */}
-                                                <span className="text-[0.75rem] font-medium text-white bg-white/10 px-2.5 py-1 rounded-full uppercase backdrop-blur-sm border border-white/5">
-                                                    {player.position}
-                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -110,6 +122,6 @@ export default async function KadraPage() {
                     );
                 })}
             </div>
-        </section>
+        </main>
     );
 }
