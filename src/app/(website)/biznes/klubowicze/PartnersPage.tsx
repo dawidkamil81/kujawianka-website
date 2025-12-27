@@ -6,149 +6,144 @@ import {
     Megaphone,
     Trophy,
     Users,
-    PiggyBank,
+    Briefcase,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Sponsor } from "@/types/index";
-import ContactSection from "@/components/common/ContactSection"; // Import
+import ContactSection from "@/components/common/ContactSection";
 
 export default function PartnersPage({ members }: { members: Sponsor[] }) {
     // Dane korzyści
     const benefits = [
         {
-            icon: <Ticket size={36} />,
-            title: "Darmowe bilety na mecze",
-            description: "Otrzymaj stałą pulę biletów na każdy mecz domowy.",
+            icon: <Ticket size={32} />,
+            title: "Bilety na mecze",
+            description: "Otrzymaj stałą pulę biletów na każdy mecz domowy dla pracowników lub kontrahentów.",
         },
         {
-            icon: <Handshake size={36} />,
+            icon: <Handshake size={32} />,
             title: "Spotkania biznesowe",
-            description: "Dostęp do zamkniętych spotkań Klubu Biznesu.",
+            description: "Dostęp do zamkniętych spotkań Klubu Biznesu, śniadań i wydarzeń networkingowych.",
         },
         {
-            icon: <Megaphone size={36} />,
-            title: "Promocja Twojej firmy",
-            description: "Możliwość reklamy na stadionie i w social media.",
+            icon: <Megaphone size={32} />,
+            title: "Lokalna Promocja",
+            description: "Możliwość reklamy na stadionie i wzmianki w naszych mediach społecznościowych.",
         },
         {
-            icon: <Trophy size={36} />,
-            title: "Status VIP w klubie",
-            description: "Specjalne miejsce na trybunie VIP i zaproszenia.",
+            icon: <Trophy size={32} />,
+            title: "Status VIP",
+            description: "Specjalne miejsce na trybunie honorowej i zaproszenia na wydarzenia klubowe.",
         },
         {
-            icon: <Users size={36} />,
-            title: "Budowanie sieci kontaktów",
-            description: "Dołącz do lokalnej społeczności przedsiębiorców.",
+            icon: <Users size={32} />,
+            title: "Networking",
+            description: "Budowanie relacji z innymi przedsiębiorcami z regionu w sportowej atmosferze.",
         },
         {
-            icon: <PiggyBank size={36} />,
-            title: "Zniżki u innych partnerów",
-            description: "Korzystaj z ofert specjalnych innych klubowiczów.",
+            icon: <Briefcase size={32} />,
+            title: "Wsparcie Klubu",
+            description: "Realny wpływ na rozwój Kujawianki i szkolenie młodzieży w Izbicy Kujawskiej.",
         },
     ];
 
     return (
-        <main className="overflow-x-hidden min-h-screen bg-gradient-to-b from-[#121915]/0 to-[#174135]/15 text-[var(--text-main)]">
+        <div className="flex flex-col gap-24">
 
-            {/* === HERO === */}
-            <motion.section
-                className="text-center py-24 px-6 bg-[radial-gradient(circle_at_top,rgba(23,65,53,0.3),transparent_70%)]"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
-                <div className="mx-auto max-w-[1200px] px-4 md:px-8">
-                    <h1 className="text-[2.75rem] font-extrabold text-[#174135] uppercase leading-tight">
-                        Poznaj Naszych Klubowiczów
-                    </h1>
-                    <p className="mt-4 text-lg text-white/75 leading-relaxed">
-                        Partnerstwo, które łączy lokalny biznes ze sportową pasją i realnymi korzyściami.
-                    </p>
+            {/* === KORZYŚCI (BENEFITS) === */}
+            <section>
+                <div className="flex items-center gap-4 mb-12">
+                    <h3 className="text-2xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-emerald-500">
+                        Dlaczego warto?
+                    </h3>
+                    <div className="h-[1px] flex-grow bg-white/10"></div>
                 </div>
-            </motion.section>
 
-            {/* === CO ZYSKUJESZ === */}
-            <section className="relative py-24 overflow-hidden">
-
-                {/* Tło kropkowane (z Twojego CSS) */}
-                <div className="absolute -top-[20%] left-0 w-full h-[140%] -z-10 pointer-events-none 
-          bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom_right,rgba(23,65,53,0.05),transparent_60%)] 
-          bg-[length:40px_40px] bg-fixed opacity-100 transform-gpu"
-                />
-
-                <div className="mx-auto max-w-[1200px] px-4 md:px-8 relative z-10">
-                    <h2 className="text-[2rem] font-bold text-white uppercase mb-10 text-center tracking-wide">
-                        Co Zyskujesz?
-                    </h2>
-
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-x-6 gap-y-8 justify-items-center items-start max-w-[1000px] mx-auto">
-                        {benefits.map((benefit, i) => (
-                            <motion.div
-                                key={i}
-                                className="group flex flex-row items-center gap-5 p-4 transition-transform duration-300 hover:-translate-y-1 w-full"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: i * 0.05 }}
-                            >
-                                <div className="flex justify-center items-center w-[60px] h-[60px] shrink-0 rounded-full bg-[#174135]/15 border border-white/10 text-[#8d1010] transition-all duration-300 group-hover:bg-[#8d1010] group-hover:text-white group-hover:scale-110">
-                                    {benefit.icon}
-                                </div>
-                                <h3 className="text-[1.1rem] font-semibold text-white m-0">
-                                    {benefit.title}
-                                </h3>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* === NASI KLUBOWICZE === */}
-            <section className="py-20">
-                <div className="mx-auto max-w-[1200px] px-4 md:px-8">
-                    <h2 className="text-[2.25rem] font-bold text-white uppercase mb-2 text-center">
-                        Nasi Klubowicze
-                    </h2>
-                    <p className="text-[1.1rem] text-[#a0a0a0] leading-relaxed max-w-[600px] text-center mx-auto mb-12">
-                        Poznaj osoby, które tworzą naszą społeczność biznesową i aktywnie wspierają klub.
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-white/10 border border-white/10 rounded-2xl overflow-hidden max-w-[1000px] mx-auto shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
-                        {members && members.length > 0 ? (
-                            members.map((member, i) => (
-                                <motion.div
-                                    key={member._id}
-                                    className="bg-[#1a1a1a] p-6 md:p-8 hover:bg-white/5 transition-colors duration-200"
-                                    initial={{ opacity: 0, x: -30 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true, amount: 0.2 }}
-                                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                                >
-                                    <span className="block text-[1.15rem] font-semibold text-white mb-1">
-                                        {member.name}
-                                    </span>
-                                    {member.description && (
-                                        <span className="text-[0.95rem] text-[#a0a0a0]">
-                                            {member.description}
-                                        </span>
-                                    )}
-                                </motion.div>
-                            ))
-                        ) : (
-                            <div className="col-span-full bg-[#1a1a1a] p-8 text-center text-gray-500">
-                                Lista klubowiczów jest w trakcie aktualizacji.
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {benefits.map((benefit, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex flex-col p-8 rounded-3xl bg-[#121212] border border-white/10 hover:border-emerald-500/30 hover:bg-white/5 transition-all duration-300 group"
+                        >
+                            <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-emerald-500 mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors shadow-lg">
+                                {benefit.icon}
                             </div>
-                        )}
-                    </div>
+                            <h4 className="text-xl font-bold text-white uppercase font-montserrat mb-3 group-hover:text-emerald-400 transition-colors">
+                                {benefit.title}
+                            </h4>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                                {benefit.description}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
             </section>
 
-            {/* === KONTAKT (Używamy komponentu) === */}
+            {/* === LISTA CZŁONKÓW === */}
+            <section>
+                <div className="flex items-center gap-4 mb-12">
+                    <h3 className="text-2xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-white/30">
+                        Aktualni Klubowicze
+                    </h3>
+                    <div className="h-[1px] flex-grow bg-white/10"></div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {members.length > 0 ? (
+                        members.map((member, i) => (
+                            <motion.div
+                                key={member._id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.05 }}
+                                className="relative p-6 rounded-2xl bg-[#121212] border border-white/10 overflow-hidden group hover:border-emerald-500/40 transition-all duration-300"
+                            >
+                                {/* Decorative gradient */}
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/20 transition-colors" />
+
+                                <div className="relative z-10 flex items-start gap-4">
+                                    <div className="p-3 bg-white/5 rounded-xl text-emerald-500 border border-white/5 group-hover:scale-110 transition-transform duration-300">
+                                        <Briefcase size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-bold text-white font-montserrat uppercase tracking-wide mb-1 group-hover:text-emerald-400 transition-colors">
+                                            {member.name}
+                                        </h4>
+                                        {member.description && (
+                                            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+                                                {member.description}
+                                            </p>
+                                        )}
+                                        {member.website && (
+                                            <a href={member.website} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 hover:text-emerald-400 mt-2 block font-bold uppercase tracking-widest transition-colors">
+                                                Odwiedź stronę &rarr;
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))
+                    ) : (
+                        <div className="col-span-full py-20 text-center border border-white/5 rounded-3xl bg-[#121212]">
+                            <p className="text-gray-500 text-lg italic">
+                                Lista klubowiczów jest aktualizowana. Dołącz jako pierwszy!
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* === KONTAKT === */}
             <ContactSection
-                title="Dołącz do Klubu"
-                description="Jesteśmy otwarci na wszelkie propozycje współpracy. Skontaktuj się z nami, aby omówić szczegóły i dołączyć do naszej sportowej rodziny."
+                title="Dołącz do Klubu Biznesu"
+                description="Chcesz dołączyć do elitarnego grona wspierającego Kujawiankę? Skontaktuj się z nami."
             />
 
-        </main>
+        </div>
     );
 }

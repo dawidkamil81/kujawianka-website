@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Sponsor } from "@/types/index";
+import { Handshake, TrendingUp, Users, Calendar, ExternalLink, Globe } from "lucide-react";
 
 export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
 
@@ -11,6 +13,7 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
     const sponsorsMain = sponsors.filter((s) => s.tier === "main");
     const sponsorsStrategic = sponsors.filter((s) => s.tier === "strategic");
     const sponsorsTech = sponsors.filter((s) => s.tier === "technical");
+    const sponsorsPartners = sponsors.filter((s) => s.tier === "partner" || !s.tier);
 
     // Ustawiamy pierwszego głównego sponsora jako aktywnego
     const [activeSponsor, setActiveSponsor] = useState(
@@ -19,242 +22,249 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
 
     // Statystyki
     const stats = [
-        { value: `${sponsors.length}`, label: "Partnerów" },
-        { value: "1200+", label: "Kibiców" },
-        { value: "25k+", label: "Zasięgi" },
-        { value: "1949", label: "Rok założenia" },
+        { value: `${sponsors.length}`, label: "Partnerów", icon: <Handshake className="text-emerald-500" size={24} /> },
+        { value: "1200+", label: "Kibiców", icon: <Users className="text-emerald-500" size={24} /> },
+        { value: "25k+", label: "Zasięgi", icon: <TrendingUp className="text-emerald-500" size={24} /> },
+        { value: "1949", label: "Rok założenia", icon: <Calendar className="text-emerald-500" size={24} /> },
     ];
 
     return (
-        // .sponsors-page
-        <main className="overflow-x-hidden min-h-screen bg-gradient-to-b from-[#121915]/0 to-[#174135]/15 text-[var(--text-main)]">
+        <div className="flex flex-col gap-24">
 
-            {/* === WPROWADZENIE (HERO) === */}
-            {/* .sponsors-hero */}
-            <section className="text-center pt-24 pb-16 px-6 bg-[radial-gradient(circle_at_top,rgba(23,65,53,0.3),transparent_70%)]">
-                <div className="mx-auto max-w-[800px]">
-                    <motion.h1
-                        className="text-[2.5rem] font-extrabold text-[#174135] uppercase leading-tight"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
+            {/* === STATYSTYKI === */}
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {stats.map((stat, index) => (
+                    <div
+                        key={index}
+                        className="flex flex-col items-center justify-center p-6 rounded-3xl bg-[#121212] border border-white/10 hover:border-club-green/30 transition-all duration-300 group"
                     >
-                        Nasi Partnerzy
-                    </motion.h1>
-                    <motion.p
-                        className="mt-4 text-[1.1rem] text-[#a0a0a0] leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        Dziękujemy wszystkim firmom i instytucjom, które wspierają rozwój
-                        Kujawianki Izbica Kujawska. To dzięki Wam możemy walczyć o najwyższe cele!
-                    </motion.p>
-                </div>
+                        <div className="mb-3 p-3 bg-white/5 rounded-full group-hover:bg-club-green/10 transition-colors">
+                            {stat.icon}
+                        </div>
+                        <span className="text-3xl md:text-4xl font-black text-white font-montserrat tracking-tight mb-1">
+                            {stat.value}
+                        </span>
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">
+                            {stat.label}
+                        </span>
+                    </div>
+                ))}
             </section>
 
-            {/* === SPONSORZY GŁÓWNI (INTERAKTYWNA SEKCJA) === */}
+            {/* === SPONSORZY GŁÓWNI (UKŁAD DZIELONY) === */}
             {sponsorsMain.length > 0 && (
-                <section className="py-16 px-4 md:px-8">
-                    <div className="mx-auto max-w-[1200px]">
-                        <h2 className="text-center text-[2rem] font-bold text-white uppercase mb-12 tracking-wide">
-                            Sponsorzy Główni
-                        </h2>
-
-                        {/* .sponsors-main-section */}
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
-
-                            {/* LEWA KOLUMNA: LISTA LOGO */}
-                            {/* .main-logo-list */}
-                            <div className="flex flex-row flex-wrap lg:flex-col justify-center gap-4">
-                                {sponsorsMain.map((sponsor) => (
-                                    <motion.div
-                                        key={sponsor._id}
-                                        onClick={() => setActiveSponsor(sponsor)}
-                                        // .logo-item
-                                        className={`cursor-pointer transition-all duration-300 p-6 rounded-xl border flex items-center justify-center bg-white/5 
-                                            ${activeSponsor?._id === sponsor._id
-                                                ? "grayscale-0 opacity-100 border-white/20 shadow-[0_0_20px_rgba(23,65,53,0.4)] bg-white/10 scale-105"
-                                                : "grayscale opacity-50 border-transparent hover:opacity-80 hover:bg-white/10"
-                                            }`}
-                                        whileHover={{ x: 5 }}
-                                    >
-                                        <img
-                                            src={sponsor.logoUrl}
-                                            alt={sponsor.name}
-                                            className="max-h-[60px] md:max-h-[80px] w-auto object-contain"
-                                        />
-                                    </motion.div>
-                                ))}
-                            </div>
-
-                            {/* PRAWA KOLUMNA: KARTA INFO (STICKY) */}
-                            <div className="relative min-h-[400px]">
-                                <AnimatePresence mode="wait">
-                                    {activeSponsor && (
-                                        <motion.div
-                                            key={activeSponsor._id}
-                                            // .sponsor-info
-                                            className="lg:sticky lg:top-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl flex flex-col gap-6"
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            transition={{ duration: 0.4 }}
-                                        >
-                                            <div className="border-b border-white/10 pb-6 mb-2">
-                                                <h3 className="text-[2rem] font-bold text-white mb-2">
-                                                    {activeSponsor.name}
-                                                </h3>
-                                                <span className="text-[#174135] font-bold uppercase tracking-wider text-sm bg-[#174135]/10 px-3 py-1 rounded-full">
-                                                    Sponsor Główny
-                                                </span>
-                                            </div>
-
-                                            <p className="text-[#d0d0d0] leading-[1.8] text-lg">
-                                                {activeSponsor.description || "Dumny partner naszego klubu, wspierający rozwój sportu w regionie."}
-                                            </p>
-
-                                            <div className="mt-auto pt-6 flex flex-wrap gap-4">
-                                                {activeSponsor.website && (
-                                                    <a
-                                                        href={activeSponsor.website}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center justify-center px-6 py-3 bg-[#174135] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-[#13352b] hover:-translate-y-1 shadow-lg hover:shadow-[#174135]/40"
-                                                    >
-                                                        Odwiedź stronę &rarr;
-                                                    </a>
-                                                )}
-                                            </div>
-
-                                            {/* Tło loga w tle karty (ozdobne) */}
-                                            <div className="absolute right-[-20px] bottom-[-20px] opacity-[0.03] rotate-[-15deg] pointer-events-none">
-                                                <img
-                                                    src={activeSponsor.logoUrl}
-                                                    alt=""
-                                                    className="w-[300px] h-auto grayscale"
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </div>
+                <section>
+                    <div className="flex items-center gap-4 mb-10">
+                        <h3 className="text-2xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-emerald-500">
+                            Główni Partnerzy
+                        </h3>
+                        <div className="h-[1px] flex-grow bg-white/10"></div>
                     </div>
-                </section>
-            )}
 
-            {/* === SPONSORZY STRATEGICZNI === */}
-            {sponsorsStrategic.length > 0 && (
-                // .sponsors-grid-section
-                <section className="py-20 px-4 border-t border-white/5 bg-black/20">
-                    <div className="mx-auto max-w-[1200px]">
-                        <h2 className="text-center text-[1.75rem] font-bold text-white uppercase mb-12 tracking-wide opacity-90">
-                            Partnerzy Strategiczni
-                        </h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 items-start">
 
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {sponsorsStrategic.map((sponsor, i) => (
+                        {/* LEWA KOLUMNA: Lista logotypów do wyboru */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-4">
+                            {sponsorsMain.map((sponsor) => (
                                 <motion.div
                                     key={sponsor._id}
-                                    className="bg-white/5 rounded-xl p-6 flex items-center justify-center h-[140px] grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:bg-white/10 transition-all duration-300 group"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 0.6, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.05 }}
+                                    onClick={() => setActiveSponsor(sponsor)}
+                                    className={`cursor-pointer relative aspect-video rounded-xl border flex items-center justify-center p-4 transition-all duration-300
+                                        ${activeSponsor?._id === sponsor._id
+                                            ? "bg-white/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                                            : "bg-[#121212] border-white/10 hover:border-white/30 hover:bg-white/5"
+                                        }`}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
-                                    <a href={sponsor.website || "#"} target={sponsor.website ? "_blank" : "_self"} className="w-full h-full flex items-center justify-center">
-                                        <img
-                                            src={sponsor.logoUrl}
-                                            alt={sponsor.name}
-                                            className="max-h-[70%] max-w-[80%] object-contain group-hover:scale-110 transition-transform duration-300"
-                                        />
-                                    </a>
+                                    {sponsor.logoUrl ? (
+                                        <div className="relative w-full h-full">
+                                            <Image
+                                                src={sponsor.logoUrl}
+                                                alt={sponsor.name}
+                                                fill
+                                                className="object-contain"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <span className="text-sm font-bold text-white">{sponsor.name}</span>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
-                    </div>
-                </section>
-            )}
 
-            {/* === PARTNERZY TECHNICZNI I INNI === */}
-            {sponsorsTech.length > 0 && (
-                <section className="py-20 px-4 border-t border-white/5">
-                    <div className="mx-auto max-w-[1000px]">
-                        <h2 className="text-center text-[1.5rem] font-bold text-gray-400 uppercase mb-10 tracking-wide">
-                            Partnerzy Techniczni i Wspierający
-                        </h2>
+                        {/* PRAWA KOLUMNA: Karta informacyjna (Sticky) */}
+                        <div className="lg:sticky lg:top-24">
+                            <AnimatePresence mode="wait">
+                                {activeSponsor && (
+                                    <motion.div
+                                        key={activeSponsor._id}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="relative bg-[#121212] border border-white/10 rounded-3xl p-8 md:p-10 overflow-hidden shadow-2xl min-h-[400px] flex flex-col"
+                                    >
+                                        {/* Tło Gradientowe */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/10 to-transparent pointer-events-none" />
 
-                        <div className="flex flex-wrap justify-center gap-x-12 gap-y-8">
-                            {sponsorsTech.map((sponsor) => (
-                                <div key={sponsor._id} className="w-[120px] md:w-[150px] h-[80px] flex items-center justify-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                                    <img
-                                        src={sponsor.logoUrl}
-                                        alt={sponsor.name}
-                                        className="max-h-full max-w-full object-contain"
-                                    />
-                                </div>
-                            ))}
+                                        {/* Header Karty */}
+                                        <div className="relative z-10 flex flex-col gap-4 mb-6 border-b border-white/10 pb-6">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <span className="inline-block text-emerald-500 font-bold uppercase tracking-widest text-xs mb-2 bg-emerald-500/10 px-3 py-1 rounded-full">
+                                                        Sponsor Główny
+                                                    </span>
+                                                    <h2 className="text-3xl md:text-4xl font-black text-white font-montserrat tracking-tight">
+                                                        {activeSponsor.name}
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Treść */}
+                                        <div className="relative z-10 flex-grow">
+                                            <p className="text-gray-300 text-lg leading-relaxed">
+                                                {activeSponsor.description || "Dumny partner Kujawianki Izbica Kujawska. Wspieramy rozwój lokalnego sportu i promujemy zdrowy tryb życia wśród młodzieży."}
+                                            </p>
+                                        </div>
+
+                                        {/* Footer Karty (Przycisk) */}
+                                        <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+                                            {activeSponsor.website && (
+                                                <a
+                                                    href={activeSponsor.website}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-sm hover:text-emerald-400 transition-colors group"
+                                                >
+                                                    Odwiedź stronę
+                                                    <ExternalLink size={16} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                                                </a>
+                                            )}
+
+                                            {/* Ozdobna ikona globu jeśli brak www */}
+                                            {!activeSponsor.website && (
+                                                <div className="text-gray-600 flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
+                                                    <Globe size={16} /> Partner Lokalny
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* PRZEKRZYWIONE LOGO W TLE (Prawy dolny róg) */}
+                                        {activeSponsor.logoUrl && (
+                                            <div className="absolute -bottom-10 -right-10 w-[350px] h-[350px] opacity-5 rotate-[-15deg] pointer-events-none">
+                                                <Image
+                                                    src={activeSponsor.logoUrl}
+                                                    alt=""
+                                                    fill
+                                                    className="object-contain"
+                                                />
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
+
                     </div>
                 </section>
             )}
 
-            {/* === STATYSTYKI === */}
-            {/* .sponsors-stats */}
-            <section className="py-20 border-y border-white/5 bg-[#0e0e0e]">
-                <div className="mx-auto max-w-[1200px] text-center">
-                    <h2 className="text-[1.5rem] font-bold text-white uppercase mb-12 tracking-wide">
-                        Kujawianka w liczbach
-                    </h2>
+            {/* === SPONSORZY STRATEGICZNI (BEZ SZAROŚCI) === */}
+            {sponsorsStrategic.length > 0 && (
+                <section>
+                    <div className="flex items-center gap-4 mb-10">
+                        <h3 className="text-xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-white/30">
+                            Partnerzy Strategiczni
+                        </h3>
+                        <div className="h-[1px] flex-grow bg-white/10"></div>
+                    </div>
 
-                    <div className="flex flex-wrap justify-center gap-12 md:gap-24">
-                        {stats.map((item, i) => (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {sponsorsStrategic.map((sponsor) => (
                             <motion.div
-                                key={i}
-                                className="flex flex-col items-center gap-2"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                key={sponsor._id}
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
+                                className="group aspect-[3/2] bg-[#121212] border border-white/10 rounded-2xl overflow-hidden flex items-center justify-center p-8 hover:border-emerald-500/30 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)] transition-all duration-300"
                             >
-                                {/* .stat-line-value */}
-                                <span className="text-4xl md:text-5xl font-black text-[#174135]">
-                                    {item.value}
-                                </span>
-                                {/* .stat-line-label */}
-                                <span className="text-sm uppercase tracking-widest text-gray-500 font-semibold">
-                                    {item.label}
-                                </span>
+                                {sponsor.logoUrl ? (
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={sponsor.logoUrl}
+                                            alt={sponsor.name}
+                                            fill
+                                            // Usunięto grayscale
+                                            className="object-contain transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                    </div>
+                                ) : (
+                                    <span className="text-lg font-bold text-gray-300">{sponsor.name}</span>
+                                )}
                             </motion.div>
                         ))}
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
-            {/* === CTA === */}
-            {/* .sponsors-cta */}
-            <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
-                {/* .cta-bg */}
-                <div className="absolute inset-0 z-0">
-                    <img src="/hero.jpg" alt="Drużyna" className="w-full h-full object-cover" />
-                    {/* .cta-overlay */}
-                    <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"></div>
-                </div>
+            {/* === POZOSTALI PARTNERZY (BEZ SZAROŚCI) === */}
+            {(sponsorsTech.length > 0 || sponsorsPartners.length > 0) && (
+                <section>
+                    <div className="flex items-center gap-4 mb-10">
+                        <h3 className="text-lg font-bold text-gray-400 uppercase font-montserrat tracking-widest pl-4 border-l-4 border-white/10">
+                            Partnerzy i Wsparcie
+                        </h3>
+                        <div className="h-[1px] flex-grow bg-white/10"></div>
+                    </div>
 
-                {/* .cta-content */}
-                <div className="relative z-10 text-center px-4">
-                    <h2 className="text-[2.5rem] md:text-[3.5rem] font-extrabold text-white uppercase mb-8 drop-shadow-lg">
-                        Zostań Sponsorem
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        {[...sponsorsTech, ...sponsorsPartners].map((sponsor) => (
+                            <div
+                                key={sponsor._id}
+                                className="bg-white/5 hover:bg-white/10 rounded-xl aspect-square flex items-center justify-center p-6 transition-colors group border border-white/5"
+                            >
+                                {sponsor.logoUrl ? (
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={sponsor.logoUrl}
+                                            alt={sponsor.name}
+                                            fill
+                                            // Usunięto filtry (opacity/grayscale), teraz jest pełny kolor od razu
+                                            className="object-contain transition-all duration-300 group-hover:scale-110"
+                                        />
+                                    </div>
+                                ) : (
+                                    <span className="text-xs font-bold text-gray-500 text-center">{sponsor.name}</span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* === CTA / ZOSTAŃ SPONSOREM === */}
+            <section className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#121212] flex flex-col items-center justify-center py-20 px-6 text-center">
+                {/* Tło CTA */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(23,65,53,0.3),transparent_70%)] pointer-events-none" />
+
+                <div className="relative z-10 max-w-2xl">
+                    <h2 className="text-3xl md:text-4xl font-black text-white uppercase font-montserrat mb-6">
+                        Dołącz do <span className="text-emerald-500">Rodziny</span> Kujawianki
                     </h2>
+                    <p className="text-gray-400 mb-10 text-lg">
+                        Budujmy razem silną markę i wspierajmy lokalny sport. Sprawdź naszą ofertę sponsorską.
+                    </p>
                     <Link
                         href="/biznes/oferta"
-                        // .cta-button
-                        className="inline-block bg-[#174135] text-white text-[1.1rem] font-bold py-4 px-10 rounded-full uppercase tracking-wider transition-all duration-300 hover:bg-[#13352b] hover:-translate-y-1 hover:shadow-[0_4px_15px_rgba(23,65,53,0.7)]"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest rounded-full transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                     >
-                        Sprawdź ofertę
+                        Zobacz Ofertę
                     </Link>
                 </div>
             </section>
-        </main>
+
+        </div>
     );
 }
