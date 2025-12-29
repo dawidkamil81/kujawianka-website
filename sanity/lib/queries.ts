@@ -130,3 +130,29 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
     }
   }
 `);
+
+export const MATCH_CENTER_QUERY = defineQuery(`
+  {
+    "nextMatch": *[_type == "result" && (homeTeam match "Kujawianka Izbica*" || awayTeam match "Kujawianka Izbica*") && !defined(homeScore)] | order(date asc)[0] {
+      _id,
+      homeTeam,
+      awayTeam,
+      date, // Może być null/undefined
+      round,
+      "stadium": "Stadion Miejski"
+    },
+    "lastMatches": *[_type == "result" && (homeTeam match "Kujawianka Izbica*" || awayTeam match "Kujawianka Izbica*") && defined(homeScore)] | order(date desc)[0...2] {
+      _id,
+      homeTeam,
+      awayTeam,
+      homeScore,
+      awayScore,
+      date,
+      round
+    },
+    "teams": *[_type == "team"] {
+      name,
+      "logoUrl": logo.asset->url
+    }
+  }
+`);
