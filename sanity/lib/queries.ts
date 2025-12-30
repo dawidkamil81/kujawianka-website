@@ -157,3 +157,17 @@ export const MATCH_CENTER_QUERY = defineQuery(`
     }
   }
 `);
+
+export const DOWNLOADS_QUERY = defineQuery(`
+  *[_type == "download"] | order(publishedAt desc) {
+    _id,
+    title,
+    description,
+    category,
+    "fileUrl": file.asset->url,
+    "fileName": file.asset->originalFilename,
+    "extension": file.asset->extension,
+    "size": file.asset->size,
+    publishedAt
+  }
+`);
