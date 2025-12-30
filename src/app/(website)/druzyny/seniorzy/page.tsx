@@ -37,11 +37,11 @@ export default async function KadraPage() {
             <div className="relative z-10 container mx-auto px-4 py-16">
 
                 {/* --- NAGŁÓWEK STRONY --- */}
-                <div className="flex flex-col items-center justify-center mb-12 space-y-3">
-                    <span className="inline-block py-1 px-3 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-[10px] uppercase tracking-widest backdrop-blur-md">
+                <div className="flex flex-col items-center justify-center mb-16 space-y-4">
+                    <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
                         Sezon 2025/2026
                     </span>
-                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl mx-auto">
                         Kadra <span className="text-emerald-500">Kujawianki</span>
                     </h1>
                 </div>

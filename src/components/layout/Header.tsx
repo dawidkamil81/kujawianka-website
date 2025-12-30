@@ -89,9 +89,9 @@ export default function Header() {
                     `}
                 >
                     {/* Strona główna */}
-                    <Link href="/" className={getVisualClasses("/")} onClick={closeMenu}>
+                    {/* <Link href="/" className={getVisualClasses("/")} onClick={closeMenu}>
                         Strona główna
-                    </Link>
+                    </Link> */}
 
                     {/* Aktualności */}
                     <Link href="/aktualnosci" className={getVisualClasses("/aktualnosci")} onClick={closeMenu}>
@@ -172,13 +172,17 @@ export default function Header() {
                             md:absolute md:right-0 md:top-full md:mt-2 md:w-48 md:rounded-lg md:border md:border-white/10 md:shadow-xl
                             ${openDropdown === "biznes" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 md:invisible py-0"}
                         `}>
+                            <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
                             <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>
-                            <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Oferta</Link>
                             <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klubowicze</Link>
+                            <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
                         </div>
                     </div>
                     <Link href="/do-pobrania" className={getVisualClasses("/do-pobrania")} onClick={closeMenu}>
                         Do pobrania
+                    </Link>
+                    <Link href="/wesprzyj" className={getVisualClasses("/wesprzyj")} onClick={closeMenu}>
+                        Przekaż 1.5%
                     </Link>
                 </nav>
             </div>

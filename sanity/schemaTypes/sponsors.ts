@@ -22,6 +22,7 @@ export const sponsor = defineType({
                     { title: 'Sponsor Strategiczny', value: 'strategic' },
                     { title: 'Partner Techniczny', value: 'technical' },
                     { title: 'Klubowicz', value: 'partner' },
+                    { title: 'Klub 100', value: 'club100' },
                 ],
                 layout: 'radio'
             },
