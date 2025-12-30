@@ -116,7 +116,8 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
         points
       }
     },
-    "lastMatches": *[_type == "result" && defined(homeScore)] | order(date desc)[0...5] {
+    // ZMIANA: Zwiększono limit z [0...5] na [0...9] (pobierze 10 meczów)
+    "lastMatches": *[_type == "result" && defined(homeScore)] | order(date desc)[0...8] {
       _id,
       homeTeam,
       awayTeam,

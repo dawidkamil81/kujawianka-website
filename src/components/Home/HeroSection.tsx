@@ -1,6 +1,7 @@
 // src/components/Home/HeroSection.tsx
 import { NewsItem } from "@/types/index";
 import HeroNewsSlider from "./HeroNewsSlider"; // Importujemy nowy slider
+import Image from 'next/image';
 
 export default function HeroSection({ news }: { news: NewsItem[] }) {
     return (
@@ -9,7 +10,15 @@ export default function HeroSection({ news }: { news: NewsItem[] }) {
             {/* === TŁO (Background) - Twoje oryginalne style === */}
             <div className="absolute inset-0 z-0">
                 {/* 1. Zdjęcie tła */}
-                <div className="absolute inset-0 bg-[url('/hero.jpg')] bg-cover bg-fixed bg-center" />
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/hero.jpg"
+                        alt="Tło stadionu"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
 
                 {/* 2. Baza przyciemniająca */}
                 <div className="absolute inset-0 bg-black/70" />
