@@ -175,7 +175,7 @@ export default function Header() {
                             <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
                             <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>
                             <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klubowicze</Link>
-                            <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
+                            <Link href="/biznes/klub-100" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
                         </div>
                     </div>
                     <Link href="/do-pobrania" className={getVisualClasses("/do-pobrania")} onClick={closeMenu}>

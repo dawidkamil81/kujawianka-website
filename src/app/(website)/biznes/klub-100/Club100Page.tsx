@@ -1,217 +1,160 @@
-"use client";
+// import React from 'react';
+// import { Shield, Crown, Award, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+// import Link from 'next/link';
+// import Image from 'next/image';
+// import { Button } from "@/components/ui/button"; // Zakładam, że masz ten komponent
+// import { cn } from "@/lib/utils";
 
-import { motion } from "framer-motion";
-import { Sponsor } from "@/types/index";
-import { Crown, Star, ArrowRight, ShieldCheck, Ticket, Users } from "lucide-react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+// // Przykładowe dane (docelowo z Sanity)
+// const benefits = [
+//     {
+//         icon: <Crown className="w-8 h-8 text-club-green" />,
+//         title: "Status VIP",
+//         description: "Darmowy wstęp na wszystkie mecze domowe oraz miejsce w strefie VIP."
+//     },
+//     {
+//         icon: <Award className="w-8 h-8 text-club-green" />,
+//         title: "Unikalny Gadżet",
+//         description: "Oficjalny szalik lub koszulka klubowa z limitowanej edycji Klub 100."
+//     },
+//     {
+//         icon: <Users className="w-8 h-8 text-club-green" />,
+//         title: "Networking",
+//         description: "Dostęp do zamkniętych spotkań biznesowych z zarządem i sponsorami."
+//     },
+//     {
+//         icon: <Shield className="w-8 h-8 text-club-green" />,
+//         title: "Ściana Chwały",
+//         description: "Twoje nazwisko lub logo firmy na stałe zagości na naszej stronie www."
+//     }
+// ];
 
-// Animacje
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
-};
+// const members = [
+//     "Jan Kowalski", "Firma Budowlana X", "Piotr Nowak", "Sklep Sportowy Y", "Adam Wiśniewski", "Tech Solutions"
+// ];
 
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-};
+// export default function Club100Page() {
+//     return (
+//         <div className="min-h-screen bg-club-dark text-white font-montserrat selection:bg-club-green selection:text-white">
 
-export default function Club100Page({ members }: { members: Sponsor[] }) {
+//             {/* --- 1. HERO SECTION --- */}
+//             <section className="relative w-full py-24 md:py-32 overflow-hidden flex items-center justify-center">
+//                 {/* Tło z gradientem i blur */}
+//                 <div className="absolute inset-0 bg-club-dark z-0" />
+//                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-club-green/20 blur-[120px] rounded-full pointer-events-none" />
 
-    // Obliczamy statystyki (możesz to potem brać z backendu)
-    const membersCount = members.length;
-    // Zakładamy, że cel to np. 100 osób
-    const progress = Math.min((membersCount / 100) * 100, 100);
+//                 <div className="relative z-10 container mx-auto px-4 text-center">
+//                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md animate-accordion-down">
+//                         <Crown size={16} className="text-yellow-500" />
+//                         <span className="text-xs font-bold uppercase tracking-widest text-gray-300">Elitarne grono wspierających</span>
+//                     </div>
 
-    return (
-        <div className="w-full pb-20 space-y-24">
+//                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter mb-6 leading-tight">
+//                         Klub <span className="text-transparent bg-clip-text bg-gradient-to-r from-club-green to-emerald-400">100</span>
+//                     </h1>
 
-            {/* === SEKCJA 1: HERO & STATS (Nowość) === */}
-            <section className="relative">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="space-y-6"
-                    >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold uppercase tracking-widest">
-                            <Crown size={14} /> Elitarna Społeczność
-                        </div>
-                        <h1 className="text-5xl md:text-7xl font-black text-white font-montserrat tracking-tight leading-none">
-                            Klub <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">
-                                100
-                            </span>
-                        </h1>
-                        <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                            Dołącz do grona osób, które biorą odpowiedzialność za przyszłość Kujawianki Izbica. Twoje wsparcie to realny rozwój klubu.
-                        </p>
+//                     <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+//                         Dołącz do grupy najbardziej zaangażowanych partnerów Kujawianki Izbica.
+//                         Wspieraj rozwój lokalnego sportu i ciesz się wyjątkowymi przywilejami.
+//                     </p>
 
-                        {/* Pasek postępu celu */}
-                        <div className="p-6 rounded-2xl bg-[#121212] border border-white/10 space-y-3">
-                            <div className="flex justify-between text-sm font-bold text-gray-400 uppercase tracking-wider">
-                                <span>Liczba Klubowiczów</span>
-                                <span className="text-white">{membersCount} / 100</span>
-                            </div>
-                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    whileInView={{ width: `${progress}%` }}
-                                    transition={{ duration: 1.5, ease: "easeOut" }}
-                                    className="h-full bg-gradient-to-r from-amber-500 to-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                                />
-                            </div>
-                            <p className="text-xs text-gray-500">
-                                Dołącz do nas i pomóż nam osiągnąć cel na ten sezon!
-                            </p>
-                        </div>
-                    </motion.div>
+//                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+//                         <Button size="lg" className="bg-club-green hover:bg-club-green-light text-white font-bold px-8 py-6 rounded-xl transition-all shadow-[0_0_20px_rgba(23,65,53,0.3)] hover:shadow-[0_0_30px_rgba(23,65,53,0.5)]">
+//                             Dołącz do Klubu
+//                         </Button>
+//                         <Button variant="outline" size="lg" className="border-white/10 text-white hover:bg-white/5 hover:text-white font-bold px-8 py-6 rounded-xl">
+//                             Zobacz korzyści
+//                         </Button>
+//                     </div>
+//                 </div>
+//             </section>
 
-                    {/* Prawa strona: Grafika / Bento Grid intro */}
-                    <div className="relative h-[400px] w-full hidden lg:block">
-                        {/* Tu możesz wstawić zdjęcie kapitana, szalika lub grafikę 3D */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-transparent rounded-3xl blur-3xl opacity-30" />
-                        <div className="relative h-full w-full border border-white/10 bg-white/5 backdrop-blur-sm rounded-3xl p-8 flex flex-col justify-between overflow-hidden">
-                            <div className="absolute top-0 right-0 p-32 bg-amber-500/10 rounded-full blur-[80px]" />
-                            <h3 className="text-2xl font-bold text-white relative z-10">
-                                "To nie tylko wsparcie finansowe. <br /> To budowanie tożsamości."
-                            </h3>
-                            <div className="flex items-center gap-4 relative z-10">
-                                <div className="w-12 h-12 bg-club-green rounded-full flex items-center justify-center font-bold text-white">K</div>
-                                <div>
-                                    <p className="text-white font-bold">Zarząd Klubu</p>
-                                    <p className="text-xs text-gray-400">Kujawianka Izbica</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+//             {/* --- 2. KORZYŚCI (GRID) --- */}
+//             <section className="py-20 bg-[#0a0a0a] border-y border-white/5">
+//                 <div className="container mx-auto px-4">
+//                     <div className="text-center mb-16">
+//                         <h2 className="text-3xl font-black uppercase tracking-tight mb-4">Co zyskujesz?</h2>
+//                         <div className="w-24 h-1 bg-club-green mx-auto rounded-full" />
+//                     </div>
 
-            {/* === SEKCJA 2: KORZYŚCI (BENTO GRID) === */}
-            <section>
-                <div className="flex items-end justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-white font-montserrat uppercase">Dlaczego <span className="text-amber-500">warto?</span></h2>
-                </div>
+//                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+//                         {benefits.map((item, index) => (
+//                             <div key={index} className="group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+//                                 <div className="absolute top-0 right-0 w-24 h-24 bg-club-green/10 blur-[40px] rounded-full group-hover:bg-club-green/20 transition-all" />
+//                                 <div className="relative z-10">
+//                                     <div className="mb-6 p-3 bg-white/5 w-fit rounded-2xl border border-white/10 group-hover:border-club-green/30 transition-colors">
+//                                         {item.icon}
+//                                     </div>
+//                                     <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+//                                     <p className="text-sm text-gray-400 leading-relaxed">{item.description}</p>
+//                                 </div>
+//                             </div>
+//                         ))}
+//                     </div>
+//                 </div>
+//             </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Duży kafelek */}
-                    <div className="md:col-span-2 p-8 rounded-3xl bg-[#121212] border border-white/5 hover:border-amber-500/20 transition-colors group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-20 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors" />
-                        <div className="relative z-10">
-                            <Ticket className="text-amber-500 mb-4" size={40} />
-                            <h3 className="text-2xl font-bold text-white mb-2">Darmowy wstęp i Gadżety</h3>
-                            <p className="text-gray-400">Jako członek Klubu 100 otrzymujesz karnet na wszystkie mecze domowe oraz unikatowy szalik, którego nie można kupić w sklepie.</p>
-                        </div>
-                    </div>
+//             {/* --- 3. MEMBERS WALL (Wyróżnienie) --- */}
+//             <section className="py-24 relative overflow-hidden">
+//                 {/* Ozdobne tło */}
+//                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-club-green/5 blur-[100px] rounded-full pointer-events-none" />
 
-                    {/* Mniejszy kafelek */}
-                    <div className="p-8 rounded-3xl bg-[#151515] border border-white/5 hover:border-amber-500/20 transition-colors">
-                        <ShieldCheck className="text-emerald-500 mb-4" size={32} />
-                        <h3 className="text-xl font-bold text-white mb-2">Realny Wpływ</h3>
-                        <p className="text-gray-400 text-sm">Twoja składka idzie bezpośrednio na sprzęt treningowy dla młodzieży.</p>
-                    </div>
+//                 <div className="container mx-auto px-4 relative z-10">
+//                     <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+//                         <div>
+//                             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight mb-2">
+//                                 Obecni <span className="text-club-green">Klubowicze</span>
+//                             </h2>
+//                             <p className="text-gray-400">Dziękujemy za wsparcie w sezonie 2025/2026</p>
+//                         </div>
+//                         {/* Opcjonalnie licznik */}
+//                         <div className="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+//                             <span className="text-3xl font-black text-white">{members.length}</span>
+//                             <span className="text-xs uppercase text-gray-500 font-bold ml-2">Członków</span>
+//                         </div>
+//                     </div>
 
-                    {/* Mniejszy kafelek */}
-                    <div className="p-8 rounded-3xl bg-[#151515] border border-white/5 hover:border-amber-500/20 transition-colors">
-                        <Users className="text-blue-500 mb-4" size={32} />
-                        <h3 className="text-xl font-bold text-white mb-2">Spotkania VIP</h3>
-                        <p className="text-gray-400 text-sm">Zamknięte spotkanie podsumowujące sezon z zarządem i piłkarzami.</p>
-                    </div>
+//                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+//                         {members.map((member, idx) => (
+//                             <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl border border-white/5 bg-[#121212] hover:border-club-green/30 transition-colors group">
+//                                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center border border-white/10 group-hover:border-club-green text-club-green font-bold text-lg">
+//                                     {idx + 1}
+//                                 </div>
+//                                 <span className="text-lg font-bold text-gray-200 group-hover:text-white transition-colors">{member}</span>
+//                                 <CheckCircle2 size={18} className="ml-auto text-club-green opacity-0 group-hover:opacity-100 transition-opacity" />
+//                             </div>
+//                         ))}
 
-                    {/* Duży kafelek */}
-                    <div className="md:col-span-2 p-8 rounded-3xl bg-[#121212] border border-white/5 hover:border-amber-500/20 transition-colors flex items-center justify-between group">
-                        <div>
-                            <Star className="text-amber-500 mb-4" size={32} />
-                            <h3 className="text-xl font-bold text-white mb-2">Twoje nazwisko w Alei Gwiazd</h3>
-                            <p className="text-gray-400">Zostaniesz wymieniony na oficjalnej stronie internetowej.</p>
-                        </div>
-                        <ArrowRight className="text-white/20 group-hover:text-amber-500 group-hover:translate-x-2 transition-all" size={32} />
-                    </div>
-                </div>
-            </section>
+//                         {/* Placeholder - zachęta */}
+//                         <div className="flex items-center justify-center gap-4 p-4 rounded-2xl border border-dashed border-white/10 bg-transparent opacity-50 hover:opacity-100 hover:border-club-green/50 cursor-pointer transition-all group">
+//                             <span className="text-sm font-bold uppercase tracking-widest text-gray-500 group-hover:text-club-green">Twoje miejsce</span>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </section>
 
-            {/* === SEKCJA 3: LISTA VIP (NOWY WYGLĄD) === */}
-            <section className="relative">
-                <div className="flex flex-col items-center mb-12">
-                    <h2 className="text-3xl font-bold text-white font-montserrat uppercase tracking-wider mb-2">Lista <span className="text-amber-500">Członków</span></h2>
-                    <div className="h-1 w-24 bg-amber-500 rounded-full" />
-                </div>
+//             {/* --- 4. CTA / PROCES --- */}
+//             <section className="py-20 bg-club-green text-white relative overflow-hidden">
+//                 {/* Pattern tła (opcjonalnie) */}
+//                 <div className="absolute inset-0 opacity-10 bg-[url('/pattern.png')] mix-blend-overlay" />
 
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
-                >
-                    {members.length > 0 ? (
-                        members.map((member, i) => (
-                            <motion.div
-                                key={member._id}
-                                variants={itemVariants}
-                                className="group flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-amber-500/30 transition-all duration-300"
-                            >
-                                {/* Numer porządkowy / Ikona */}
-                                <div className="w-10 h-10 rounded-full bg-[#0a0a0a] flex items-center justify-center border border-white/10 text-amber-500 font-bold font-mono text-sm group-hover:scale-110 transition-transform">
-                                    {i + 1}
-                                </div>
+//                 <div className="container mx-auto px-4 relative z-10 text-center">
+//                     <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-8">
+//                         Dołącz do elity
+//                     </h2>
+//                     <p className="text-white/80 text-lg max-w-2xl mx-auto mb-10">
+//                         Składka członkowska wynosi <span className="font-bold text-white">100 PLN miesięcznie</span>.
+//                         Środki w 100% przeznaczane są na rozwój infrastruktury i sprzęt dla zawodników.
+//                     </p>
+//                     <div className="flex justify-center">
+//                         <Button className="bg-white text-club-green hover:bg-gray-100 font-black text-lg px-10 py-8 rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
+//                             Wypełnij deklarację
+//                             <ArrowRight className="ml-2 w-6 h-6" />
+//                         </Button>
+//                     </div>
+//                 </div>
+//             </section>
 
-                                {/* Dane */}
-                                <div className="flex-1">
-                                    <h4 className="text-white font-bold text-lg leading-tight group-hover:text-amber-400 transition-colors">
-                                        {member.name}
-                                    </h4>
-                                    {/* Opcjonalnie: Jeśli to firma z WWW */}
-                                    {member.website && (
-                                        <span className="text-xs text-gray-500 uppercase tracking-wider">Partner Biznesowy</span>
-                                    )}
-                                </div>
-
-                                {/* Logo (jeśli jest) lub ikona */}
-                                <div className="opacity-50 group-hover:opacity-100 transition-opacity">
-                                    {member.logoUrl ? (
-                                        <div className="relative w-8 h-8">
-                                            <Image src={member.logoUrl} alt={member.name} fill className="object-contain" />
-                                        </div>
-                                    ) : (
-                                        <Crown size={20} className="text-white/20 group-hover:text-amber-500 transition-colors" />
-                                    )}
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl">
-                            <p className="text-gray-500">Bądź pierwszy. Lista czeka na Twoje nazwisko.</p>
-                        </div>
-                    )}
-                </motion.div>
-            </section>
-
-            {/* === SEKCJA 4: CTA (Banner) === */}
-            <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-600 to-amber-800 p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-10 mix-blend-overlay" /> {/* Opcjonalny pattern */}
-
-                <div className="relative z-10 space-y-4 max-w-2xl">
-                    <h2 className="text-3xl font-black text-white font-montserrat uppercase">Dołącz teraz</h2>
-                    <p className="text-amber-100 font-medium text-lg">
-                        Wystarczy 100 zł miesięcznie, aby stać się częścią legendy. <br />
-                        Skontaktuj się z nami, aby otrzymać szczegóły przelewu.
-                    </p>
-                </div>
-
-                <div className="relative z-10">
-                    <button className="px-8 py-4 bg-white text-amber-700 font-black uppercase tracking-widest rounded-xl hover:bg-gray-100 hover:scale-105 transition-all shadow-xl">
-                        Skontaktuj się
-                    </button>
-                    {/* Tu możesz podpiąć Link do /kontakt lub open modal */}
-                </div>
-            </section>
-
-        </div>
-    );
-}
+//         </div>
+//     );
+// }
