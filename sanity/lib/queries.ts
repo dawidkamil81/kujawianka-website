@@ -173,3 +173,15 @@ export const DOWNLOADS_QUERY = defineQuery(`
     publishedAt
   }
 `);
+
+export const SINGLE_NEWS_QUERY = defineQuery(`
+  *[_type == "news" && slug.current == $slug][0] {
+    _id,
+    title,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url,
+    content, // To jest pole z treścią (Portable Text)
+    "slug": slug.current
+  }
+`);
