@@ -8,14 +8,15 @@ export type Player = {
 };
 
 
-export type NewsItem = {
+export interface NewsItem {
     _id: string;
     title: string;
     slug: string;
     publishedAt: string;
-    excerpt?: string;
-    imageUrl?: string; // <--- Dodaj tę linię!
-};
+    excerpt: string;
+    imageUrl: string;
+    isHighlighted?: boolean; // <--- Dodaj to pole (opcjonalne, bo stare artykuły mogą go nie mieć)
+}
 
 
 

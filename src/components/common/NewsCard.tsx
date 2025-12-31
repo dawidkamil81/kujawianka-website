@@ -43,6 +43,7 @@ export default function NewsCard({ title, slug, imageUrl, date, compact = false 
                         <Image src="/logo.png" width={60} height={60} alt="Placeholder" className="opacity-30 grayscale" />
                     </div>
                 )}
+
             </div>
 
             {/* === TREŚĆ === */}

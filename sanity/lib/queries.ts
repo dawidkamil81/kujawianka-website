@@ -38,7 +38,8 @@ export const HOMEPAGE_NEWS_QUERY = defineQuery(`
     "slug": slug.current,
     publishedAt,
     excerpt,
-    "imageUrl": mainImage.asset->url
+    "imageUrl": mainImage.asset->url,
+    isHighlighted
   }
 `);
 
@@ -50,7 +51,8 @@ export const ALL_NEWS_QUERY = defineQuery(`
     "slug": slug.current,
     publishedAt,
     excerpt,
-    "imageUrl": mainImage.asset->url
+    "imageUrl": mainImage.asset->url,
+    isHighlighted
   }
 `);
 

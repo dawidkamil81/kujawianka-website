@@ -51,7 +51,7 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
             {/* --- GÓRA: TYLKO NAGŁÓWEK (BEZ KROPKI) --- */}
             <div className="flex items-center gap-3 px-1 mb-1">
                 <h3 className="text-white font-montserrat font-bold tracking-widest uppercase text-xs opacity-80">
-                    Aktualności
+                    WYRÓŻNIONE ARTYKUŁY
                 </h3>
             </div>
 

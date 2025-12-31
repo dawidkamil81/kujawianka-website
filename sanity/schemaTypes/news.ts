@@ -12,6 +12,13 @@ export const news = defineType({
             validation: (rule) => rule.required(),
         }),
         defineField({
+            name: 'isHighlighted',
+            title: 'Wyróżniony artykuł',
+            type: 'boolean',
+            description: 'Zaznacz, aby wyróżnić ten artykuł (np. dodać odznakę "Wyróżniony" lub wyświetlić w sliderze).',
+            initialValue: false, // Domyślnie wyłączone
+        }),
+        defineField({
             name: 'slug',
             title: 'Adres URL',
             type: 'slug',
