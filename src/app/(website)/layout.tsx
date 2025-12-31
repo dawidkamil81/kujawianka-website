@@ -1,6 +1,6 @@
 import "./globals.css";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer";
 
 export const metadata = {
   title: "Kujawianka – Oficjalna Strona Klubu",
@@ -15,9 +15,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pl">
-      <body className="bg-neutral-50 text-neutral-900">
+      {/* Zmieniamy bg-neutral-50 na ciemne tło i ustawiamy flexbox dla pełnej wysokości */}
+      <body className="bg-[#121212] text-white min-h-screen flex flex-col font-sans antialiased">
         <Header />
-        <main className="max-w-6xl mx-auto px-6 py-10">{children}</main>
+
+        {/* USUWAMY ograniczenia szerokości (max-w-6xl, px-6). 
+            Teraz main zajmuje 100% szerokości. */}
+        <main className="flex-grow w-full">
+          {children}
+        </main>
+
         <Footer />
       </body>
     </html>

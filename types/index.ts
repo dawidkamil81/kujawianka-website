@@ -22,7 +22,7 @@ export type NewsItem = {
 export type Sponsor = {
     _id: string;
     name: string;
-    tier: "main" | "strategic" | "technical" | "partner";
+    tier: "main" | "strategic" | "technical" | "partner" | "club100";
     logoUrl: string;
     website?: string;
     description?: string; // Tylko dla głównych

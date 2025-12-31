@@ -116,7 +116,8 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
         points
       }
     },
-    "lastMatches": *[_type == "result" && defined(homeScore)] | order(date desc)[0...5] {
+    // ZMIANA: Zwiększono limit z [0...5] na [0...9] (pobierze 10 meczów)
+    "lastMatches": *[_type == "result" && defined(homeScore)] | order(date desc)[0...8] {
       _id,
       homeTeam,
       awayTeam,
@@ -128,5 +129,45 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
       name,
       "logoUrl": logo.asset->url
     }
+  }
+`);
+
+export const MATCH_CENTER_QUERY = defineQuery(`
+  {
+    "nextMatch": *[_type == "result" && (homeTeam match "Kujawianka Izbica*" || awayTeam match "Kujawianka Izbica*") && !defined(homeScore)] | order(date asc)[0] {
+      _id,
+      homeTeam,
+      awayTeam,
+      date, // Może być null/undefined
+      round,
+      "stadium": "Stadion Miejski"
+    },
+    "lastMatches": *[_type == "result" && (homeTeam match "Kujawianka Izbica*" || awayTeam match "Kujawianka Izbica*") && defined(homeScore)] | order(date desc)[0...2] {
+      _id,
+      homeTeam,
+      awayTeam,
+      homeScore,
+      awayScore,
+      date,
+      round
+    },
+    "teams": *[_type == "team"] {
+      name,
+      "logoUrl": logo.asset->url
+    }
+  }
+`);
+
+export const DOWNLOADS_QUERY = defineQuery(`
+  *[_type == "download"] | order(publishedAt desc) {
+    _id,
+    title,
+    description,
+    category,
+    "fileUrl": file.asset->url,
+    "fileName": file.asset->originalFilename,
+    "extension": file.asset->extension,
+    "size": file.asset->size,
+    publishedAt
   }
 `);

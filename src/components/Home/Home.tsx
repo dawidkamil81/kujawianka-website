@@ -1,17 +1,22 @@
+// src/components/Home/Home.tsx
 "use client";
 
-import "./Home.css";
 import HeroSection from "./HeroSection";
 import MatchCenter from "./MatchCenter";
-import ResultsTable from "./ResultsTable"; // <--- To będziemy karmić danymi
+import ResultsTable from "./ResultsTable";
 import PlayersTeaser from "./PlayersTeaser";
 import SponsorsTeaser from "./SponsorsTeaser";
-import Footer from "../Footer";
 import { Player, NewsItem, Sponsor, LeagueTable, Match, Team } from "@/types/index";
 
-// Typ dla paczki danych z wynikami
 type ResultsDataPacket = {
     table: LeagueTable;
+    lastMatches: Match[];
+    teams: Team[];
+};
+
+// Nowy typ dla danych MatchCenter
+type MatchCenterDataPacket = {
+    nextMatch: Match | null;
     lastMatches: Match[];
     teams: Team[];
 };
@@ -20,24 +25,38 @@ interface HomeProps {
     players: Player[];
     news: NewsItem[];
     sponsors: Sponsor[];
-    resultsData: ResultsDataPacket; // <--- Nowy props
+    resultsData: ResultsDataPacket;
+    matchCenterData: MatchCenterDataPacket; // <--- Nowy prop
 }
 
-export default function Home({ players, news, sponsors, resultsData }: HomeProps) {
+export default function Home({ players, news, sponsors, resultsData, matchCenterData }: HomeProps) {
     return (
-        <>
-            <HeroSection news={news} />
-            <MatchCenter />
-
-            {/* Przekazujemy dane do tabeli */}
-            <ResultsTable
-                table={resultsData.table}
-                matches={resultsData.lastMatches}
-                teams={resultsData.teams}
+        <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
+      bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]"
+        >
+            <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
+        bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]"
             />
 
-            <PlayersTeaser players={players} />
-            <SponsorsTeaser sponsors={sponsors} />
-        </>
+            <div className="relative z-10 flex flex-col w-full">
+                <HeroSection news={news} />
+
+                {/* Przekazujemy dedykowane dane */}
+                <MatchCenter
+                    nextMatch={matchCenterData.nextMatch}
+                    lastMatches={matchCenterData.lastMatches}
+                    teams={matchCenterData.teams}
+                />
+
+                <ResultsTable
+                    table={resultsData.table}
+                    matches={resultsData.lastMatches}
+                    teams={resultsData.teams}
+                />
+
+                <PlayersTeaser players={players} />
+                <SponsorsTeaser sponsors={sponsors} />
+            </div>
+        </main>
     );
 }

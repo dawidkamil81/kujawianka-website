@@ -6,8 +6,8 @@ import { news } from './news'
 import { sponsor } from './sponsors'
 import { result } from './results'
 import { page } from './page'
-import { downloadFile } from './download'
+import { download } from './download'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [news, player, sponsor, downloadFile, page, team, table, result],
+  types: [news, player, sponsor, download, page, team, table, result],
 }
