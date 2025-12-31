@@ -61,7 +61,7 @@ export default function Footer() {
                         <h4 className="mb-4 text-lg font-semibold uppercase text-[#174135]">Śledź nas</h4>
                         <div className="mt-2 flex gap-8">
                             <a
-                                href="https://facebook.com"
+                                href="https://www.facebook.com/kujawiankaizbica"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Facebook"
@@ -71,7 +71,7 @@ export default function Footer() {
                                 <Facebook size={38} />
                             </a>
                             <a
-                                href="https://instagram.com"
+                                href="https://www.instagram.com/mgks_kujawianka/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Instagram"
@@ -79,7 +79,7 @@ export default function Footer() {
                             >
                                 <Instagram size={38} />
                             </a>
-                            <a
+                            {/* <a
                                 href="https://youtube.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -87,7 +87,7 @@ export default function Footer() {
                                 className="text-[#174135] transition-all duration-300 hover:-translate-y-1 hover:text-[#da1818] hover:drop-shadow-[0_0_10px_rgba(23,65,53,0.5)]"
                             >
                                 <Youtube size={38} />
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 
@@ -97,15 +97,15 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li className="flex items-start justify-center gap-3 md:justify-start">
                                 <MapPin size={22} className="shrink-0 text-[#174135]" />
-                                <span className="text-white/75 leading-snug text-left">ul. Sportowa 5<br />87-865 Izbica Kujawska</span>
+                                <span className="text-white/75 leading-snug text-left">ul. Sportowa 1a<br />87-865 Izbica Kujawska</span>
                             </li>
                             <li className="flex items-center justify-center gap-3 md:justify-start">
                                 <Phone size={22} className="shrink-0 text-[#174135]" />
-                                <span className="text-white/75">+48 600 123 456</span>
+                                <span className="text-white/75">+48 665 426 757</span>
                             </li>
                             <li className="flex items-center justify-center gap-3 md:justify-start">
                                 <Mail size={22} className="shrink-0 text-[#174135]" />
-                                <span className="text-white/75">kontakt@kujawiankaizbica.pl</span>
+                                <span className="text-white/75">kujawiankaizbicakujawska@gmail.com</span>
                             </li>
                         </ul>
                     </div>

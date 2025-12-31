@@ -201,21 +201,21 @@ export default function ClubPage() {
                                 <span className="text-xl font-bold text-white">1984 Rok</span>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/10 transition-colors group">
+                            {/* <div className="p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/10 transition-colors group">
                                 <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-emerald-500 transition-colors">
                                     <Trees size={20} />
                                     <span className="text-xs font-bold uppercase tracking-widest">Murawa</span>
                                 </div>
                                 <span className="text-xl font-bold text-white">Naturalna</span>
-                            </div>
+                            </div> */}
 
-                            <div className="p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/10 transition-colors group">
+                            {/* <div className="p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/10 transition-colors group">
                                 <div className="flex items-center gap-3 mb-2 text-gray-500 group-hover:text-emerald-500 transition-colors">
                                     <MapPin size={20} />
                                     <span className="text-xs font-bold uppercase tracking-widest">Lokalizacja</span>
                                 </div>
                                 <span className="text-xl font-bold text-white">Centrum</span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </motion.section>

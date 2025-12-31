@@ -11,6 +11,7 @@ import Home from "@/components/Home/HomePage";
 
 export default async function Page() {
   // Dodajemy MATCH_CENTER_QUERY do Promise.all
+  //tests
   const [players, news, sponsors, resultsData, matchCenterData] = await Promise.all([
     client.fetch(HOMEPAGE_PLAYERS_QUERY),
     client.fetch(HOMEPAGE_NEWS_QUERY),
