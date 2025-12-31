@@ -44,11 +44,11 @@ export default async function DownloadsPage() {
                 {/* === NAGŁÓWEK STRONY === */}
                 <div className="flex flex-col items-center justify-center mb-20 space-y-5 text-center">
                     {/* ZMIANA: Użycie klas 'club-green' zamiast 'emerald' zgodnie z plikiem page.tsx */}
+
                     <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
                         Strefa Klubowa
                     </span>
-
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white font-montserrat drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
                         Do <span className="text-emerald-500">Pobrania</span>
                     </h1>
 

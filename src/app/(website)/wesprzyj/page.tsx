@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Copy, Check, Heart, Trophy, Bus, Shirt, Users, ArrowRight } from "lucide-react";
+import { Copy, Check, Heart, Trophy, Bus, Shirt, Users, ArrowRight, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // KONFIGURACJA DANYCH
@@ -24,7 +24,7 @@ export default function DonateTaxPage() {
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
 
-            {/* TŁO DEKORACYJNE (bez zmian) */}
+            {/* TŁO DEKORACYJNE */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-12 md:py-20 flex flex-col gap-20">
@@ -99,7 +99,7 @@ export default function DonateTaxPage() {
                     </div>
                 </section>
 
-                {/* --- 2. INSTRUKCJA (Uproszczona wizualnie) --- */}
+                {/* --- 2. INSTRUKCJA --- */}
                 <section className="border-t border-white/10 pt-16">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
                         <h2 className="text-3xl font-bold uppercase">Jak przekazać podatek?</h2>
@@ -108,28 +108,45 @@ export default function DonateTaxPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* KROK 01 */}
                         <StepCard
                             num="01"
                             title="Wpisz KRS"
                             desc={`W sekcji "Wniosek o przekazanie 1,5% podatku" wpisz numer: ${KRS_NUMBER}`}
+                            className="order-1 md:order-1"
                         />
-                        <div className="hidden md:flex items-center justify-center text-white/20">
+
+                        {/* Strzałka 1 (pusta) */}
+                        <div className="hidden md:flex items-center justify-center text-white/20 md:order-2">
+                            {/* <ArrowRight size={32} /> */}
+                        </div>
+
+                        {/* KROK 03 - W wersji mobilnej jest ostatni (order-3), w desktopowej w środku (order-3) */}
+                        <StepCard
+                            num="03"
+                            title="Wyślij PIT"
+                            desc="Złóż deklarację online (e-PIT) lub w urzędzie. To wszystko!"
+                            className="order-3 md:order-3"
+                        />
+
+                        {/* Strzałka 2 */}
+                        <div className="hidden md:flex items-center justify-center text-white/20 md:order-4">
                             <ArrowRight size={32} />
                         </div>
+
+                        {/* KROK 02 - W wersji mobilnej jest drugi (order-2), w desktopowej na końcu (order-5) */}
                         <StepCard
                             num="02"
                             title="Cel szczegółowy"
                             desc={`W rubryce "Cel szczegółowy 1,5%" wpisz: "${SPECIFIC_GOAL}"`}
                             highlight
+                            className="order-2 md:order-5"
                         />
-                        <div className="hidden md:flex items-center justify-center text-white/20">
-                            <ArrowRight size={32} />
+
+                        {/* Strzałka 3 (w górę) */}
+                        <div className="hidden md:flex items-center justify-center text-white/20 md:order-6">
+                            <ArrowUp size={32} />
                         </div>
-                        <StepCard
-                            num="03"
-                            title="Wyślij PIT"
-                            desc="Złóż deklarację online (e-PIT) lub w urzędzie. To wszystko!"
-                        />
                     </div>
                 </section>
 
@@ -152,9 +169,8 @@ export default function DonateTaxPage() {
 
                     {/* Prawa kolumna: Social Proof (Zdjęcie) */}
                     <section className="relative overflow-hidden rounded-3xl border border-white/10 min-h-[300px] group">
-                        {/* ZMIEŃ src NA WŁAŚCIWE ZDJĘCIE */}
                         <Image
-                            src="/public/s2b.jpg"
+                            src="/s2b.jpg"
                             alt="Akademia Kujawianki"
                             fill
                             className="object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-500 group-hover:scale-105 transform"
@@ -177,11 +193,13 @@ export default function DonateTaxPage() {
 
 // --- KOMPONENTY POMOCNICZE ---
 
-function StepCard({ num, title, desc, highlight }: { num: string, title: string, desc: string, highlight?: boolean }) {
+// Zaktualizowany StepCard przyjmujący className
+function StepCard({ num, title, desc, highlight, className }: { num: string, title: string, desc: string, highlight?: boolean, className?: string }) {
     return (
         <div className={cn(
             "p-6 rounded-xl border transition-all duration-300 bg-[#121212]",
-            highlight ? "border-[#e74c3c]/50 shadow-[0_0_20px_-5px_rgba(231,76,60,0.2)]" : "border-white/10 hover:border-white/20"
+            highlight ? "border-[#e74c3c]/50 shadow-[0_0_20px_-5px_rgba(231,76,60,0.2)]" : "border-white/10 hover:border-white/20",
+            className
         )}>
             <div className="text-4xl font-black text-white/10 mb-4">{num}</div>
             <h4 className="text-lg font-bold text-white mb-2">{title}</h4>

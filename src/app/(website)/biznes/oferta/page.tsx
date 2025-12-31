@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { CheckCircle, Trophy, Target, Users, Star, ArrowRight, Handshake, Heart } from "lucide-react";
 import ContactSection from "@/components/common/ContactSection";
 
@@ -61,7 +60,7 @@ export default function OfferPage() {
     ];
 
     return (
-        // === GŁÓWNY WRAPPER (Spójny z Home/News/Results/Sponsors) ===
+        // === GŁÓWNY WRAPPER ===
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
         bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
 
@@ -74,9 +73,9 @@ export default function OfferPage() {
                 {/* === NAGŁÓWEK STRONY === */}
                 <div className="flex flex-col items-center justify-center mb-20 space-y-5 text-center">
                     <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
-                        Współpraca Biznesowa
+                        Wspólpraca Biznesowa
                     </span>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white font-montserrat drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
                         Oferta <span className="text-emerald-500">Sponsorska</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl text-center text-sm md:text-base font-medium leading-relaxed">
@@ -87,12 +86,8 @@ export default function OfferPage() {
                 {/* === PAKIETY SPONSORSKIE === */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32 items-start">
                     {sponsorPackages.map((pkg, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
                             className={`relative flex flex-col p-8 rounded-3xl border transition-all duration-300 h-full
                                 ${pkg.isPopular
                                     ? "bg-[#174135]/20 border-emerald-500/50 shadow-[0_0_40px_rgba(23,65,53,0.3)] transform md:-translate-y-4 z-10"
@@ -151,20 +146,16 @@ export default function OfferPage() {
                             >
                                 Wybierz Pakiet <ArrowRight size={14} />
                             </Link>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
 
                 {/* === STATYSTYKI === */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32">
                     {stats.map((stat, index) => (
-                        <motion.div
+                        <div
                             key={index}
                             className="flex flex-col items-center justify-center p-6 rounded-3xl bg-[#121212] border border-white/10 hover:border-club-green/30 transition-all duration-300 group text-center"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
                         >
                             <div className="mb-3 p-3 bg-white/5 rounded-full group-hover:bg-club-green/10 transition-colors">
                                 {stat.icon}
@@ -175,7 +166,7 @@ export default function OfferPage() {
                             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
                                 {stat.label}
                             </span>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
 

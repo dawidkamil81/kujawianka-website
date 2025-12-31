@@ -33,7 +33,8 @@ export default function PlayersTeaser({ players }: { players: Player[] }) {
                 </div>
 
                 {/* --- GRID ZAWODNIKÓW --- */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {/* ZMIANA: grid-cols-2 na mobile, mniejszy gap na mobile */}
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                     {players && players.length > 0 ? (
                         players.map((player, i) => (
                             <motion.div
@@ -52,7 +53,7 @@ export default function PlayersTeaser({ players }: { players: Player[] }) {
                                             alt={`${player.name} ${player.surname}`}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-all duration-500"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-white/10">
@@ -61,9 +62,9 @@ export default function PlayersTeaser({ players }: { players: Player[] }) {
                                     )}
                                 </div>
 
-                                {/* POZYCJA (Badge na górze) */}
-                                <div className="absolute top-4 right-4 z-10">
-                                    <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
+                                {/* POZYCJA (Badge na górze) - ZMIANA: mniejszy padding i pozycja na mobile */}
+                                <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10">
+                                    <span className="px-2 py-0.5 md:px-3 md:py-1 text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-white bg-black/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
                                         {player.position}
                                     </span>
                                 </div>
@@ -73,22 +74,23 @@ export default function PlayersTeaser({ players }: { players: Player[] }) {
                                     {/* Tło paska: Gradient klubowy */}
                                     <div className="absolute inset-0 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md border-t border-white/10" />
 
-                                    {/* Zawartość paska */}
-                                    <div className="relative p-4 flex items-center justify-between">
+                                    {/* Zawartość paska - ZMIANA: mniejszy padding na mobile */}
+                                    <div className="relative p-3 md:p-4 flex items-center justify-between">
 
-                                        {/* Imię i Nazwisko - ANIMACJA PRZESUNIĘCIA */}
+                                        {/* Imię i Nazwisko */}
                                         <div className="flex flex-col">
-                                            <h3 className="text-lg font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-2">
+                                            {/* ZMIANA: mniejsze czcionki na mobile */}
+                                            <h3 className="text-sm md:text-lg font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-1 md:group-hover:translate-x-2 truncate max-w-[80px] sm:max-w-none">
                                                 {player.surname}
                                             </h3>
-                                            <p className="text-xs font-medium text-gray-200 uppercase tracking-wide mt-1 transition-all duration-300 group-hover:translate-x-2">
+                                            <p className="text-[10px] md:text-xs font-medium text-gray-200 uppercase tracking-wide mt-0.5 md:mt-1 transition-all duration-300 group-hover:translate-x-1 md:group-hover:translate-x-2 truncate">
                                                 {player.name}
                                             </p>
                                         </div>
 
-                                        {/* Numer */}
-                                        <div className="flex items-center justify-center">
-                                            <span className="text-3xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
+                                        {/* Numer - ZMIANA: mniejszy rozmiar na mobile */}
+                                        <div className="flex items-center justify-center pl-2">
+                                            <span className="text-xl md:text-3xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
                                                 {player.number}
                                             </span>
                                         </div>

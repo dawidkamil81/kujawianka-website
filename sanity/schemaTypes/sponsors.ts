@@ -50,7 +50,7 @@ export const sponsor = defineType({
             rows: 3,
             // Ukrywamy, jeśli to zwykły klubowicz (partner) lub techniczny.
             // Zostawiamy dla Main i Strategic.
-            hidden: ({ document }) => document?.tier !== 'main' && document?.tier !== 'strategic',
+            hidden: ({ document }) => document?.tier !== 'main' && document?.tier !== 'strategic' && document?.tier !== 'club100',
         }),
         defineField({
             name: 'backgroundImage',

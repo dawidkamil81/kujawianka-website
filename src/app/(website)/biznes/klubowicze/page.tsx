@@ -28,7 +28,7 @@ export default async function KlubowiczePage() {
                     <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
                         Lokalny Biznes
                     </span>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white font-montserrat drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
                         Klub <span className="text-emerald-500">Biznesu</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl text-center text-sm md:text-base font-medium leading-relaxed">

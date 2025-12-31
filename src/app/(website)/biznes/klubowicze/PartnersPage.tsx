@@ -50,7 +50,7 @@ export default function PartnersPage({ members }: { members: Sponsor[] }) {
     return (
         <div className="flex flex-col gap-24">
 
-            {/* === KORZYŚCI (BENEFITS) === */}
+            {/* === KORZYŚCI (BENEFITS) - BEZ ANIMACJI === */}
             <section>
                 <div className="flex items-center gap-4 mb-12">
                     <h3 className="text-2xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-emerald-500">
@@ -61,12 +61,8 @@ export default function PartnersPage({ members }: { members: Sponsor[] }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {benefits.map((benefit, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
                             className="flex flex-col p-8 rounded-3xl bg-[#121212] border border-white/10 hover:border-emerald-500/30 hover:bg-white/5 transition-all duration-300 group"
                         >
                             <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-emerald-500 mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors shadow-lg">
@@ -78,7 +74,7 @@ export default function PartnersPage({ members }: { members: Sponsor[] }) {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 {benefit.description}
                             </p>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </section>

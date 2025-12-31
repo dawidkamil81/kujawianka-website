@@ -24,13 +24,11 @@ export default async function KadraPage() {
 
     // 3. Renderujemy
     return (
-        // === TŁO I GŁÓWNY WRAPPER (Identyczne jak w NewsPage) ===
-        //rgba(141,16,16,0.05)
-        //#1a1a1a_100%
+        // === TŁO I GŁÓWNY WRAPPER ===
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
         bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]">
 
-            {/* Ozdobny particle (Identyczny jak w NewsPage) */}
+            {/* Ozdobny particle */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
             bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]" />
 
@@ -60,8 +58,8 @@ export default async function KadraPage() {
                                 <div className="h-[1px] flex-grow bg-white/10"></div>
                             </div>
 
-                            {/* Grid Kart - (Zachowano zmniejszone karty z poprzedniego kroku) */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {/* Grid Kart - Zmiana na grid-cols-2 na mobile i mniejszy gap */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                                 {groupPlayers.map((player) => (
                                     <div
                                         key={player._id}
@@ -75,7 +73,7 @@ export default async function KadraPage() {
                                                     alt={`${player.name} ${player.surname}`}
                                                     fill
                                                     className="object-cover group-hover:scale-105 transition-all duration-500"
-                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
+                                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-white/10">
@@ -84,32 +82,33 @@ export default async function KadraPage() {
                                             )}
                                         </div>
 
-                                        {/* POZYCJA (Badge mniejszy) */}
-                                        <div className="absolute top-3 right-3 z-10">
-                                            <span className="px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white bg-black/50 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
+                                        {/* POZYCJA (Badge mniejszy i dopasowany) */}
+                                        <div className="absolute top-2 right-2 md:top-3 md:right-3 z-10">
+                                            <span className="px-2 py-0.5 md:px-2.5 text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-white bg-black/50 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
                                                 {player.position}
                                             </span>
                                         </div>
 
-                                        {/* PASEK DOLNY (Mniejszy padding) */}
+                                        {/* PASEK DOLNY */}
                                         <div className="absolute bottom-0 left-0 w-full z-20">
                                             <div className="absolute inset-0 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md border-t border-white/10" />
 
-                                            <div className="relative p-3 flex items-center justify-between">
+                                            {/* Zmniejszony padding na mobile (p-2 vs p-3) */}
+                                            <div className="relative p-2 md:p-3 flex items-center justify-between">
                                                 <div className="flex flex-col">
-                                                    {/* Nazwisko */}
-                                                    <h3 className="text-base font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-1">
+                                                    {/* Nazwisko - mniejsza czcionka na mobile */}
+                                                    <h3 className="text-sm md:text-base font-bold text-white uppercase font-montserrat leading-none group-hover:text-gray-300 transition-all duration-300 group-hover:translate-x-1 truncate max-w-[80px] sm:max-w-none">
                                                         {player.surname}
                                                     </h3>
                                                     {/* Imię */}
-                                                    <p className="text-[10px] font-medium text-gray-200 uppercase tracking-wide mt-0.5 transition-all duration-300 group-hover:translate-x-1">
+                                                    <p className="text-[9px] md:text-[10px] font-medium text-gray-200 uppercase tracking-wide mt-0.5 transition-all duration-300 group-hover:translate-x-1 truncate">
                                                         {player.name}
                                                     </p>
                                                 </div>
 
                                                 <div className="flex items-center justify-center">
-                                                    {/* Numer */}
-                                                    <span className="text-2xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
+                                                    {/* Numer - mniejsza czcionka na mobile */}
+                                                    <span className="text-xl md:text-2xl font-black text-white/30 font-montserrat group-hover:text-white transition-colors duration-300">
                                                         {player.number}
                                                     </span>
                                                 </div>

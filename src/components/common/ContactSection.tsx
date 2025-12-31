@@ -51,7 +51,8 @@ export default function ContactSection({
                                         Adres Klubu
                                     </strong>
                                     <span className="text-lg font-bold text-white font-montserrat">
-                                        ul. Sportowa 1, Izbica Kujawska
+                                        {/* ZMIANA: Łamanie linii na mobile */}
+                                        ul. Sportowa 1a, <br className="md:hidden" /> Izbica Kujawska, 87-865
                                     </span>
                                 </div>
                             </li>
@@ -61,13 +62,14 @@ export default function ContactSection({
                                 <div className="p-3 rounded-xl bg-[#121212] border border-white/10 text-emerald-500 group-hover:text-white group-hover:bg-emerald-600 transition-colors shadow-lg">
                                     <Mail size={24} />
                                 </div>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col overflow-hidden">
                                     <strong className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1 group-hover:text-gray-300 transition-colors">
                                         E-mail
                                     </strong>
-                                    <a href="mailto:biznes@kujawianka.pl" className="text-lg font-bold text-white font-montserrat hover:text-emerald-400 transition-colors flex items-center gap-2">
-                                        biznes@kujawianka.pl
-                                        <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" />
+                                    {/* ZMIANA: text-sm na mobile, text-lg na desktop + break-all */}
+                                    <a href="mailto:kujawiankaizbicakujawska@gmail.com" className="text-sm md:text-lg font-bold text-white font-montserrat hover:text-emerald-400 transition-colors flex items-center gap-2 break-all md:break-normal">
+                                        kujawiankaizbicakujawska@gmail.com
+                                        <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 shrink-0 hidden md:block" />
                                     </a>
                                 </div>
                             </li>
@@ -81,8 +83,8 @@ export default function ContactSection({
                                     <strong className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1 group-hover:text-gray-300 transition-colors">
                                         Telefon
                                     </strong>
-                                    <a href="tel:+48123456789" className="text-lg font-bold text-white font-montserrat hover:text-emerald-400 transition-colors">
-                                        +48 123 456 789
+                                    <a href="tel:+48665426757" className="text-lg font-bold text-white font-montserrat hover:text-emerald-400 transition-colors">
+                                        +48 665 426 757
                                     </a>
                                 </div>
                             </li>

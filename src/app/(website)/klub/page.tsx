@@ -1,7 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, Users, Calendar, Trees, Shield } from "lucide-react";
+import {
+    MapPin,
+    Users,
+    Calendar,
+    Trees,
+    Shield,
+    Trophy,
+    Star,
+    Medal,
+    Phone,
+    Mail,
+    User,
+    Briefcase
+} from "lucide-react";
 
 export default function ClubPage() {
     return (
@@ -25,7 +38,7 @@ export default function ClubPage() {
                     <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
                         Tradycja • Pasja • Wspólnota
                     </span>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
                         Kujawianka <span className="text-emerald-500">Izbica Kujawska</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl text-center text-sm md:text-base font-medium">
@@ -35,7 +48,7 @@ export default function ClubPage() {
 
                 {/* === SEKCJA 1: O KLUBIE === */}
                 <motion.section
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32"
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32 border-b border-white/5 pb-20"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
@@ -57,7 +70,7 @@ export default function ClubPage() {
                                 <strong className="text-white">Kujawianka</strong> to nie tylko klub piłkarski, to wieloletnia tradycja, która od lat stanowi serce naszej lokalnej społeczności. Naszym celem jest nieustanny rozwój młodych talentów, promocja zdrowego ducha rywalizacji oraz integracja mieszkańców poprzez wspólną, nierozerwalną pasję do futbolu.
                             </p>
                             <p>
-                                Klub został założony z miłości do piłki nożnej i z ideą, że sport to nie tylko wynik na tablicy, ale przede wszystkim przyjaźń, szacunek i ciężka praca zespołowa. Dziś Kujawianka to wielka rodzina — zawodnicy, trenerzy, oddani kibice i wolontariusze, którzy wspólnie tworzą niepowtarzalną atmosferę.
+                                W miejscowości działa Miejsko-Gminny Klub Sportowy "Kujawianka", założony w 1949 r. Klub w sezonie 2015/16 występował w III lidze, gr. kujawsko-pomorsko-wielkopolskiej. Aktualnie (sezon 2023/2024) występuje w IV lidze, gr. kujawsko-pomorskiej.
                             </p>
                         </div>
                     </div>
@@ -77,9 +90,60 @@ export default function ClubPage() {
                     </div>
                 </motion.section>
 
-                {/* === SEKCJA 2: STADION === */}
+                {/* === SEKCJA 2: OSIĄGNIĘCIA (Nowa) === */}
                 <motion.section
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                    className="mb-32"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    viewport={{ once: true }}
+                >
+                    <div className="flex flex-col items-center text-center mb-12">
+                        <div className="p-3 bg-yellow-500/10 rounded-full mb-4 border border-yellow-500/20">
+                            <Trophy className="text-yellow-500" size={32} />
+                        </div>
+                        <h2 className="text-3xl font-black text-white uppercase font-montserrat tracking-tight mb-2">
+                            Sukcesy i <span className="text-yellow-500">Osiągnięcia</span>
+                        </h2>
+                        <div className="h-1 w-20 bg-yellow-500 rounded-full" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Karta 1 */}
+                        <div className="p-8 rounded-3xl bg-[#121212] border border-white/5 hover:border-yellow-500/30 transition-all group text-center relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 blur-[40px] rounded-full group-hover:bg-yellow-500/10 transition-colors" />
+                            <Star className="text-yellow-500 mx-auto mb-4 group-hover:scale-110 transition-transform" size={40} />
+                            <h3 className="text-xl font-bold text-white mb-2">III Liga Polska</h3>
+                            <p className="text-gray-400 text-sm">
+                                Historyczny awans i występy w sezonie 2015/2016 (gr. kujawsko-pomorsko-wielkopolska).
+                            </p>
+                        </div>
+
+                        {/* Karta 2 */}
+                        <div className="p-8 rounded-3xl bg-[#121212] border border-white/5 hover:border-yellow-500/30 transition-all group text-center relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 blur-[40px] rounded-full group-hover:bg-yellow-500/10 transition-colors" />
+                            <Medal className="text-yellow-500 mx-auto mb-4 group-hover:scale-110 transition-transform" size={40} />
+                            <h3 className="text-xl font-bold text-white mb-2">75 Lat Tradycji</h3>
+                            <p className="text-gray-400 text-sm">
+                                Nieprzerwana działalność sportowa od 1949 roku, kształtująca pokolenia sportowców.
+                            </p>
+                        </div>
+
+                        {/* Karta 3 */}
+                        <div className="p-8 rounded-3xl bg-[#121212] border border-white/5 hover:border-yellow-500/30 transition-all group text-center relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 blur-[40px] rounded-full group-hover:bg-yellow-500/10 transition-colors" />
+                            <Trophy className="text-yellow-500 mx-auto mb-4 group-hover:scale-110 transition-transform" size={40} />
+                            <h3 className="text-xl font-bold text-white mb-2">Puchar Polski</h3>
+                            <p className="text-gray-400 text-sm">
+                                Wielokrotny zdobywca Pucharu Polski na szczeblu okręgowym i wojewódzkim.
+                            </p>
+                        </div>
+                    </div>
+                </motion.section>
+
+                {/* === SEKCJA 3: STADION === */}
+                <motion.section
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32 border-b border-white/5 pb-20"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
@@ -155,6 +219,41 @@ export default function ClubPage() {
                         </div>
                     </div>
                 </motion.section>
+
+                {/* === SEKCJA 4: ZARZĄD (Nowa) === */}
+                <motion.section
+                    className="mb-32"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    viewport={{ once: true }}
+                >
+                    <div className="flex flex-col items-center text-center mb-12">
+                        <div className="p-3 bg-blue-500/10 rounded-full mb-4 border border-blue-500/20">
+                            <Briefcase className="text-blue-500" size={32} />
+                        </div>
+                        <h2 className="text-3xl font-black text-white uppercase font-montserrat tracking-tight mb-2">
+                            Władze <span className="text-blue-500">Klubu</span>
+                        </h2>
+                        <div className="h-1 w-20 bg-blue-500 rounded-full" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {/* Członek Zarządu 1 */}
+                        {['Prezes Zarządu', 'Wiceprezes', 'Skarbnik', 'Sekretarz'].map((role, idx) => (
+                            <div key={idx} className="p-6 rounded-2xl bg-[#121212] border border-white/5 hover:border-blue-500/30 transition-colors group flex flex-col items-center text-center">
+                                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <User className="text-gray-400 group-hover:text-blue-500 transition-colors" size={40} />
+                                </div>
+                                <h4 className="text-lg font-bold text-white mb-1">Jan Kowalski</h4>
+                                <p className="text-sm font-bold uppercase tracking-wider text-blue-500">{role}</p>
+                            </div>
+                        ))}
+                    </div>
+                </motion.section>
+
+                {/* === SEKCJA 5: KONTAKT (Nowa) === */}
+
 
             </div>
         </main>

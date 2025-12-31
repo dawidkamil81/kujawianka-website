@@ -15,7 +15,7 @@ interface MatchCenterProps {
 // Stała nazwa naszej drużyny do wykrywania lokalizacji
 const CLUB_NAME_PART = "Kujawianka Izbica";
 
-// --- 1. KOMPONENT TIMERA Z OBSŁUGĄ BRAKU DATY ---
+// --- 1. KOMPONENT TIMERA ---
 const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
     const calculateTimeLeft = () => {
         if (!targetDate) return null;
@@ -46,37 +46,36 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
     const TimeBox = ({ value, label }: { value: number | string; label: string }) => (
         <div className="flex flex-col items-center gap-1">
             <div className="relative group">
-                <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm shadow-lg group-hover:border-club-green/50 group-hover:shadow-[0_0_15px_rgba(23,65,53,0.3)] transition-all duration-300">
-                    <span className="text-2xl md:text-3xl font-black text-white font-montserrat tracking-tighter">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm shadow-lg group-hover:border-club-green/50 group-hover:shadow-[0_0_15px_rgba(23,65,53,0.3)] transition-all duration-300">
+                    <span className="text-lg sm:text-2xl md:text-3xl font-black text-white font-montserrat tracking-tighter">
                         {value}
                     </span>
                 </div>
             </div>
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</span>
+            <span className="text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest">{label}</span>
         </div>
     );
 
-    // Jeśli brak daty, wyświetlamy znaki zapytania
     if (!timeLeft) {
         return (
-            <div className="flex items-start gap-3 md:gap-4">
+            <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
                 <TimeBox value="??" label="Dni" />
-                <div className="text-2xl font-bold text-white/20 mt-3">:</div>
+                <div className="text-xl sm:text-2xl font-bold text-white/20 mt-2 sm:mt-3">:</div>
                 <TimeBox value="??" label="Godz" />
-                <div className="text-2xl font-bold text-white/20 mt-3">:</div>
+                <div className="text-xl sm:text-2xl font-bold text-white/20 mt-2 sm:mt-3">:</div>
                 <TimeBox value="??" label="Min" />
             </div>
         );
     }
 
     return (
-        <div className="flex items-start gap-3 md:gap-4">
+        <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
             <TimeBox value={format(timeLeft.dni)} label="Dni" />
-            <div className="text-2xl font-bold text-white/20 mt-3">:</div>
+            <div className="text-xl sm:text-2xl font-bold text-white/20 mt-2 sm:mt-3">:</div>
             <TimeBox value={format(timeLeft.godziny)} label="Godz" />
-            <div className="text-2xl font-bold text-white/20 mt-3">:</div>
+            <div className="text-xl sm:text-2xl font-bold text-white/20 mt-2 sm:mt-3">:</div>
             <TimeBox value={format(timeLeft.minuty)} label="Min" />
-            <div className="text-2xl font-bold text-white/20 mt-3">:</div>
+            <div className="text-xl sm:text-2xl font-bold text-white/20 mt-2 sm:mt-3">:</div>
             <TimeBox value={format(timeLeft.sekundy)} label="Sek" />
         </div>
     );
@@ -84,12 +83,11 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
 
 // Helper do sprawdzania lokalizacji (Dom/Wyjazd)
 const getLocation = (match: Match) => {
-    // Sprawdzamy czy nazwa gospodarza zawiera "Kujawianka Izbica"
     if (match.homeTeam.includes(CLUB_NAME_PART)) return "Dom";
     return "Wyjazd";
 };
 
-// --- 2. KARTA OSTATNIEGO MECZU (POPRAWIONA) ---
+// --- 2. KARTA OSTATNIEGO MECZU ---
 const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: string) => string }) => {
     const formattedDate = match.date
         ? new Date(match.date).toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" })
@@ -102,14 +100,12 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0" />
             <div className="relative z-10 p-5 flex flex-col items-center justify-center">
 
-                {/* Kolejka */}
                 <div className="mb-4 text-center">
                     <span className="text-[10px] font-bold text-club-green uppercase tracking-wider border border-club-green/20 px-3 py-1 rounded-full bg-club-green/5">
                         Kolejka {match.round}
                     </span>
                 </div>
 
-                {/* Drużyny i Wynik */}
                 <div className="w-full flex items-center justify-between gap-2 mb-4">
                     <div className="flex flex-col items-center w-1/3">
                         <div className="relative w-14 h-14 mb-2 transition-transform duration-500 group-hover/last:scale-110">
@@ -136,13 +132,11 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
                     </div>
                 </div>
 
-                {/* Data i Lokalizacja - OBOK SIEBIE */}
                 <div className="w-full pt-3 border-t border-white/5 flex items-center justify-center gap-4 text-center">
                     <div className="flex items-center gap-2 text-gray-400">
                         <Calendar size={14} className="text-club-green" />
                         <span className="text-xs font-medium uppercase tracking-wide">{formattedDate}</span>
                     </div>
-                    {/* Lokalizacja bez kolorów, obok daty */}
                     <div className="flex items-center gap-2 text-gray-400">
                         <MapPin size={14} className="text-club-green/60" />
                         <span className="text-xs font-medium uppercase tracking-wide">
@@ -172,7 +166,6 @@ export default function MatchCenter({ nextMatch, lastMatches, teams }: MatchCent
         };
     };
 
-    // Helper dla następnego meczu (lokalizacja)
     const nextMatchLocation = nextMatch ? getLocation(nextMatch) : null;
     const formattedNextDate = nextMatch ? formatNextMatchDate(nextMatch.date) : null;
 
@@ -200,30 +193,51 @@ export default function MatchCenter({ nextMatch, lastMatches, teams }: MatchCent
                         <div className="absolute inset-0 bg-gradient-to-br from-club-green/5 via-transparent to-black z-0" />
 
                         {nextMatch ? (
-                            <div className="relative z-10 p-6 md:p-10 flex flex-col items-center justify-center h-full min-h-[450px]">
+                            <div className="relative z-10 p-6 md:p-10 flex flex-col items-center justify-center h-full min-h-[400px]">
                                 <div className="flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
                                     <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">Najbliższe spotkanie</span>
                                 </div>
-                                <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-12 mb-10">
-                                    <div className="flex flex-col items-center gap-4">
-                                        <div className="relative w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_25px_rgba(23,65,53,0.4)] transition-transform duration-500 group-hover:scale-110">
+
+                                {/* DRUŻYNY i VS */}
+                                <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-12 mb-8">
+
+                                    {/* Gospodarz */}
+                                    <div className="flex flex-col items-center gap-3 md:gap-4">
+                                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 drop-shadow-[0_0_25px_rgba(23,65,53,0.4)] transition-transform duration-500 group-hover:scale-110">
                                             <Image src={getLogo(nextMatch.homeTeam)} alt={nextMatch.homeTeam} fill className="object-contain" />
                                         </div>
-                                        <h3 className="text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[180px]">{nextMatch.homeTeam}</h3>
+                                        <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[120px] md:max-w-[180px]">
+                                            {nextMatch.homeTeam}
+                                        </h3>
                                     </div>
-                                    <div className="flex flex-col items-center justify-center relative">
+
+                                    {/* Środek: VS + Timer (TYLKO DESKTOP) */}
+                                    <div className="flex flex-col items-center justify-center relative min-w-[50px] md:min-w-0">
                                         <span className="text-4xl md:text-6xl font-black text-white/10 font-montserrat absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 select-none">VS</span>
-                                        <div className="mt-16 md:mt-20 scale-90 md:scale-100">
+
+                                        {/* Timer widoczny TYLKO na desktopie (md:block) - tak jak w oryginale */}
+                                        <div className="hidden md:block mt-20 scale-100">
                                             <CountdownTimer targetDate={nextMatch.date} />
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-center gap-4">
-                                        <div className="relative w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 group-hover:scale-110">
+
+                                    {/* Gość */}
+                                    <div className="flex flex-col items-center gap-3 md:gap-4">
+                                        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 group-hover:scale-110">
                                             <Image src={getLogo(nextMatch.awayTeam)} alt={nextMatch.awayTeam} fill className="object-contain" />
                                         </div>
-                                        <h3 className="text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[180px]">{nextMatch.awayTeam}</h3>
+                                        <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[120px] md:max-w-[180px]">
+                                            {nextMatch.awayTeam}
+                                        </h3>
                                     </div>
                                 </div>
+
+                                {/* Timer widoczny TYLKO na mobile (md:hidden) - poniżej drużyn */}
+                                <div className="md:hidden mb-8 scale-95">
+                                    <CountdownTimer targetDate={nextMatch.date} />
+                                </div>
+
+                                {/* Info na dole */}
                                 <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/10 pt-6">
                                     <div className="flex items-center justify-center gap-3 text-gray-400">
                                         <Shield size={18} className="text-club-green" />
