@@ -7,7 +7,7 @@ import {
   HOMEPAGE_RESULTS_QUERY,
   MATCH_CENTER_QUERY // <--- Importujemy nowe zapytanie
 } from "@/sanity/lib/queries";
-import Home from "@/components/home/Home";
+import Home from "@/components/Home/HomePage";
 
 export default async function Page() {
   // Dodajemy MATCH_CENTER_QUERY do Promise.all
