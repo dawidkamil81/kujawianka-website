@@ -1,5 +1,4 @@
-// src/app/(website)/aktualnosci/[slug]/page.tsx
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import { SINGLE_NEWS_QUERY } from "@/sanity/lib/queries";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -52,7 +51,10 @@ type Props = {
 
 export default async function NewsArticlePage({ params }: Props) {
     const { slug } = await params;
-    const news = await client.fetch(SINGLE_NEWS_QUERY, { slug });
+    const { data: news } = await sanityFetch({
+        query: SINGLE_NEWS_QUERY,
+        params: { slug }
+    });
 
     if (!news) {
         notFound();

@@ -1,4 +1,4 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import { ALL_PLAYERS_QUERY } from "@/sanity/lib/queries";
 import { Player } from "@/types";
 import Image from "next/image";
@@ -17,7 +17,7 @@ function groupPlayersByPosition(players: Player[]) {
 
 export default async function KadraPage() {
     // 1. Pobieramy wszystkich z Sanity
-    const players = await client.fetch<Player[]>(ALL_PLAYERS_QUERY);
+    const { data: players } = await sanityFetch({ query: ALL_PLAYERS_QUERY });
 
     // 2. Grupujemy ich wg pozycji
     const squad = groupPlayersByPosition(players);
