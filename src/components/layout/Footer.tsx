@@ -7,10 +7,10 @@ import { Facebook, Instagram, Mail, MapPin, Phone, ArrowRight, Shield } from "lu
 export default function Footer() {
     const navItems = [
         { name: "Aktualności", href: "/aktualnosci" },
-        { name: "Wyniki meczów", href: "/wyniki" },
-        { name: "Kadra zespołu", href: "/kadra" },
+        { name: "Wyniki i tabela", href: "/wyniki/seniorzy" },
+        { name: "Kadra zespołu", href: "/druzyny/seniorzy" },
         { name: "Dokumenty do pobrania", href: "/do-pobrania" },
-        { name: "Współpraca / Biznes", href: "/biznes/oferta" },
+        { name: "Współpraca", href: "/biznes/oferta" },
         { name: "Przekaż 1.5%", href: "/wesprzyj" },
     ];
 
