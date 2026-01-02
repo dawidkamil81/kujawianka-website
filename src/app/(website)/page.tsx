@@ -1,5 +1,5 @@
-// ZMIEŃ IMPORT: zamiast z client.ts, importuj z live.ts
-import { sanityFetch } from "@/sanity/lib/live";
+// src/app/(website)/page.tsx
+import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU (zamiast client)
 import {
   HOMEPAGE_PLAYERS_QUERY,
   HOMEPAGE_NEWS_QUERY,
@@ -10,8 +10,8 @@ import {
 import Home from "@/components/Home/HomePage";
 
 export default async function Page() {
-  // ZMIEŃ SPOSÓB POBIERANIA DANYCH
-  // sanityFetch zwraca obiekt { data: ... }, więc musimy się do niego dostać
+  // 2. ZMIANA POBIERANIA DANYCH na sanityFetch
+  // Zwróć uwagę, że sanityFetch zwraca obiekt { data: ... }
   const [players, news, sponsors, resultsData, matchCenterData] = await Promise.all([
     sanityFetch({ query: HOMEPAGE_PLAYERS_QUERY }),
     sanityFetch({ query: HOMEPAGE_NEWS_QUERY }),
@@ -22,11 +22,13 @@ export default async function Page() {
 
   return (
     <Home
-      players={players.data}       // <-- Dodaj .data
-      news={news.data}             // <-- Dodaj .data
-      sponsors={sponsors.data}     // <-- Dodaj .data
-      resultsData={resultsData.data} // <-- Dodaj .data
-      matchCenterData={matchCenterData.data} // <-- Dodaj .data
+      // 3. PRZEKAZANIE DANYCH Z .data
+      // Musisz dopisać .data, ponieważ sanityFetch zwraca opakowany wynik
+      players={players.data}
+      news={news.data}
+      sponsors={sponsors.data}
+      resultsData={resultsData.data}
+      matchCenterData={matchCenterData.data}
     />
   );
 }
