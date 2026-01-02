@@ -1,4 +1,4 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live"; // <--- ZMIANA 1: Import z live.ts zamiast client.ts
 import { defineQuery } from "next-sanity";
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";
@@ -27,9 +27,13 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function NewsPage() {
-    const newsList = await client.fetch<NewsItem[]>(NEWS_PAGE_QUERY);
-    const highlightedNews = newsList.filter((item) => item.isHighlighted === true);
-    const otherNews = newsList.filter((item) => item.isHighlighted !== true);
+    // <--- ZMIANA 2: Użycie sanityFetch i wyciągnięcie 'data'
+    // Dzięki temu Next.js wie, że ma nasłuchiwać zmian w czasie rzeczywistym
+    const { data: newsList } = await sanityFetch({ query: NEWS_PAGE_QUERY });
+
+    // Poniższa logika pozostaje bez zmian, ponieważ 'newsList' zawiera teraz te same dane co wcześniej
+    const highlightedNews = newsList.filter((item: NewsItem) => item.isHighlighted === true);
+    const otherNews = newsList.filter((item: NewsItem) => item.isHighlighted !== true);
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
@@ -67,9 +71,8 @@ export default async function NewsPage() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {otherNews.map((item) => (
+                    {otherNews.map((item: NewsItem) => (
                         <div key={item._id} className="h-full">
-                            {/* === POPRAWIONE WYWOŁANIE === */}
                             <NewsCard
                                 title={item.title}
                                 slug={typeof item.slug === 'string' ? item.slug : (item.slug as any)?.current || ""}
