@@ -1,17 +1,19 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU
 import { ALL_SPONSORS_QUERY } from "@/sanity/lib/queries";
 import { Sponsor } from "@/types/index";
 import Club100List from "./Club100List";
 
-export const dynamic = 'force-dynamic'; // Opcjonalnie: wymusza świeże dane przy każdym wejściu
+// export const dynamic = 'force-dynamic'; // <--- Można usunąć przy użyciu sanityFetch
 
 export default async function Club100Page() {
-    // 1. Pobieramy WSZYSTKICH (Sponsorzy + Klubowicze)
-    const allEntities = await client.fetch<Sponsor[]>(ALL_SPONSORS_QUERY);
+    // 1. Pobieramy WSZYSTKICH (Sponsorzy + Klubowicze) przy użyciu Live API
+    // Destrukturyzujemy 'data' i zmieniamy nazwę na 'allEntities'
+    const { data: allEntities } = await sanityFetch({ query: ALL_SPONSORS_QUERY });
 
     // 2. Filtrujemy: Wybieramy tylko tych z rangą "club100"
-    const clubMembers = allEntities.filter(
-        (entity) => entity.tier === "club100"
+    // Dodajemy zabezpieczenie (allEntities || []) na wypadek braku danych
+    const clubMembers = (allEntities || []).filter(
+        (entity: Sponsor) => entity.tier === "club100"
     );
 
     return (

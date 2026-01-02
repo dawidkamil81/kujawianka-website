@@ -1,4 +1,5 @@
 import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import { DOWNLOADS_QUERY } from "@/sanity/lib/queries";
 import { FileText, Download, HardDrive, Calendar } from "lucide-react";
 import Link from "next/link";
@@ -21,7 +22,8 @@ export const metadata = {
 };
 
 export default async function DownloadsPage() {
-    const files = await client.fetch(DOWNLOADS_QUERY);
+    // const files = await client.fetch(DOWNLOADS_QUERY);
+    const { data: files } = await sanityFetch({ query: DOWNLOADS_QUERY });
 
     // Grupowanie
     const categories = {

@@ -1,15 +1,15 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import { ALL_SPONSORS_QUERY } from "@/sanity/lib/queries";
 import { Sponsor } from "@/types/index";
 import PartnersPage from "./PartnersPage";
 
 export default async function KlubowiczePage() {
     // 1. Pobieramy WSZYSTKICH (Sponsorzy + Klubowicze)
-    const allEntities = await client.fetch<Sponsor[]>(ALL_SPONSORS_QUERY);
+    const { data: allEntities } = await sanityFetch({ query: ALL_SPONSORS_QUERY });
 
     // 2. Filtrujemy: Wybieramy tylko tych, którzy są "Klubowiczami" (tier == 'partner')
-    const clubMembers = allEntities.filter(
-        (entity) => entity.tier === "partner"
+    const clubMembers = (allEntities || []).filter(
+        (entity: Sponsor) => entity.tier === "partner"
     );
 
     return (

@@ -1,11 +1,12 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU
 import { ALL_SPONSORS_QUERY } from "@/sanity/lib/queries";
 import { Sponsor } from "@/types/index";
 import SponsorsPage from "./SponsorsPage";
 
 export default async function Sponsors() {
-    // 1. Pobieramy dane z bazy
-    const sponsors = await client.fetch<Sponsor[]>(ALL_SPONSORS_QUERY);
+    // 1. Pobieramy dane z bazy korzystając z Live API
+    // Destrukturyzujemy { data } i przypisujemy alias 'sponsors'
+    const { data: sponsors } = await sanityFetch({ query: ALL_SPONSORS_QUERY });
 
     return (
         // === GŁÓWNY WRAPPER (Identyczne tło jak wszędzie) ===
@@ -32,7 +33,8 @@ export default async function Sponsors() {
                 </div>
 
                 {/* === KOMPONENT KLIENTSKI === */}
-                <SponsorsPage sponsors={sponsors} />
+                {/* Przekazujemy dane z Live API (zabezpieczenie || [] na wypadek braku danych) */}
+                <SponsorsPage sponsors={sponsors || []} />
 
             </div>
         </main>
