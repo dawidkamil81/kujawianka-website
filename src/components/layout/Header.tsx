@@ -26,23 +26,20 @@ export default function Header() {
         return pathname?.startsWith(path);
     };
 
-    // === WSPÓLNA LOGIKA STYLÓW (POPRAWIONA) ===
+    // === ZMIANA 1: Zmiana breakpointów w klasach CSS (md -> lg) ===
     const getVisualClasses = (path: string) => {
         const active = isActive(path);
 
-        // ZMIANA: Zamiast text-white/60 używamy opacity-60.
-        // Dzięki temu 'color: inherit' z globals.css nie blokuje przygaszenia.
-        // Dodatkowo text-white jest zawsze ustawiony, sterujemy tylko jego widocznością.
         const visualState = active
             ? "opacity-100"
             : "opacity-60 hover:opacity-100";
 
+        // ZMIANA: md:w-auto -> lg:w-auto, md:py-2 -> lg:py-2
         const baseClasses = `
-            relative flex items-center justify-center gap-1 w-full py-4 font-semibold md:w-auto md:py-2 
+            relative flex items-center justify-center gap-1 w-full py-4 font-semibold lg:w-auto lg:py-2 
             text-white transition-all duration-300 ${visualState}
         `;
 
-        // Podkreślenie (bez zmian)
         const underlineClasses = `
             after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] 
             after:bg-white after:transition-transform after:duration-300 after:origin-bottom-right 
@@ -54,6 +51,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md shadow-lg text-white">
+            {/* ZMIANA: md:px-8 -> lg:px-8 (opcjonalnie, można zostawić md dla paddingu) */}
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
 
                 {/* Logo */}
@@ -67,14 +65,15 @@ export default function Header() {
                             priority
                         />
                     </div>
-                    <h1 className="text-sm font-bold uppercase tracking-wide md:text-xl text-white drop-shadow-sm">
+                    {/* ZMIANA: md:text-xl -> lg:text-xl (żeby na tablecie tekst nie był za duży) */}
+                    <h1 className="text-sm font-bold uppercase tracking-wide md:text-lg lg:text-xl text-white drop-shadow-sm">
                         Kujawianka Izbica Kujawska
                     </h1>
                 </Link>
 
-                {/* Hamburger (Mobilny) */}
+                {/* Hamburger (Mobilny) - ZMIANA: md:hidden -> lg:hidden */}
                 <button
-                    className="flex p-2 text-white/80 hover:text-white md:hidden hover:bg-white/10 rounded-lg transition-colors"
+                    className="flex p-2 text-white/80 hover:text-white lg:hidden hover:bg-white/10 rounded-lg transition-colors"
                     onClick={toggleMenu}
                     aria-label={isMenuOpen ? "Zamknij menu" : "Otwórz menu"}
                 >
@@ -82,17 +81,13 @@ export default function Header() {
                 </button>
 
                 {/* Nawigacja */}
+                {/* ZMIANA: Wszystkie prefiksy md: zamienione na lg: */}
                 <nav
                     className={`
-                        absolute left-0 top-full w-full flex-col bg-[#174135] md:bg-transparent border-b border-white/10 md:border-none transition-all duration-300 md:static md:flex md:w-auto md:flex-row md:items-center md:gap-6 md:p-0
-                        ${isMenuOpen ? "flex opacity-100 visible shadow-xl" : "hidden opacity-0 invisible md:flex md:opacity-100 md:visible md:shadow-none"}
+                        absolute left-0 top-full w-full flex-col bg-[#174135] lg:bg-transparent border-b border-white/10 lg:border-none transition-all duration-300 lg:static lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:p-0
+                        ${isMenuOpen ? "flex opacity-100 visible shadow-xl" : "hidden opacity-0 invisible lg:flex lg:opacity-100 lg:visible lg:shadow-none"}
                     `}
                 >
-                    {/* Strona główna */}
-                    {/* <Link href="/" className={getVisualClasses("/")} onClick={closeMenu}>
-                        Strona główna
-                    </Link> */}
-
                     {/* Aktualności */}
                     <Link href="/aktualnosci" className={getVisualClasses("/aktualnosci")} onClick={closeMenu}>
                         Aktualności
@@ -100,9 +95,10 @@ export default function Header() {
 
                     {/* Dropdown: Drużyny */}
                     <div
-                        className="relative w-full md:w-auto text-center group"
-                        onMouseEnter={() => window.innerWidth >= 768 && setOpenDropdown("teams")}
-                        onMouseLeave={() => window.innerWidth >= 768 && setOpenDropdown(null)}
+                        className="relative w-full lg:w-auto text-center group"
+                        // ZMIANA: window.innerWidth >= 1024 (zamiast 768)
+                        onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
+                        onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
                         <button
                             className={getVisualClasses("/druzyny")}
@@ -114,8 +110,8 @@ export default function Header() {
 
                         <div className={`
                             bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            md:absolute md:left-1/2 md:-translate-x-1/2 md:top-full md:mt-2 md:w-48 md:rounded-lg md:border md:border-white/10 md:shadow-xl
-                            ${openDropdown === "teams" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 md:invisible py-0"}
+                            lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
+                            ${openDropdown === "teams" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
                         `}>
                             <Link href="/druzyny/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
                             <Link href="/druzyny/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
@@ -125,9 +121,10 @@ export default function Header() {
 
                     {/* Dropdown: Wyniki */}
                     <div
-                        className="relative w-full md:w-auto text-center group"
-                        onMouseEnter={() => window.innerWidth >= 768 && setOpenDropdown("results")}
-                        onMouseLeave={() => window.innerWidth >= 768 && setOpenDropdown(null)}
+                        className="relative w-full lg:w-auto text-center group"
+                        // ZMIANA: 1024px
+                        onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
+                        onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
                         <button
                             className={getVisualClasses("/wyniki")}
@@ -139,8 +136,8 @@ export default function Header() {
 
                         <div className={`
                             bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            md:absolute md:left-1/2 md:-translate-x-1/2 md:top-full md:mt-2 md:w-48 md:rounded-lg md:border md:border-white/10 md:shadow-xl
-                            ${openDropdown === "results" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 md:invisible py-0"}
+                            lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
+                            ${openDropdown === "results" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
                         `}>
                             <Link href="/wyniki/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
                             <Link href="/wyniki/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
@@ -155,9 +152,10 @@ export default function Header() {
 
                     {/* Dropdown: Biznes */}
                     <div
-                        className="relative w-full md:w-auto text-center group"
-                        onMouseEnter={() => window.innerWidth >= 768 && setOpenDropdown("biznes")}
-                        onMouseLeave={() => window.innerWidth >= 768 && setOpenDropdown(null)}
+                        className="relative w-full lg:w-auto text-center group"
+                        // ZMIANA: 1024px
+                        onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("biznes")}
+                        onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
                         <button
                             className={getVisualClasses("/biznes")}
@@ -169,8 +167,8 @@ export default function Header() {
 
                         <div className={`
                             bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            md:absolute md:right-0 md:top-full md:mt-2 md:w-48 md:rounded-lg md:border md:border-white/10 md:shadow-xl
-                            ${openDropdown === "biznes" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 md:invisible py-0"}
+                            lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
+                            ${openDropdown === "biznes" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
                         `}>
                             <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
                             <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>

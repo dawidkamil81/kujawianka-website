@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react"; // ZMIANA: Import React dla React.Fragment
 import Image from "next/image";
-import { LeagueTable, Match, Team } from "@/types";
-import { Calendar, ChevronLeft, ChevronRight, Trophy, Minus, Check, X } from "lucide-react";
+import { Match, Team } from "@/types";
+import { Calendar, ChevronLeft, ChevronRight, Trophy, Minus, Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Definicja typu wiersza
@@ -34,29 +34,32 @@ export default function WynikiClient({ table, matches, teams }: ResultsClientPro
         return found?.logoUrl || "/l1.png";
     };
 
+    // Stan do obsługi akordeonu na mobile
+    const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+    const toggleRow = (key: string) => {
+        if (window.innerWidth >= 768) return;
+        setExpandedRow(expandedRow === key ? null : key);
+    };
+
     // 1. Logika Kolejek
     const rounds = Array.from(new Set(matches.map((m) => m.round))).sort((a, b) => a - b);
 
-    // Znajdź ostatnią "rozegraną" kolejkę (taka, gdzie są wpisane wyniki)
-    // Jeśli nie ma wyników, pokaż 1. kolejkę
     const lastPlayedRound = matches
         .filter(m => m.homeScore !== null && m.homeScore !== undefined)
         .reduce((max, m) => (m.round > max ? m.round : max), rounds[0] || 1);
 
     const [currentRound, setCurrentRound] = useState(lastPlayedRound);
 
-    // 2. Filtrowanie i Sortowanie Meczów (Kujawianka na górze)
+    // 2. Filtrowanie i Sortowanie Meczów
     const currentMatches = matches
         .filter((m) => m.round === currentRound)
         .sort((a, b) => {
             const isKujawiankaA = a.homeTeam.toLowerCase().includes("kujawianka") || a.awayTeam.toLowerCase().includes("kujawianka");
             const isKujawiankaB = b.homeTeam.toLowerCase().includes("kujawianka") || b.awayTeam.toLowerCase().includes("kujawianka");
-
-            // Jeśli A to Kujawianka, daj ją wyżej (-1)
             if (isKujawiankaA && !isKujawiankaB) return -1;
-            // Jeśli B to Kujawianka, daj A niżej (1)
             if (!isKujawiankaA && isKujawiankaB) return 1;
-            return 0; // Bez zmian
+            return 0;
         });
 
     const handleRoundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -92,36 +95,28 @@ export default function WynikiClient({ table, matches, teams }: ResultsClientPro
         });
     };
 
-    // Helper do koloru wyniku meczu (tylko dla Kujawianki)
     const getMatchScoreStyle = (match: Match) => {
         const homeName = match.homeTeam.toLowerCase();
         const awayName = match.awayTeam.toLowerCase();
         const isKujawiankaHome = homeName.includes("kujawianka");
         const isKujawiankaAway = awayName.includes("kujawianka");
 
-        // Jeśli to nie mecz Kujawianki, standardowy styl
         if (!isKujawiankaHome && !isKujawiankaAway) {
             return "bg-black/40 border-white/10 text-white";
         }
-
-        // Jeśli mecz Kujawianki, ale brak wyniku
         if (match.homeScore === null || match.homeScore === undefined) {
             return "bg-black/40 border-white/10 text-white";
         }
-
         const homeScore = match.homeScore;
         const awayScore = match.awayScore!;
 
-        // Logika wygranej/przegranej
         if (isKujawiankaHome) {
-            if (homeScore > awayScore) return "bg-green-900/40 border-green-500/50 text-green-400 shadow-[0_0_15px_rgba(74,222,128,0.1)]"; // Wygrana domu
-            if (homeScore < awayScore) return "bg-red-900/40 border-red-500/50 text-red-400 shadow-[0_0_15px_rgba(248,113,113,0.1)]";   // Przegrana domu
+            if (homeScore > awayScore) return "bg-green-900/40 border-green-500/50 text-green-400 shadow-[0_0_15px_rgba(74,222,128,0.1)]";
+            if (homeScore < awayScore) return "bg-red-900/40 border-red-500/50 text-red-400 shadow-[0_0_15px_rgba(248,113,113,0.1)]";
         } else {
-            if (awayScore > homeScore) return "bg-green-900/40 border-green-500/50 text-green-400 shadow-[0_0_15px_rgba(74,222,128,0.1)]"; // Wygrana wyjazdu
-            if (awayScore < homeScore) return "bg-red-900/40 border-red-500/50 text-red-400 shadow-[0_0_15px_rgba(248,113,113,0.1)]";   // Przegrana wyjazdu
+            if (awayScore > homeScore) return "bg-green-900/40 border-green-500/50 text-green-400 shadow-[0_0_15px_rgba(74,222,128,0.1)]";
+            if (awayScore < homeScore) return "bg-red-900/40 border-red-500/50 text-red-400 shadow-[0_0_15px_rgba(248,113,113,0.1)]";
         }
-
-        // Remis
         return "bg-gray-800/60 border-white/10 text-gray-300";
     };
 
@@ -177,19 +172,23 @@ export default function WynikiClient({ table, matches, teams }: ResultsClientPro
 
                 <div className="rounded-3xl border border-white/10 bg-[#121212] overflow-hidden shadow-2xl relative">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(23,65,53,0.1),transparent_70%)] pointer-events-none" />
-                    <div className="overflow-x-auto relative z-10">
-                        <table className="w-full text-left border-collapse min-w-[700px]">
+                    <div className="relative z-10">
+                        <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-white/5 border-b border-white/10 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                                    <th className="py-5 px-6 text-center w-16">#</th>
-                                    <th className="py-5 px-4 w-[35%]">Drużyna</th>
-                                    <th className="py-5 px-4 text-center">Mecze</th>
+                                    <th className="py-5 px-4 text-center w-12 md:w-16">#</th>
+                                    <th className="py-5 px-4 w-auto md:w-[35%]">Drużyna</th>
+
+                                    <th className="py-5 px-4 text-center hidden md:table-cell">Mecze</th>
+
                                     <th className="py-5 px-4 text-center">PKT</th>
-                                    <th className="py-5 px-4 text-center hidden sm:table-cell">Z</th>
-                                    <th className="py-5 px-4 text-center hidden sm:table-cell">R</th>
-                                    <th className="py-5 px-4 text-center hidden sm:table-cell">P</th>
+                                    <th className="py-5 px-4 text-center hidden md:table-cell">Z</th>
+                                    <th className="py-5 px-4 text-center hidden md:table-cell">R</th>
+                                    <th className="py-5 px-4 text-center hidden md:table-cell">P</th>
                                     <th className="py-5 px-4 text-center hidden md:table-cell">Bramki</th>
                                     <th className="py-5 px-4 text-center hidden md:table-cell">Forma</th>
+
+                                    <th className="py-5 px-2 w-8 md:hidden"></th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm font-medium">
@@ -197,56 +196,112 @@ export default function WynikiClient({ table, matches, teams }: ResultsClientPro
                                     const isMyTeam = row.teamName.toLowerCase().includes("kujawianka");
                                     const isPromotion = (row.position || index + 1) === 1;
                                     const isRelegation = (row.position || index + 1) > table.rows.length - 2;
+                                    const isExpanded = expandedRow === row._key;
 
                                     return (
-                                        <tr
-                                            key={row._key || index}
-                                            className={cn(
-                                                "border-b border-white/5 transition-colors group",
-                                                isPromotion ? "bg-emerald-900/50 hover:bg-emerald-900/60" :
-                                                    isRelegation ? "bg-red-900/20 hover:bg-red-900/30" :
-                                                        isMyTeam ? "bg-white/5 hover:bg-white/10" : "hover:bg-white/5",
-                                                isMyTeam ? "border-l-4 border-l-club-green" : "border-l-4 border-l-transparent"
-                                            )}
-                                        >
-                                            <td className="py-4 px-6 text-center font-black text-white/50 group-hover:text-white transition-colors">
-                                                <div className={cn(
-                                                    "w-8 h-8 flex items-center justify-center rounded-full mx-auto",
-                                                    isPromotion ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/20" :
-                                                        isRelegation ? "bg-red-800 text-white shadow-lg shadow-red-900/20" : ""
-                                                )}>
-                                                    {row.position || index + 1}
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="relative w-10 h-10 flex-shrink-0">
-                                                        <Image src={getTeamLogo(row.teamName)} alt={row.teamName} fill className="object-contain" />
-                                                    </div>
-                                                    <span className={cn(
-                                                        "text-base uppercase tracking-wide",
-                                                        isMyTeam ? "font-black text-white" : "font-bold text-gray-300"
+                                        // ZMIANA: Używamy React.Fragment z kluczem zamiast <>
+                                        <React.Fragment key={row._key || index}>
+                                            {/* GŁÓWNY WIERSZ (Usunięto key stąd) */}
+                                            <tr
+                                                onClick={() => toggleRow(row._key)}
+                                                className={cn(
+                                                    "border-b border-white/5 transition-colors group cursor-pointer md:cursor-default relative",
+                                                    isPromotion ? "bg-emerald-900/50 hover:bg-emerald-900/60" :
+                                                        isRelegation ? "bg-red-900/20 hover:bg-red-900/30" :
+                                                            isMyTeam ? "bg-white/5 hover:bg-white/10" : "hover:bg-white/5",
+                                                    isMyTeam ? "border-l-4 border-l-club-green" : "border-l-4 border-l-transparent"
+                                                )}
+                                            >
+                                                {/* POZYCJA */}
+                                                <td className="py-4 px-2 md:px-6 text-center font-black text-white/50 group-hover:text-white transition-colors">
+                                                    <div className={cn(
+                                                        "w-8 h-8 flex items-center justify-center rounded-full mx-auto",
+                                                        isPromotion ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/20" :
+                                                            isRelegation ? "bg-red-800 text-white shadow-lg shadow-red-900/20" : ""
                                                     )}>
-                                                        {row.teamName}
+                                                        {row.position || index + 1}
+                                                    </div>
+                                                </td>
+
+                                                {/* DRUŻYNA */}
+                                                <td className="py-4 px-2 md:px-4">
+                                                    <div className="flex items-center gap-3 md:gap-4">
+                                                        <div className="relative w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
+                                                            <Image src={getTeamLogo(row.teamName)} alt={row.teamName} fill className="object-contain" />
+                                                        </div>
+                                                        <span className={cn(
+                                                            "text-sm md:text-base uppercase tracking-wide truncate max-w-[140px] md:max-w-none",
+                                                            isMyTeam ? "font-black text-white" : "font-bold text-gray-300"
+                                                        )}>
+                                                            {row.teamName}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                {/* MECZE (Desktop) */}
+                                                <td className="py-4 px-4 text-center font-bold text-gray-400 text-base hidden md:table-cell">{row.matches}</td>
+
+                                                {/* PUNKTY */}
+                                                <td className="py-4 px-2 md:px-4 text-center">
+                                                    <span className={cn("text-xl font-black", isMyTeam ? "text-club-green-light" : "text-white")}>
+                                                        {row.points}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-4 text-center font-bold text-gray-400 text-base">{row.matches}</td>
-                                            <td className="py-4 px-4 text-center">
-                                                <span className={cn("text-xl font-black", isMyTeam ? "text-club-green-light" : "text-white")}>
-                                                    {row.points}
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-4 text-center text-gray-500 hidden sm:table-cell">{row.won}</td>
-                                            <td className="py-4 px-4 text-center text-gray-500 hidden sm:table-cell">{row.drawn}</td>
-                                            <td className="py-4 px-4 text-center text-gray-500 hidden sm:table-cell">{row.lost}</td>
-                                            <td className="py-4 px-4 text-center text-gray-500 hidden md:table-cell font-mono">{row.goals}</td>
-                                            <td className="py-4 px-4 hidden md:table-cell">
-                                                <div className="flex items-center justify-center gap-1.5">
-                                                    {getTeamForm(row.teamName).map((result, idx) => renderFormIcon(result, idx))}
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+
+                                                {/* STATYSTYKI (Desktop) */}
+                                                <td className="py-4 px-4 text-center text-gray-500 hidden md:table-cell">{row.won}</td>
+                                                <td className="py-4 px-4 text-center text-gray-500 hidden md:table-cell">{row.drawn}</td>
+                                                <td className="py-4 px-4 text-center text-gray-500 hidden md:table-cell">{row.lost}</td>
+                                                <td className="py-4 px-4 text-center text-gray-500 hidden md:table-cell font-mono">{row.goals}</td>
+                                                <td className="py-4 px-4 hidden md:table-cell">
+                                                    <div className="flex items-center justify-center gap-1.5">
+                                                        {getTeamForm(row.teamName).map((result, idx) => renderFormIcon(result, idx))}
+                                                    </div>
+                                                </td>
+
+                                                {/* STRZAŁKA (Mobile) */}
+                                                <td className="py-4 px-2 text-center md:hidden text-gray-500">
+                                                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                </td>
+                                            </tr>
+
+                                            {/* WIERSZ ROZWIJANY (Mobile Only) */}
+                                            {isExpanded && (
+                                                <tr className="md:hidden bg-[#0a0a0a] border-b border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                    <td colSpan={5} className="p-4">
+                                                        <div className="grid grid-cols-3 gap-4 text-xs font-bold uppercase text-gray-400 mb-4">
+                                                            <div className="flex flex-col items-center gap-1 p-2 bg-white/5 rounded-lg">
+                                                                <span className="text-[10px] tracking-widest opacity-60">Mecze</span>
+                                                                <span className="text-lg text-white">{row.matches}</span>
+                                                            </div>
+                                                            <div className="flex flex-col items-center gap-1 p-2 bg-emerald-900/10 rounded-lg border border-emerald-500/10">
+                                                                <span className="text-[10px] tracking-widest text-emerald-500">W</span>
+                                                                <span className="text-lg text-white">{row.won}</span>
+                                                            </div>
+                                                            <div className="flex flex-col items-center gap-1 p-2 bg-white/5 rounded-lg">
+                                                                <span className="text-[10px] tracking-widest opacity-60">R</span>
+                                                                <span className="text-lg text-white">{row.drawn}</span>
+                                                            </div>
+                                                            <div className="flex flex-col items-center gap-1 p-2 bg-red-900/10 rounded-lg border border-red-500/10">
+                                                                <span className="text-[10px] tracking-widest text-red-500">P</span>
+                                                                <span className="text-lg text-white">{row.lost}</span>
+                                                            </div>
+                                                            <div className="col-span-2 flex flex-col items-center gap-1 p-2 bg-white/5 rounded-lg">
+                                                                <span className="text-[10px] tracking-widest opacity-60">Bramki</span>
+                                                                <span className="text-lg text-white font-mono tracking-widest">{row.goals}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-2">
+                                                            <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">Ostatnie mecze:</span>
+                                                            <div className="flex items-center gap-2">
+                                                                {getTeamForm(row.teamName).map((result, idx) => renderFormIcon(result, idx))}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
                                     );
                                 })}
                             </tbody>
@@ -303,11 +358,10 @@ export default function WynikiClient({ table, matches, teams }: ResultsClientPro
                                         <span className="text-[11px] font-bold text-center text-gray-300 uppercase leading-tight line-clamp-2">{match.homeTeam}</span>
                                     </div>
 
-                                    {/* SEKCJA WYNIKU Z KOLOROWANIEM */}
                                     <div className="flex flex-col items-center justify-center w-[40%]">
                                         <div className={cn(
                                             "rounded-xl px-4 py-2 border backdrop-blur-md mb-2 transition-colors duration-300",
-                                            getMatchScoreStyle(match) // <- Tutaj aplikujemy dynamiczny styl
+                                            getMatchScoreStyle(match)
                                         )}>
                                             <span className="text-2xl md:text-3xl font-black font-montserrat tracking-widest whitespace-nowrap">
                                                 {match.homeScore !== null && match.homeScore !== undefined && match.awayScore !== null && match.awayScore !== undefined

@@ -31,8 +31,20 @@ export const ALL_PLAYERS_QUERY = defineQuery(`
 // ... (poprzednie importy i zapytania do zawodników)
 
 // 3. NEWSY NA STRONĘ GŁÓWNĄ (Teaser - 3 najnowsze)
+// export const HOMEPAGE_NEWS_QUERY = defineQuery(`
+//   *[_type == "news"] | order(publishedAt desc)[0...2] {
+//     _id,
+//     title,
+//     "slug": slug.current,
+//     publishedAt,
+//     excerpt,
+//     "imageUrl": mainImage.asset->url,
+//     isHighlighted
+//   }
+// `);
+
 export const HOMEPAGE_NEWS_QUERY = defineQuery(`
-  *[_type == "news"] | order(publishedAt desc)[0...2] {
+  *[_type == "news" && isHighlighted == true] | order(publishedAt desc)[0...5] {
     _id,
     title,
     "slug": slug.current,

@@ -1,9 +1,11 @@
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU
 import { RESULTS_PAGE_QUERY } from "@/sanity/lib/queries";
 import WynikiClient from "./Results";
 
 export default async function WynikiPage() {
-    const data = await client.fetch(RESULTS_PAGE_QUERY);
+    // 1. Pobieramy dane z Live API
+    // Destrukturyzujemy { data }, aby zmienna 'data' zawierała wynik zapytania (obiekt z polami table, matches, teams)
+    const { data } = await sanityFetch({ query: RESULTS_PAGE_QUERY });
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
@@ -25,9 +27,11 @@ export default async function WynikiPage() {
                 </div>
 
                 <WynikiClient
-                    table={data.table}
-                    matches={data.matches}
-                    teams={data.teams}
+                    // Używamy "optional chaining" (data?.table), aby strona nie wyrzuciła błędu, 
+                    // gdyby dane nie zdążyły się jeszcze załadować.
+                    table={data?.table || []}
+                    matches={data?.matches || []}
+                    teams={data?.teams || []}
                 />
             </div>
         </main>
