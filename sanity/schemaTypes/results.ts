@@ -55,6 +55,22 @@ export const result = defineType({
             readOnly: true,
             hidden: true
         }),
+        // Wklej to do player.ts, results.ts i table.ts
+        defineField({
+            name: 'category',
+            title: 'Kategoria Wiekowa',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Seniorzy', value: 'senior' },
+                    { title: 'Juniorzy', value: 'junior' },
+                    { title: 'Trampkarze', value: 'trampkarz' }
+                ],
+                layout: 'radio'
+            },
+            initialValue: 'senior',
+            validation: (rule) => rule.required()
+        }),
     ],
     preview: {
         select: {

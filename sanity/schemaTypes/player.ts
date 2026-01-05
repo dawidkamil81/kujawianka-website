@@ -29,4 +29,23 @@ export const player = defineType({
         defineField({ name: 'redCards', title: 'Czerwone kartki', type: 'number' }),
         defineField({ name: 'image', title: 'Zdjęcie', type: 'image', options: { hotspot: true } }),
     ],
+    // --- SEKCJA PODGLĄDU ---
+    preview: {
+        select: {
+            name: 'name',
+            surname: 'surname',
+            media: 'image',
+            position: 'position'
+        },
+        prepare({ name, surname, media, position }) {
+            // Sprawdzamy czy mamy imię i nazwisko, jeśli nie - wyświetlamy "Nowy Zawodnik"
+            const title = name && surname ? `${name} ${surname}` : (name || surname || 'Nowy Zawodnik')
+
+            return {
+                title: title,
+                subtitle: position, // Pod spodem pojawi się np. "Pomocnik"
+                media: media
+            }
+        }
+    }
 })
