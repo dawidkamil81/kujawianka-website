@@ -1,0 +1,15 @@
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  // ZMIEŃ TO na swój prawdziwy adres domeny
+  const BASE_URL = 'https://kujawianka-izbica.pl'
+
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: '/studio/', // Nie chcemy, żeby Google indeksowało panel logowania
+    },
+    sitemap: `${BASE_URL}/sitemap.xml`,
+  }
+}

@@ -197,3 +197,13 @@ export const SINGLE_NEWS_QUERY = defineQuery(`
     "slug": slug.current
   }
 `);
+
+export const SETTINGS_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0] {
+    title,
+    logo,
+    socialLinks,
+    contact,
+    seo
+  }
+`)

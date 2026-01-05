@@ -5,11 +5,26 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
+// Importujemy funkcję pomocniczą do obrazów Sanity oraz typ ustawień
+import { urlFor } from "@/sanity/lib/image";
+import type { SiteSettings } from "@/types";
 
-export default function Header() {
+// Definiujemy propsy, które komponent otrzymuje z Layoutu
+interface HeaderProps {
+    settings?: SiteSettings | null;
+}
+
+export default function Header({ settings }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const pathname = usePathname();
+
+    // --- LOGIKA DANYCH Z SANITY ---
+    // 1. Logo: Jeśli jest w CMS, użyj go. Jeśli nie, weź domyślne z /public/logo.png
+    const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
+
+    // 2. Tytuł: Jeśli jest w CMS, użyj go. Jeśli nie, weź domyślny.
+    const siteTitle = settings?.title || "Kujawianka Izbica Kujawska";
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const closeMenu = () => {
@@ -51,23 +66,23 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md shadow-lg text-white">
-            {/* ZMIANA: md:px-8 -> lg:px-8 (opcjonalnie, można zostawić md dla paddingu) */}
+            {/* ZMIANA: md:px-8 -> lg:px-8 */}
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
 
-                {/* Logo */}
+                {/* Logo i Tytuł */}
                 <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
                     <div className="relative h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
                         <Image
-                            src="/logo.png"
-                            alt="Herb Kujawianki"
+                            src={logoSrc} // Używamy zmiennej
+                            alt={siteTitle}
                             fill
                             className="object-contain"
                             priority
                         />
                     </div>
-                    {/* ZMIANA: md:text-xl -> lg:text-xl (żeby na tablecie tekst nie był za duży) */}
+                    {/* ZMIANA: md:text-xl -> lg:text-xl */}
                     <h1 className="text-sm font-bold uppercase tracking-wide md:text-lg lg:text-xl text-white drop-shadow-sm">
-                        Kujawianka Izbica Kujawska
+                        Kujawianka Izbica Kujawska {/* Używamy zmiennej */}
                     </h1>
                 </Link>
 
@@ -96,7 +111,7 @@ export default function Header() {
                     {/* Dropdown: Drużyny */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
-                        // ZMIANA: window.innerWidth >= 1024 (zamiast 768)
+                        // ZMIANA: window.innerWidth >= 1024
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
@@ -122,7 +137,6 @@ export default function Header() {
                     {/* Dropdown: Wyniki */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
-                        // ZMIANA: 1024px
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
@@ -153,7 +167,6 @@ export default function Header() {
                     {/* Dropdown: Biznes */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
-                        // ZMIANA: 1024px
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("biznes")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >

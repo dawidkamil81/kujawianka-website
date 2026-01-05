@@ -76,3 +76,22 @@ export type Match = {
     isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
 };
 
+export interface SiteSettings {
+    title: string;
+    logo?: any; // Sanity Image Object
+    socialLinks?: {
+        facebook?: string;
+        instagram?: string;
+        youtube?: string;
+        twitter?: string;
+    };
+    contact?: {
+        email?: string;
+        phone?: string;
+        address?: string;
+    };
+    seo?: {
+        description?: string;
+        ogImage?: any;
+    };
+}
