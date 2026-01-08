@@ -44,7 +44,7 @@ export const ALL_PLAYERS_QUERY = defineQuery(`
 // `);
 
 export const HOMEPAGE_NEWS_QUERY = defineQuery(`
-  *[_type == "news" && isHighlighted == true] | order(publishedAt desc)[0...5] {
+  *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
     _id,
     title,
     "slug": slug.current,
@@ -57,7 +57,7 @@ export const HOMEPAGE_NEWS_QUERY = defineQuery(`
 
 // 4. WSZYSTKIE NEWSY (Dla strony /aktualnosci)
 export const ALL_NEWS_QUERY = defineQuery(`
-  *[_type == "news"] | order(publishedAt desc) {
+  *[_type == "news" && publishedAt < now()] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
@@ -187,13 +187,13 @@ export const DOWNLOADS_QUERY = defineQuery(`
 `);
 
 export const SINGLE_NEWS_QUERY = defineQuery(`
-  *[_type == "news" && slug.current == $slug][0] {
+  *[_type == "news" && slug.current == $slug && publishedAt < now()][0] {
     _id,
     title,
     publishedAt,
     excerpt,
     "imageUrl": mainImage.asset->url,
-    content, // To jest pole z treścią (Portable Text)
+    content,
     "slug": slug.current
   }
 `);
