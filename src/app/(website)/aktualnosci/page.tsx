@@ -1,4 +1,4 @@
-// src/app/(website)/aktualnosci/page.tsx
+export const revalidate = 60;
 
 import { sanityFetch } from "@/sanity/lib/live";
 import { NewsItem } from "@/types";
@@ -24,7 +24,7 @@ export default async function NewsPage() {
     const allHighlighted = newsList.filter((item: NewsItem) => item.isHighlighted === true);
 
     // 2. Do slidera bierzemy tylko 5 najnowszych wyróżnionych (zgodnie z limitem)
-    const sliderNews = allHighlighted.slice(0, 6);
+    const sliderNews = allHighlighted.slice(0, 5);
 
     // 3. Reszta trafia na listę (siatkę). 
     // Są to: artykuły niewyróżnione ORAZ wyróżnione, które nie zmieściły się w pierwszej 5-tce.
