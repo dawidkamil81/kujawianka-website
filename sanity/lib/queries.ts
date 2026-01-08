@@ -242,7 +242,7 @@ export const CLUB_PAGE_QUERY = defineQuery(`
 `);
 
 export const NEWS_PAGE_QUERY = defineQuery(`
-  *[_type == "news"] | order(publishedAt desc) {
+  *[_type == "news" && publishedAt < now()] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,

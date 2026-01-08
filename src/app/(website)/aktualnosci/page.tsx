@@ -1,22 +1,10 @@
-import { sanityFetch } from "@/sanity/lib/live"; // <--- ZMIANA 1: Import z live.ts zamiast client.ts
-// import { defineQuery } from "next-sanity";
+// src/app/(website)/aktualnosci/page.tsx
+
+import { sanityFetch } from "@/sanity/lib/live";
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";
 import HeroNewsSlider from "@/components/Home/HeroNewsSlider";
 import { NEWS_PAGE_QUERY } from "@/sanity/lib/queries";
-
-// Zapytanie GROQ (slug jest rzutowany na string w projekcji: "slug": slug.current)
-// const NEWS_PAGE_QUERY = defineQuery(`
-//   *[_type == "news"] | order(publishedAt desc) {
-//     _id,
-//     title,
-//     "slug": slug.current,
-//     publishedAt,
-//     excerpt,
-//     "imageUrl": mainImage.asset->url,
-//     isHighlighted
-//   }
-// `);
 
 // Helper do daty
 const formatDate = (dateString: string) => {
@@ -28,13 +16,21 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function NewsPage() {
-    // <--- ZMIANA 2: Użycie sanityFetch i wyciągnięcie 'data'
-    // Dzięki temu Next.js wie, że ma nasłuchiwać zmian w czasie rzeczywistym
     const { data: newsList } = await sanityFetch({ query: NEWS_PAGE_QUERY });
 
-    // Poniższa logika pozostaje bez zmian, ponieważ 'newsList' zawiera teraz te same dane co wcześniej
-    const highlightedNews = newsList.filter((item: NewsItem) => item.isHighlighted === true);
-    const otherNews = newsList.filter((item: NewsItem) => item.isHighlighted !== true);
+    // === ZMIANA LOGIKI ===
+
+    // 1. Wybieramy wszystkie wyróżnione artykuły
+    const allHighlighted = newsList.filter((item: NewsItem) => item.isHighlighted === true);
+
+    // 2. Do slidera bierzemy tylko 5 najnowszych wyróżnionych (zgodnie z limitem)
+    const sliderNews = allHighlighted.slice(0, 6);
+
+    // 3. Reszta trafia na listę (siatkę). 
+    // Są to: artykuły niewyróżnione ORAZ wyróżnione, które nie zmieściły się w pierwszej 5-tce.
+    // Używamy filtrowania po ID, żeby wykluczyć te, które już są w sliderze.
+    const sliderIds = new Set(sliderNews.map((item: NewsItem) => item._id));
+    const otherNews = newsList.filter((item: NewsItem) => !sliderIds.has(item._id));
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
@@ -54,19 +50,21 @@ export default async function NewsPage() {
                     </h1>
                 </div>
 
-                {highlightedNews.length > 0 && (
+                {/* SLIDER - TYLKO TOP 5 WYRÓŻNIONYCH */}
+                {sliderNews.length > 0 && (
                     <div className="mx-auto mb-20 max-w-5xl">
-                        <HeroNewsSlider news={highlightedNews} />
+                        <HeroNewsSlider news={sliderNews} />
                     </div>
                 )}
 
+                {/* POZOSTAŁE WPISY (W TYM WYRÓŻNIONE POWYŻEJ LIMITU) */}
                 {otherNews.length > 0 && (
                     <div className="relative flex items-center justify-center mb-12">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-white/10"></div>
                         </div>
                         <span className="relative z-10 bg-[#0e0e0e] px-4 text-sm font-bold uppercase tracking-widest text-gray-500">
-                            {highlightedNews.length > 0 ? "Pozostałe wpisy" : "Najnowsze wpisy"}
+                            {sliderNews.length > 0 ? "Pozostałe wpisy" : "Najnowsze wpisy"}
                         </span>
                     </div>
                 )}
