@@ -1,21 +1,22 @@
 import { sanityFetch } from "@/sanity/lib/live"; // <--- ZMIANA 1: Import z live.ts zamiast client.ts
-import { defineQuery } from "next-sanity";
+// import { defineQuery } from "next-sanity";
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";
 import HeroNewsSlider from "@/components/Home/HeroNewsSlider";
+import { NEWS_PAGE_QUERY } from "@/sanity/lib/queries";
 
 // Zapytanie GROQ (slug jest rzutowany na string w projekcji: "slug": slug.current)
-const NEWS_PAGE_QUERY = defineQuery(`
-  *[_type == "news"] | order(publishedAt desc) {
-    _id,
-    title,
-    "slug": slug.current,
-    publishedAt,
-    excerpt,
-    "imageUrl": mainImage.asset->url,
-    isHighlighted
-  }
-`);
+// const NEWS_PAGE_QUERY = defineQuery(`
+//   *[_type == "news"] | order(publishedAt desc) {
+//     _id,
+//     title,
+//     "slug": slug.current,
+//     publishedAt,
+//     excerpt,
+//     "imageUrl": mainImage.asset->url,
+//     isHighlighted
+//   }
+// `);
 
 // Helper do daty
 const formatDate = (dateString: string) => {

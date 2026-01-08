@@ -235,9 +235,26 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       // --- 7. POZOSTAŁE ---
-      S.documentTypeListItem('page')
+      S.listItem()
         .title('Strony Statyczne')
-        .icon(FileText),
+        .icon(FileText)
+        .child(
+          S.list()
+            .title('Strony Statyczne')
+            .items([
+              S.documentTypeListItem('page'),
+              S.listItem()
+                .title('O Klubie')
+                .icon(Shield)
+                .child(
+                  S.document()
+                    .schemaType('clubPage')
+                    .documentId('clubPage')
+                    .title('Edycja strony Klubowej')
+                )
+            ])
+        ),
+
 
       S.documentTypeListItem('download')
         .title('Pliki do pobrania')

@@ -1,5 +1,27 @@
 import { defineField, defineType } from 'sanity'
 
+// Pomocnicza funkcja do tworzenia pól social media
+const socialLink = (name: string, title: string) =>
+    defineField({
+        name,
+        title,
+        type: 'object',
+        options: { collapsible: true, collapsed: true },
+        fields: [
+            defineField({
+                name: 'url',
+                title: 'Link do profilu',
+                type: 'url'
+            }),
+            defineField({
+                name: 'isVisible',
+                title: 'Widoczny na stronie?',
+                type: 'boolean',
+                initialValue: false // Domyślnie ukryte, chyba że włączymy
+            }),
+        ]
+    });
+
 export const siteSettings = defineType({
     name: 'siteSettings',
     title: 'Ustawienia Strony',
@@ -21,15 +43,19 @@ export const siteSettings = defineType({
             description: 'Główne logo wyświetlane w nagłówku i stopce.',
         }),
 
-        // --- SOCIAL MEDIA ---
+        // --- SOCIAL MEDIA (ZMODYFIKOWANE) ---
         defineField({
             name: 'socialLinks',
             title: 'Media Społecznościowe',
             type: 'object',
             options: { collapsible: true, collapsed: false },
+            description: 'Zarządzaj linkami do social mediów. Włącz "Widoczny", aby ikona pojawiła się w stopce.',
             fields: [
-                defineField({ name: 'facebook', title: 'Facebook URL', type: 'url' }),
-                defineField({ name: 'instagram', title: 'Instagram URL', type: 'url' }),
+                socialLink('facebook', 'Facebook'),
+                socialLink('instagram', 'Instagram'),
+                socialLink('youtube', 'YouTube'),
+                socialLink('tiktok', 'TikTok'),
+                socialLink('twitter', 'X (Twitter)'), // Opcjonalnie
             ]
         }),
 
@@ -51,7 +77,7 @@ export const siteSettings = defineType({
             name: 'seo',
             title: 'Domyślne SEO',
             type: 'object',
-            options: { collapsible: true, collapsed: true }, // Domyślnie zwinięte, żeby nie przeszkadzało
+            options: { collapsible: true, collapsed: true },
             description: 'Ustawienia domyślne dla wyszukiwarek i udostępniania.',
             fields: [
                 defineField({

@@ -202,8 +202,53 @@ export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0] {
     title,
     logo,
-    socialLinks,
+    socialLinks {
+      facebook { url, isVisible },
+      instagram { url, isVisible },
+      youtube { url, isVisible },
+      tiktok { url, isVisible },
+      twitter { url, isVisible }
+    },
     contact,
     seo
   }
 `)
+
+export const CLUB_PAGE_QUERY = defineQuery(`
+  *[_id == "clubPage"][0] {
+    heroHeading,
+    heroDescription,
+    historyTitle,
+    historyContent,
+    "historyImageUrl": historyImage.asset->url,
+    achievements[] {
+      title,
+      description,
+      iconType
+    },
+    stadiumDescription,
+    "stadiumImageUrl": stadiumImage.asset->url,
+    stadiumAddress,
+    stadiumCapacity,
+    stadiumBuilt,
+    // ZMIANA TUTAJ:
+    clubAuthorities[] {
+      name,
+      group,
+      role,
+      isVisible
+    }
+  }
+`);
+
+export const NEWS_PAGE_QUERY = defineQuery(`
+  *[_type == "news"] | order(publishedAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url,
+    isHighlighted
+  }
+`);

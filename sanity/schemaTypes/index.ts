@@ -8,7 +8,8 @@ import { result } from './results'
 import { page } from './page'
 import { download } from './download'
 import { siteSettings } from './siteSettings'
+import { clubPage } from './clubPage'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, news, player, sponsor, download, page, team, table, result],
+  types: [siteSettings, news, player, sponsor, download, page, team, table, result, clubPage],
 }

@@ -76,15 +76,24 @@ export type Match = {
     isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
 };
 
+export type SocialLink = {
+    url?: string;
+    isVisible: boolean;
+};
+
 export interface SiteSettings {
     title: string;
     logo?: any; // Sanity Image Object
+
+    // Teraz każdy serwis ma typ SocialLink zamiast string
     socialLinks?: {
-        facebook?: string;
-        instagram?: string;
-        youtube?: string;
-        twitter?: string;
+        facebook?: SocialLink;
+        instagram?: SocialLink;
+        youtube?: SocialLink;
+        twitter?: SocialLink;
+        tiktok?: SocialLink; // <--- Dodane
     };
+
     contact?: {
         email?: string;
         phone?: string;
