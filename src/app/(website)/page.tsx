@@ -1,4 +1,3 @@
-// src/app/(website)/page.tsx
 export const revalidate = 60;
 
 import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU (zamiast client)
