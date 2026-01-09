@@ -15,7 +15,7 @@ export default async function Page() {
   // Zwróć uwagę, że sanityFetch zwraca obiekt { data: ... }
   const [players, news, sponsors, resultsData, matchCenterData] = await Promise.all([
     sanityFetch({ query: HOMEPAGE_PLAYERS_QUERY }),
-    sanityFetch({ query: HOMEPAGE_NEWS_QUERY }),
+    sanityFetch({ query: HOMEPAGE_NEWS_QUERY },),
     sanityFetch({ query: ALL_SPONSORS_QUERY }),
     sanityFetch({ query: HOMEPAGE_RESULTS_QUERY }),
     sanityFetch({ query: MATCH_CENTER_QUERY })

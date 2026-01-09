@@ -1,6 +1,4 @@
-export const revalidate = 60;
-
-import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client"; // <--- ZMIANA 1: Importujemy 'client'
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";
 import HeroNewsSlider from "@/components/Home/HeroNewsSlider";
@@ -16,9 +14,13 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function NewsPage() {
-    const { data: newsList } = await sanityFetch({ query: NEWS_PAGE_QUERY });
+    // === ZMIANA 2 i 3: Używamy client.fetch zamiast sanityFetch ===
+    // Dzięki temu możemy przekazać { next: { revalidate: 60 } }
+    const newsList = await client.fetch(NEWS_PAGE_QUERY, {}, {
+        next: { revalidate: 60 }
+    });
 
-    // === ZMIANA LOGIKI ===
+    // === DALSZA CZĘŚĆ KODU BEZ ZMIAN ===
 
     // 1. Wybieramy wszystkie wyróżnione artykuły
     const allHighlighted = newsList.filter((item: NewsItem) => item.isHighlighted === true);
@@ -26,9 +28,7 @@ export default async function NewsPage() {
     // 2. Do slidera bierzemy tylko 5 najnowszych wyróżnionych (zgodnie z limitem)
     const sliderNews = allHighlighted.slice(0, 5);
 
-    // 3. Reszta trafia na listę (siatkę). 
-    // Są to: artykuły niewyróżnione ORAZ wyróżnione, które nie zmieściły się w pierwszej 5-tce.
-    // Używamy filtrowania po ID, żeby wykluczyć te, które już są w sliderze.
+    // ... reszta logiki (otherNews, return JSX) pozostaje identyczna ...
     const sliderIds = new Set(sliderNews.map((item: NewsItem) => item._id));
     const otherNews = newsList.filter((item: NewsItem) => !sliderIds.has(item._id));
 
@@ -36,6 +36,7 @@ export default async function NewsPage() {
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
       bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]"
         >
+            {/* ... reszta kodu JSX bez zmian ... */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
         bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]"
             />
