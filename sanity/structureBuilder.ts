@@ -12,7 +12,8 @@ import {
   Handshake,
   Crown,
   Medal,
-  Baby
+  Baby,
+  Heart
 } from 'lucide-react'
 
 // Funkcja pomocnicza do Terminarza
@@ -251,7 +252,16 @@ export const structure: StructureResolver = (S) =>
                     .schemaType('clubPage')
                     .documentId('clubPage')
                     .title('Edycja strony Klubowej')
-                )
+                ),
+              S.listItem()
+                .title('Przekaż 1.5%')
+                .icon(Heart)
+                .child(
+                  S.document()
+                    .schemaType('donatePage')
+                    .documentId('donatePage') // Singleton ID
+                    .title('Edycja strony 1.5%')
+                ),
             ])
         ),
 

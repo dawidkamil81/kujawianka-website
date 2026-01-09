@@ -252,3 +252,23 @@ export const NEWS_PAGE_QUERY = defineQuery(`
     isHighlighted
   }
 `);
+
+// sanity/lib/queries.ts
+
+export const DONATE_PAGE_QUERY = defineQuery(`
+  *[_id == "donatePage"][0] {
+    heroHeading,
+    krsNumber,
+    specificGoal,
+    steps[] {
+        title,
+        description
+    },
+    goalsList,
+    socialProof {
+        "imageUrl": image.asset->url,
+        quote,
+        author
+    }
+  }
+`);
