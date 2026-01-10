@@ -1,19 +1,40 @@
 import { sanityFetch } from "@/sanity/lib/live";
-import { ALL_SPONSORS_QUERY } from "@/sanity/lib/queries";
-import { Sponsor } from "@/types/index";
+import { PARTNERS_PAGE_QUERY } from "@/sanity/lib/queries";
 import PartnersPage from "./PartnersPage";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Klubowicze | Kujawianka Izbica Kujawska",
+    description: "Poznaj lokalnych przedsiębiorców i osoby wspierające nasz klub.",
+};
 
 export default async function KlubowiczePage() {
-    // 1. Pobieramy WSZYSTKICH (Sponsorzy + Klubowicze)
-    const { data: allEntities } = await sanityFetch({ query: ALL_SPONSORS_QUERY });
+    // Pobieramy dane z dedykowanego zapytania (które już filtruje typ 'partner')
+    const { data } = await sanityFetch({ query: PARTNERS_PAGE_QUERY });
 
-    // 2. Filtrujemy: Wybieramy tylko tych, którzy są "Klubowiczami" (tier == 'partner')
-    const clubMembers = (allEntities || []).filter(
-        (entity: Sponsor) => entity.tier.name === "partner"
-    );
+    const pageData = data?.pageData;
+    const members = data?.members || [];
+
+    // Helper do kolorowania tytułu (zachowujemy styl: Klub <span green>Biznesu</span>)
+    const renderColoredTitle = (title: string) => {
+        const words = title.trim().split(/\s+/);
+        if (words.length < 2) return <span className="text-white">{title}</span>;
+
+        const halfIndex = Math.ceil(words.length / 2);
+
+        return (
+            <>
+                <span className="text-white">{words.slice(0, halfIndex).join(" ")} </span>
+                <span className="text-emerald-500">{words.slice(halfIndex).join(" ")}</span>
+            </>
+        );
+    };
+
+    const titleContent = pageData?.title
+        ? renderColoredTitle(pageData.title)
+        : <>Klub <span className="text-emerald-500">Biznesu</span></>;
 
     return (
-        // === GŁÓWNY WRAPPER (Spójny z resztą strony) ===
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
         bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
 
@@ -29,15 +50,14 @@ export default async function KlubowiczePage() {
                         Lokalny Biznes
                     </span>
                     <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
-                        Klub <span className="text-emerald-500">Biznesu</span>
+                        {titleContent}
                     </h1>
                     <p className="text-gray-400 max-w-2xl text-center text-sm md:text-base font-medium leading-relaxed">
-                        Elitarne grono przedsiębiorców wspierających Kujawiankę. Łączymy pasję do sportu z możliwościami biznesowymi i networkingiem.
+                        {pageData?.description || "Elitarne grono przedsiębiorców wspierających Kujawiankę. Łączymy pasję do sportu z możliwościami biznesowymi i networkingiem."}
                     </p>
                 </div>
 
-                {/* === KOMPONENT KLIENTSKI === */}
-                <PartnersPage members={clubMembers} />
+                <PartnersPage members={members} pageData={pageData} />
 
             </div>
         </main>

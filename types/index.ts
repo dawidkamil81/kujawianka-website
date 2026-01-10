@@ -153,3 +153,30 @@ export type OfferPageData = {
     ctaTitle?: string;
     ctaDescription?: string;
 };
+
+export type PartnersPageData = {
+    title: string;
+    description: string;
+    benefitsTitle?: string;
+    benefits?: {
+        title: string;
+        description: string;
+        iconName: string;
+    }[];
+    ctaTitle?: string;
+    ctaDescription?: string;
+};
+
+export type Club100PageData = {
+    title: string;
+    description: string;
+    benefits?: {
+        title: string;
+        description: string;
+        iconName: string;
+    }[];
+    aboutTitle?: string;   // <--- NOWE
+    aboutContent?: string; // <--- NOWE
+    ctaTitle?: string;
+    ctaDescription?: string;
+};

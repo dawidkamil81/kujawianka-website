@@ -15,7 +15,7 @@ import {
     TrendingUp
 } from "lucide-react";
 import ContactSection from "@/components/common/ContactSection";
-import { Sponsor, OfferPageData } from "@/types/index";
+import { OfferPageData } from "@/types/index";
 
 // 1. Mapowanie ikon
 const iconMap: Record<string, React.ElementType> = {
@@ -31,7 +31,6 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 // 2. Mapowanie Twoich klas stylów (Theme)
-// Dokładnie te same klasy, które miałeś wpisane na sztywno
 const colorThemes: Record<string, any> = {
     emerald: {
         iconColor: "text-emerald-400",
@@ -41,27 +40,28 @@ const colorThemes: Record<string, any> = {
         textColor: "group-hover:text-emerald-400"
     },
     white: {
-        iconColor: "text-white-400", // zakładam, że masz taką klasę w configu, skoro jej używasz
-        borderColor: "hover:border-white-400/50",
+        iconColor: "text-white",
+        borderColor: "hover:border-white/50",
         shadowColor: "hover:shadow-[0_0_50px_rgba(255,255,255,0.1)]",
-        bgColor: "bg-white-400/10",
-        textColor: "group-hover:text-white-400"
+        bgColor: "bg-white/10",
+        textColor: "group-hover:text-white"
     },
     blue: {
         iconColor: "text-blue-400",
         borderColor: "hover:border-blue-400/50",
-        shadowColor: "hover:shadow-[0_0_50px_rgba(52,211,153,0.2)]", // Tu w oryginale miałeś zielony cień przy niebieskim, zostawiam jak było
+        shadowColor: "hover:shadow-[0_0_50px_rgba(52,211,153,0.2)]",
         bgColor: "bg-blue-400/10",
         textColor: "group-hover:text-blue-400"
     }
 };
 
 interface PartnershipProps {
-    sponsors: Sponsor[];
+    // ZMIANA: Zamiast tablicy sponsorów, przyjmujemy tylko liczbę
+    sponsorsCount: number;
     pageData?: OfferPageData;
 }
 
-export default function Partnership({ sponsors, pageData }: PartnershipProps) {
+export default function Partnership({ sponsorsCount, pageData }: PartnershipProps) {
     const router = useRouter();
 
     const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
@@ -72,12 +72,11 @@ export default function Partnership({ sponsors, pageData }: PartnershipProps) {
         }
     };
 
-    // Helper do kolorowania tytułu (zachowanie Twojego h1)
+    // Helper do kolorowania tytułu
     const renderColoredTitle = (title: string) => {
         const words = title.trim().split(/\s+/);
         if (words.length < 2) return <span className="text-white">{title}</span>;
 
-        // Ostatnie słowo na zielono (jak w Twoim przykładzie "Sponsorska")
         const lastWord = words.pop();
         return (
             <>
@@ -86,13 +85,14 @@ export default function Partnership({ sponsors, pageData }: PartnershipProps) {
         );
     };
 
-    // Pakiety z CMS (z fallbackiem na pustą tablicę)
+    // Pakiety z CMS
     const packages = pageData?.packages || [];
 
     // Statystyki z CMS (z obsługą AUTO)
     const stats = pageData?.stats?.map(stat => ({
         ...stat,
-        value: stat.value?.toUpperCase() === 'AUTO' ? `${sponsors.length}` : stat.value,
+        // ZMIANA: Używamy sponsorsCount zamiast sponsors.length
+        value: stat.value?.toUpperCase() === 'AUTO' ? `${sponsorsCount}` : stat.value,
     })) || [];
 
     return (
@@ -121,7 +121,6 @@ export default function Partnership({ sponsors, pageData }: PartnershipProps) {
                 {/* === PAKIETY SPONSORSKIE === */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-32">
                     {packages.map((pkg, index) => {
-                        // Pobieramy style na podstawie wybranego w CMS motywu (emerald/white/blue)
                         const theme = colorThemes[pkg.colorTheme] || colorThemes.emerald;
                         const IconComponent = iconMap[pkg.iconName] || Gem;
 
@@ -130,7 +129,7 @@ export default function Partnership({ sponsors, pageData }: PartnershipProps) {
                                 key={index}
                                 className={`group relative flex flex-col p-8 md:p-10 rounded-3xl bg-[#121212] border border-white/10 transition-all duration-500 ${theme.borderColor} ${theme.shadowColor}`}
                             >
-                                {/* Ikona w tle (duża, półprzezroczysta) */}
+                                {/* Ikona w tle */}
                                 <div className="absolute top-4 right-4 opacity-5 scale-150 grayscale group-hover:grayscale-0 group-hover:scale-125 transition-transform duration-700 pointer-events-none">
                                     <IconComponent size={40} className={theme.iconColor} />
                                 </div>

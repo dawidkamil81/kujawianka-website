@@ -1,23 +1,35 @@
-import { sanityFetch } from "@/sanity/lib/live"; // <--- 1. ZMIANA IMPORTU
-import { ALL_SPONSORS_QUERY } from "@/sanity/lib/queries";
-import { Sponsor } from "@/types/index";
+import { sanityFetch } from "@/sanity/lib/live";
+import { CLUB100_PAGE_QUERY } from "@/sanity/lib/queries";
 import Club100List from "./Club100List";
+import { Metadata } from "next";
 
-// export const dynamic = 'force-dynamic'; // <--- Można usunąć przy użyciu sanityFetch
+export const metadata: Metadata = {
+    title: "Klub 100 | Kujawianka Izbica Kujawska",
+    description: "Elitarne grono 100 najbardziej zaangażowanych firm i osób prywatnych wspierających nasz klub.",
+};
 
 export default async function Club100Page() {
-    // 1. Pobieramy WSZYSTKICH (Sponsorzy + Klubowicze) przy użyciu Live API
-    // Destrukturyzujemy 'data' i zmieniamy nazwę na 'allEntities'
-    const { data: allEntities } = await sanityFetch({ query: ALL_SPONSORS_QUERY });
+    const { data } = await sanityFetch({ query: CLUB100_PAGE_QUERY });
 
-    // 2. Filtrujemy: Wybieramy tylko tych z rangą "club100"
-    // Dodajemy zabezpieczenie (allEntities || []) na wypadek braku danych
-    const clubMembers = (allEntities || []).filter(
-        (entity: Sponsor) => entity.tier.name === "club100"
-    );
+    const pageData = data?.pageData;
+    const members = data?.members || [];
+
+    const renderColoredTitle = (title: string) => {
+        const words = title.trim().split(/\s+/);
+        if (words.length < 2) return <span className="text-white">{title}</span>;
+        const lastWord = words.pop();
+        return (
+            <>
+                {words.join(" ")} <span className="text-emerald-500">{lastWord}</span>
+            </>
+        );
+    };
+
+    const titleContent = pageData?.title
+        ? renderColoredTitle(pageData.title)
+        : <>Klub <span className="text-emerald-500">100</span></>;
 
     return (
-        // === GŁÓWNY WRAPPER ===
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
         bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)] font-montserrat">
 
@@ -25,8 +37,25 @@ export default async function Club100Page() {
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
             bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
 
-            {/* Przekazujemy pobrane dane do komponentu klienckiego */}
-            <Club100List members={clubMembers} />
+            {/* --- 1. NAGŁÓWEK STRONY (ZAMKNIĘTY W KONTENERZE) --- */}
+            <div className="relative z-10 pt-16 md:pt-24 pb-12">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col items-center justify-center space-y-5 text-center">
+                        <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
+                            Prestiż i Wsparcie
+                        </span>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white drop-shadow-2xl">
+                            {titleContent}
+                        </h1>
+                        <p className="text-gray-400 max-w-2xl text-center text-sm md:text-base font-medium leading-relaxed">
+                            {pageData?.description || "Elitarne grono 100 najbardziej zaangażowanych firm i osób prywatnych. To prestiżowy klub biznesu, który poprzez regularne wsparcie ma realny wpływ na stabilność i rozwój Kujawianki."}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- 2. LISTA I KORZYŚCI (BEZ KONTENERA ZEWNĘTRZNEGO, BO MA SEKCJĘ FULL-WIDTH) --- */}
+            <Club100List members={members} pageData={pageData} />
 
         </main>
     );

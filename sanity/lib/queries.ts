@@ -24,24 +24,7 @@ export const ALL_PLAYERS_QUERY = defineQuery(`
   }
 `);
 
-// ... poprzednie importy i zapytania
 
-// 3. Zapytanie do NEWSÓW NA STRONĘ GŁÓWNĄ
-// Pobiera 3 najnowsze wpisy
-// ... (poprzednie importy i zapytania do zawodników)
-
-// 3. NEWSY NA STRONĘ GŁÓWNĄ (Teaser - 3 najnowsze)
-// export const HOMEPAGE_NEWS_QUERY = defineQuery(`
-//   *[_type == "news"] | order(publishedAt desc)[0...2] {
-//     _id,
-//     title,
-//     "slug": slug.current,
-//     publishedAt,
-//     excerpt,
-//     "imageUrl": mainImage.asset->url,
-//     isHighlighted
-//   }
-// `);
 
 export const HOMEPAGE_NEWS_QUERY = defineQuery(`
   *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
@@ -70,58 +53,125 @@ export const ALL_NEWS_QUERY = defineQuery(`
 
 // ... (poprzednie zapytania)
 
+
+
 // export const ALL_SPONSORS_QUERY = defineQuery(`
-//   *[_type == "sponsor"] {
+//   *[_type == "sponsor"] | order(tier->rank asc, name asc) {
 //     _id,
 //     name,
-//     tier,
 //     "logoUrl": logo.asset->url,
 //     website,
 //     description,
-//     "backgroundImageUrl": backgroundImage.asset->url
+//     "backgroundImageUrl": backgroundImage.asset->url,
+//     // Pobieramy dane z relacji tier
+//     tier->{
+//       name,
+//       rank
+//     }
 //   }
 // `);
 
 export const ALL_SPONSORS_QUERY = defineQuery(`
-  *[_type == "sponsor"] | order(tier->rank asc, name asc) {
-    _id,
-    name,
-    "logoUrl": logo.asset->url,
-    website,
-    description,
-    "backgroundImageUrl": backgroundImage.asset->url,
-    // Pobieramy dane z relacji tier
-    tier->{
-      name,
-      rank
+  *[_type in ["sponsor", "partner", "club100"]] {
+    _id, name, "logoUrl": logo.asset->url, website,
+    // Sprawdzamy typ dokumentu, żeby ustalić rangę
+    _type == "sponsor" => {
+      tier->{name, rank}
+    },
+    _type == "partner" => {
+      "tier": { "name": "Klubowicz", "rank": 99 }
+    },
+    _type == "club100" => {
+      "tier": { "name": "Klub 100", "rank": 100 }
     }
-  }
+  } | order(tier.rank asc, name asc)
+`);
+
+// export const SPONSORS_PAGE_QUERY = defineQuery(`
+//   {
+//     "pageData": *[_id == "sponsorsPage"][0] {
+//       title,
+//       description,
+//       stats[] {
+//         value,
+//         label,
+//         icon
+//       },
+//       ctaTitle,
+//       ctaDescription
+//     },
+//     "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+//       _id,
+//       name,
+//       "logoUrl": logo.asset->url,
+//       website,
+//       description,
+//       "backgroundImageUrl": backgroundImage.asset->url,
+//       tier->{
+//         name,
+//         rank
+//       }
+//     }
+//   }
+// `);
+
+export const ALL_SUPPORTERS_COUNT_QUERY = defineQuery(`
+  count(*[_type in ["sponsor", "partner", "club100"]])
 `);
 
 export const SPONSORS_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "sponsorsPage"][0] {
+      title, description, ctaTitle, ctaDescription,
+      stats[] { value, label, icon }
+    },
+    // Pobieramy tylko typ 'sponsor'
+    "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+      _id, name, website, description,
+      "logoUrl": logo.asset->url,
+      "backgroundImageUrl": backgroundImage.asset->url,
+      tier->{ name, rank }
+    }
+  }
+`);
+
+export const CLUB100_PAGE_QUERY = defineQuery(`
+  {
+    "pageData": *[_id == "club100Page"][0] {
       title,
       description,
-      stats[] {
-        value,
-        label,
-        icon
+      benefits[] {
+        title,
+        description,
+        iconName
       },
+      aboutTitle,   // <--- NOWE
+      aboutContent, // <--- NOWE
       ctaTitle,
       ctaDescription
     },
-    "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+    "members": *[_type == "club100"] | order(name asc) {
       _id,
       name,
       "logoUrl": logo.asset->url,
       website,
-      description,
-      "backgroundImageUrl": backgroundImage.asset->url,
-      tier->{
-        name,
-        rank
-      }
+      description
+    }
+  }
+`);
+
+export const PARTNERS_PAGE_QUERY = defineQuery(`
+  {
+    "pageData": *[_id == "partnersPage"][0] {
+      title, description, benefitsTitle, ctaTitle, ctaDescription,
+      benefits[] { title, description, iconName }
+    },
+    // Pobieramy typ 'partner' i udajemy, że mają tier "Klubowicz" (dla spójności frontendu)
+    "members": *[_type == "partner"] | order(name asc) {
+      _id, name, website, description,
+      "logoUrl": logo.asset->url,
+      // Symulujemy obiekt tier, żeby TypeScript na frontendzie nie krzyczał
+      "tier": { "name": "Klubowicz", "rank": 99 }
     }
   }
 `);
@@ -367,3 +417,28 @@ export const OFFER_PAGE_QUERY = defineQuery(`
     ctaDescription
   }
 `);
+
+// export const PARTNERS_PAGE_QUERY = defineQuery(`
+//   {
+//     "pageData": *[_id == "partnersPage"][0] {
+//       title,
+//       description,
+//       benefitsTitle,
+//       benefits[] {
+//         title,
+//         description,
+//         iconName
+//       },
+//       ctaTitle,
+//       ctaDescription
+//     },
+//     // Pobieramy sponsorów, których ranga to "Klubowicz"
+//     "members": *[_type == "sponsor" && tier->name == "Klubowicz"] | order(name asc) {
+//       _id,
+//       name,
+//       "logoUrl": logo.asset->url,
+//       website,
+//       description
+//     }
+//   }
+// `);

@@ -188,12 +188,102 @@ export const partnersPage = defineType({
     name: 'partnersPage',
     title: 'Strona: Klubowicze',
     type: 'document',
-    fields: [...commonFields]
+    fields: [
+        ...commonFields,
+
+        // Sekcja "Dlaczego warto?" (opcjonalna)
+        defineField({
+            name: 'benefitsTitle',
+            title: 'Tytuł sekcji korzyści (np. Dlaczego warto dołączyć?)',
+            type: 'string'
+        }),
+        defineField({
+            name: 'benefits',
+            title: 'Karty korzyści',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    defineField({ name: 'title', title: 'Tytuł', type: 'string' }),
+                    defineField({ name: 'description', title: 'Opis', type: 'text', rows: 2 }),
+                    defineField({
+                        name: 'iconName',
+                        title: 'Ikona',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Uścisk dłoni', value: 'handshake' },
+                                { title: 'Ludzie', value: 'users' },
+                                { title: 'Serce', value: 'heart' },
+                                { title: 'Gwiazda', value: 'star' },
+                                { title: 'Medal', value: 'medal' }
+                            ]
+                        }
+                    })
+                ]
+            }]
+        }),
+
+        // CTA
+        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
+    ]
 })
 
 export const club100Page = defineType({
     name: 'club100Page',
     title: 'Strona: Klub 100',
     type: 'document',
-    fields: [...commonFields]
+    fields: [
+        ...commonFields,
+
+        // 1. Sekcja Korzyści (Górna)
+        defineField({
+            name: 'benefits',
+            title: 'Karty korzyści (Górna sekcja)',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    defineField({ name: 'title', title: 'Tytuł', type: 'string' }),
+                    defineField({ name: 'description', title: 'Opis', type: 'text', rows: 3 }),
+                    defineField({
+                        name: 'iconName',
+                        title: 'Ikona',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Korona (Crown)', value: 'crown' },
+                                { title: 'Tarcza (ShieldCheck)', value: 'shield' },
+                                { title: 'Ludzie (Users)', value: 'users' },
+                                { title: 'Gwiazda (Star)', value: 'star' },
+                                { title: 'Bilet (Ticket)', value: 'ticket' }
+                            ]
+                        },
+                        initialValue: 'crown'
+                    })
+                ]
+            }]
+            // Usunięto validation: rule => rule.max(3), możesz dodać ile chcesz
+        }),
+
+        // 2. NOWOŚĆ: Sekcja "Więcej niż wsparcie" (Środkowa)
+        defineField({
+            name: 'aboutTitle',
+            title: 'Tytuł sekcji środkowej (np. Więcej niż wsparcie)',
+            type: 'string',
+            initialValue: 'Więcej niż wsparcie'
+        }),
+        defineField({
+            name: 'aboutContent',
+            title: 'Treść sekcji środkowej',
+            type: 'text',
+            rows: 6,
+            initialValue: 'Klub 100 to inicjatywa skierowana do osób prywatnych i lokalnych przedsiębiorców...'
+        }),
+
+        // 3. CTA
+        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
+    ]
 })

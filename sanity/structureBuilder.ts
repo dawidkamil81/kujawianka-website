@@ -12,7 +12,6 @@ import {
   Handshake,
   Crown,
   Medal,
-  Baby,
   Heart,
   ListFilter,
   Edit,
@@ -63,33 +62,22 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Konfiguracja')
             .items([
-              S.documentListItem()
-                .schemaType('siteSettings')
-                .id('siteSettings')
-                .title('Konfiguracja Strony'),
+              S.documentListItem().schemaType('siteSettings').id('siteSettings').title('Konfiguracja Strony'),
               S.divider(),
-              S.documentTypeListItem('squad')
-                .title('Dane drużyn (grupy wiekowe)')
-                .icon(ListFilter),
-              S.documentTypeListItem('staffRole')
-                .title('Role w Sztabie')
-                .icon(UserCog),
-              S.documentTypeListItem('sponsorTier')
-                .title('Typy Sponsorów / Rang')
-                .icon(Tag)
+              S.documentTypeListItem('squad').title('Dane drużyn (grupy wiekowe)'),
+              S.documentTypeListItem('staffRole').title('Role w Sztabie'),
+              S.documentTypeListItem('sponsorTier').title('Typy Sponsorów / Rang').icon(Tag)
             ])
         ),
 
       S.divider(),
 
       // --- 2. AKTUALNOŚCI ---
-      S.documentTypeListItem('news')
-        .title('Aktualności')
-        .icon(Newspaper),
+      S.documentTypeListItem('news').title('Aktualności').icon(Newspaper),
 
       S.divider(),
 
-      // --- 3. KADRY DRUŻYN ---
+      // --- 3. DRUŻYNY ---
       S.listItem()
         .title('Drużyny')
         .icon(Users)
@@ -97,15 +85,8 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Zarządzanie Kadrami')
             .items([
-              // A. Baza wszystkich
-              S.listItem()
-                .title('Wszyscy zawodnicy i sztab')
-                .icon(Users)
-                .child(S.documentTypeList('player')),
-
+              S.listItem().title('Wszyscy zawodnicy i sztab').icon(Users).child(S.documentTypeList('player')),
               S.divider(),
-
-              // B. Lista Drużyn
               S.listItem()
                 .title('Lista Drużyn')
                 .icon(ListFilter)
@@ -116,47 +97,20 @@ export const structure: StructureResolver = (S) =>
                       S.list()
                         .title('Zarządzanie Drużyną')
                         .items([
-                          // 1. Konfiguracja drużyny
-                          S.listItem()
-                            .title('Dane Drużyny')
-                            .icon(Edit)
-                            .child(
-                              S.document()
-                                .schemaType('squad')
-                                .documentId(squadId)
-                            ),
-
+                          S.listItem().title('Dane Drużyny').icon(Edit).child(S.document().schemaType('squad').documentId(squadId)),
                           S.divider(),
-
-                          // 2. KADRA ZAWODNICZA
-                          S.listItem()
-                            .title('Kadra Zawodnicza')
-                            .icon(Shirt)
-                            .child(
-                              S.documentList()
-                                .title('Lista Piłkarzy')
-                                .schemaType('player')
-                                .filter('_type == "player" && squad._ref == $squadId && position != "Sztab"')
-                                .params({ squadId })
-                                .initialValueTemplates([
-                                  S.initialValueTemplateItem('player-by-squad', { squadId })
-                                ])
-                            ),
-
-                          // 3. SZTAB SZKOLENIOWY
-                          S.listItem()
-                            .title('Sztab Szkoleniowy')
-                            .icon(UserCog)
-                            .child(
-                              S.documentList()
-                                .title('Lista Sztabu')
-                                .schemaType('player')
-                                .filter('_type == "player" && squad._ref == $squadId && position == "Sztab"')
-                                .params({ squadId })
-                                .initialValueTemplates([
-                                  S.initialValueTemplateItem('staff-by-squad', { squadId })
-                                ])
-                            )
+                          S.listItem().title('Kadra Zawodnicza').icon(Shirt).child(
+                            S.documentList().title('Lista Piłkarzy').schemaType('player')
+                              .filter('_type == "player" && squad._ref == $squadId && position != "Sztab"')
+                              .params({ squadId })
+                              .initialValueTemplates([S.initialValueTemplateItem('player-by-squad', { squadId })])
+                          ),
+                          S.listItem().title('Sztab Szkoleniowy').icon(UserCog).child(
+                            S.documentList().title('Lista Sztabu').schemaType('player')
+                              .filter('_type == "player" && squad._ref == $squadId && position == "Sztab"')
+                              .params({ squadId })
+                              .initialValueTemplates([S.initialValueTemplateItem('staff-by-squad', { squadId })])
+                          )
                         ])
                     )
                 )
@@ -165,7 +119,7 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // --- 4. TABELA I WYNIKI ---
+      // --- 4. WYNIKI ---
       S.listItem()
         .title('Tabela i Wyniki')
         .icon(FileText)
@@ -173,53 +127,30 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Wybierz Kategorię')
             .items([
-              // A. SENIORZY
-              S.listItem()
-                .title('Seniorzy')
-                .icon(Medal)
-                .child(
-                  S.list()
-                    .title('Seniorzy - Liga')
-                    .items([
-                      S.listItem()
-                        .title('Tabela Ligowa')
-                        .icon(FileText)
-                        .child(
-                          S.documentList()
-                            .title('Tabela Ligowa')
-                            .schemaType('table')
-                            .filter('_type == "table" && (!defined(category) || category == "senior")')
-                        ),
-                      createScheduleFolder(S, 'Seniorzy', 'senior')
-                    ])
-                ),
+              S.listItem().title('Seniorzy').icon(Medal).child(
+                S.list().title('Seniorzy - Liga').items([
+                  S.listItem().title('Tabela Ligowa').icon(FileText).child(
+                    S.documentList().title('Tabela Ligowa').schemaType('table')
+                      .filter('_type == "table" && (!defined(category) || category == "senior")')
+                  ),
+                  createScheduleFolder(S, 'Seniorzy', 'senior')
+                ])
+              ),
               S.divider(),
-              // B. POZOSTAŁE GRUPY
-              S.listItem()
-                .title('Tabele Grup Młodzieżowych')
-                .icon(Users)
-                .child(
-                  S.documentTypeList('squad')
-                    .title('Wybierz Grupę')
-                    .child(squadId =>
-                      S.documentList()
-                        .title('Tabele')
-                        .schemaType('table')
-                        .filter('_type == "table" && squad._ref == $squadId')
-                        .params({ squadId })
-                    )
+              S.listItem().title('Tabele Grup Młodzieżowych').icon(Users).child(
+                S.documentTypeList('squad').title('Wybierz Grupę').child(squadId =>
+                  S.documentList().title('Tabele').schemaType('table')
+                    .filter('_type == "table" && squad._ref == $squadId').params({ squadId })
                 )
+              )
             ])
         ),
 
       S.divider(),
-
-      // --- 5. BAZA KLUBÓW ---
       S.documentTypeListItem('team').title('Loga zespołów').icon(Shield),
-
       S.divider(),
 
-      // --- 6. BIZNES I PARTNERZY (ZMODYFIKOWANA) ---
+      // --- 6. BIZNES I PARTNERZY (POPRAWIONE FILTROWANIE) ---
       S.listItem()
         .title('Biznes i Partnerzy')
         .icon(Briefcase)
@@ -227,13 +158,15 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Strefa Biznesowa')
             .items([
-              // A. Dynamiczna lista folderów wg Typów Sponsorów
+              // 1. SPONSORZY BIZNESOWI (Tylko typ 'sponsor')
               S.listItem()
-                .title('Sponsorzy wg Kategorii')
+                .title('Sponsorzy Biznesowi')
                 .icon(Gem)
                 .child(
                   S.documentTypeList('sponsorTier')
-                    .title('Wybierz Kategorię')
+                    .title('Kategorie Sponsorów')
+                    // Wykluczamy Klubowiczów i Klub 100 z listy kategorii, żeby nie mylić admina
+                    .filter('_type == "sponsorTier" && name != "Klubowicz" && name != "Klub 100"')
                     .child(tierId =>
                       S.documentList()
                         .title('Sponsorzy')
@@ -248,42 +181,20 @@ export const structure: StructureResolver = (S) =>
 
               S.divider(),
 
-              // B. WYDZIELONE SKRÓTY (Klubowicze i Klub 100)
-              // Filtrujemy po nazwie rangi (wymaga utworzenia rang o nazwach "Klubowicz" i "Klub 100")
-
-              S.listItem()
+              // 2. KLUBOWICZE (Typ 'partner')
+              // Klikając "Utwórz" tutaj, otworzy się formularz BEZ wyboru rangi!
+              S.documentTypeListItem('partner')
                 .title('Klubowicze')
-                .icon(Users)
-                .child(
-                  S.documentList()
-                    .title('Lista Klubowiczów')
-                    .schemaType('sponsor')
-                    .filter('_type == "sponsor" && tier->name == "Klubowicz"')
-                ),
+                .icon(Users),
 
-              S.listItem()
+              // 3. KLUB 100 (Typ 'club100')
+              // Klikając "Utwórz" tutaj, otworzy się formularz BEZ wyboru rangi!
+              S.documentTypeListItem('club100')
                 .title('Klub 100')
-                .icon(Crown)
-                .child(
-                  S.documentList()
-                    .title('Lista Klub 100')
-                    .schemaType('sponsor')
-                    .filter('_type == "sponsor" && tier->name == "Klub 100"')
-                ),
+                .icon(Crown),
 
               S.divider(),
-
-              // C. Link do zarządzania kategoriami
-              S.documentTypeListItem('sponsorTier')
-                .title('Edytuj Typy/Rangi')
-                .icon(Tag),
-
-              S.divider(),
-
-              // D. Lista wszystkich sponsorów (opcjonalnie)
-              S.documentTypeListItem('sponsor')
-                .title('Wszyscy Sponsorzy (Lista)')
-                .icon(ListFilter),
+              S.documentTypeListItem('sponsorTier').title('Zarządzaj Rangami (Dla firm)').icon(Tag),
             ])
         ),
 
@@ -291,7 +202,7 @@ export const structure: StructureResolver = (S) =>
 
       // --- 7. STRONY STATYCZNE ---
       S.listItem()
-        .title('Strony Statyczne')
+        .title('Edycja Stron')
         .icon(FileText)
         .child(
           S.list()
@@ -299,45 +210,14 @@ export const structure: StructureResolver = (S) =>
             .items([
               S.documentTypeListItem('page').title('Strony Dodatkowe'),
               S.divider(),
-              S.listItem()
-                .title('O Klubie')
-                .icon(Shield)
-                .child(
-                  S.document()
-                    .schemaType('clubPage')
-                    .documentId('clubPage')
-                ),
-              S.listItem()
-                .title('Przekaż 1.5%')
-                .icon(Heart)
-                .child(
-                  S.document()
-                    .schemaType('donatePage')
-                    .documentId('donatePage')
-                ),
+              S.listItem().title('O Klubie').icon(Shield).child(S.document().schemaType('clubPage').documentId('clubPage')),
+              S.listItem().title('Przekaż 1.5%').icon(Heart).child(S.document().schemaType('donatePage').documentId('donatePage')),
               S.divider(),
-              S.listItem()
-                .title('Współpraca / Oferta')
-                .icon(Handshake)
-                .child(S.document().schemaType('offerPage').documentId('offerPage')),
-
-              S.listItem()
-                .title('Strona: Sponsorzy')
-                .icon(Briefcase)
-                .child(S.document().schemaType('sponsorsPage').documentId('sponsorsPage')),
-
-              S.listItem()
-                .title('Strona: Klubowicze')
-                .icon(Users)
-                .child(S.document().schemaType('partnersPage').documentId('partnersPage')),
-
-              S.listItem()
-                .title('Strona: Klub 100')
-                .icon(Crown)
-                .child(S.document().schemaType('club100Page').documentId('club100Page')),
+              S.listItem().title('Współpraca / Oferta').icon(Handshake).child(S.document().schemaType('offerPage').documentId('offerPage')),
+              S.listItem().title('Strona: Sponsorzy').icon(Briefcase).child(S.document().schemaType('sponsorsPage').documentId('sponsorsPage')),
+              S.listItem().title('Strona: Klubowicze').icon(Users).child(S.document().schemaType('partnersPage').documentId('partnersPage')),
+              S.listItem().title('Strona: Klub 100').icon(Crown).child(S.document().schemaType('club100Page').documentId('club100Page')),
             ])
         ),
-      S.documentTypeListItem('download')
-        .title('Pliki do pobrania')
-        .icon(Download),
+      S.documentTypeListItem('download').title('Pliki do pobrania').icon(Download),
     ])
