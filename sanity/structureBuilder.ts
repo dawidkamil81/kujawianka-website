@@ -68,10 +68,10 @@ export const structure: StructureResolver = (S) =>
                 .title('Konfiguracja Strony'),
               S.divider(),
               S.documentTypeListItem('squad')
-                .title('Definicje Grup / Roczniki')
+                .title('Dane drużyn (grupy wiekowe)')
                 .icon(ListFilter),
               S.documentTypeListItem('staffRole')
-                .title('Role w Sztabie (Słownik)')
+                .title('Role w Sztabie')
                 .icon(UserCog)
             ])
         ),
@@ -87,7 +87,7 @@ export const structure: StructureResolver = (S) =>
 
       // --- 3. KADRY DRUŻYN (Z PODZIAŁEM NA SZTAB I ZAWODNIKÓW) ---
       S.listItem()
-        .title('Kadry Drużyn')
+        .title('Drużyny')
         .icon(Users)
         .child(
           S.list()
@@ -95,7 +95,7 @@ export const structure: StructureResolver = (S) =>
             .items([
               // A. Baza wszystkich (dla porządku)
               S.listItem()
-                .title('Baza Globalna (Wszyscy)')
+                .title('Wszyscy zawodnicy i sztab')
                 .icon(Users)
                 .child(S.documentTypeList('player')),
 
@@ -114,7 +114,7 @@ export const structure: StructureResolver = (S) =>
                         .items([
                           // 1. Konfiguracja samej drużyny (nazwa, logo)
                           S.listItem()
-                            .title('Dane Drużyny (Konfiguracja)')
+                            .title('Dane Drużyny')
                             .icon(Edit)
                             .child(
                               S.document()

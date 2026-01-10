@@ -10,8 +10,8 @@ export const squad = defineType({
     fieldsets: [
         {
             name: 'infoSection',
-            title: '📢 Strefa Informacyjna (Kontakt / Nabór)',
-            description: 'Wypełnij te pola, jeśli chcesz wyświetlić sekcję kontaktową i informacje o treningach na stronie tej drużyny.',
+            title: 'Strefa Informacyjna (Kontakt / Nabór)',
+            description: 'Wypełnij te pola, jeśli chcesz wyświetlić sekcję kontaktową i informacje o treningach na stronie tej drużyny. (wymagane obie sekcje)',
             options: { collapsible: true, collapsed: false }
         }
     ],
@@ -40,7 +40,7 @@ export const squad = defineType({
         // --- NOWA SEKCJA KONTAKTOWA ---
         defineField({
             name: 'coachName',
-            title: 'Imię i Nazwisko Trenera (do kontaktu)',
+            title: 'Imię i Nazwisko Trenera',
             type: 'string',
             fieldset: 'infoSection',
             description: 'Pojawi się w sekcji "Kontakt z trenerem".'
@@ -62,7 +62,7 @@ export const squad = defineType({
         // --- OPIS / NABÓR / TRENINGI ---
         defineField({
             name: 'description',
-            title: 'Informacje o naborze / Treningach',
+            title: 'Informacje o naborze / treningach',
             type: 'array',
             fieldset: 'infoSection',
             of: [{ type: 'block' }], // Pozwala na pogrubienia, listy itp.

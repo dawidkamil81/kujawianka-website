@@ -38,10 +38,10 @@ export const player = defineType({
         }),
         defineField({
             name: 'staffRole',
-            title: 'Konkretna Rola w Sztabie',
+            title: 'Rola w Sztabie',
             type: 'reference',
             to: [{ type: 'staffRole' }], // Pobiera opcje z nowego dokumentu
-            description: 'Wybierz funkcję (np. Trener, Fizjoterapeuta). Lista zarządzana w Ustawieniach.',
+            description: 'Wybierz funkcję (np. Trener, Fizjoterapeuta)',
             // To pole pokaże się TYLKO jeśli wybrano pozycję "Sztab"
             hidden: ({ document }) => document?.position !== 'Sztab',
             validation: (rule) => rule.custom((value, context) => {
