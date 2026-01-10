@@ -9,8 +9,8 @@ export default function SponsorsTeaser({ sponsors }: { sponsors: Sponsor[] }) {
     // 1. Filtrowanie i zabezpieczenie przed błędami (brak logo)
     const validSponsors = sponsors?.filter(s => s.logoUrl && s.logoUrl.trim() !== "") || [];
 
-    const mainSponsors = validSponsors.filter((s) => s.tier === "main");
-    const otherSponsors = validSponsors.filter((s) => s.tier !== "main");
+    const mainSponsors = validSponsors.filter((s) => s.tier.name === "main");
+    const otherSponsors = validSponsors.filter((s) => s.tier.name !== "main");
 
     // Jeśli brak sponsorów, nie wyświetlamy sekcji
     if (validSponsors.length === 0) return null;
