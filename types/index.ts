@@ -21,14 +21,29 @@ export interface NewsItem {
 
 
 
+// export type Sponsor = {
+//     _id: string;
+//     name: string;
+//     tier: "main" | "strategic" | "technical" | "partner" | "club100";
+//     logoUrl: string;
+//     website?: string;
+//     description?: string; // Tylko dla głównych
+//     backgroundImageUrl?: string; // Tylko dla głównych
+// };
+
+
 export type Sponsor = {
     _id: string;
     name: string;
-    tier: "main" | "strategic" | "technical" | "partner" | "club100";
+    // ZMIANA: tier jest teraz obiektem pobranym z CMS
+    tier: {
+        name: string;
+        rank: number;
+    };
     logoUrl: string;
     website?: string;
-    description?: string; // Tylko dla głównych
-    backgroundImageUrl?: string; // Tylko dla głównych
+    description?: string;
+    backgroundImageUrl?: string;
 };
 
 // src/types/index.ts

@@ -34,7 +34,7 @@ export default defineConfig({
           // Nie ustawiamy pozycji, użytkownik wybierze (Bramkarz, Obrońca itp.)
         }),
       },
-      // 2. NOWOŚĆ: Szablon dla SZTABU (przypisuje do drużyny ORAZ ustawia pozycję 'Sztab')
+      // 2. Szablon dla SZTABU (przypisuje do drużyny ORAZ ustawia pozycję 'Sztab')
       {
         id: 'staff-by-squad',
         title: 'Nowy Członek Sztabu',
@@ -44,6 +44,17 @@ export default defineConfig({
         value: ({ squadId }: { squadId: string }) => ({
           squad: { _type: 'reference', _ref: squadId },
           position: 'Sztab' // <--- To jest kluczowe!
+        }),
+      },
+      // 3. NOWOŚĆ: Szablon dla SPONSORA (przypisuje automatycznie rangę/tier)
+      {
+        id: 'sponsor-by-tier',
+        title: 'Sponsor w tej kategorii',
+        description: 'Sponsor przypisany do wybranej rangi',
+        schemaType: 'sponsor',
+        parameters: [{ name: 'tierId', type: 'string' }],
+        value: ({ tierId }: { tierId: string }) => ({
+          tier: { _type: 'reference', _ref: tierId },
         }),
       },
     ],

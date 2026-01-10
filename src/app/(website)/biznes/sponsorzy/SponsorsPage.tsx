@@ -1,27 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import { Sponsor } from "@/types/index";
 import { Handshake, TrendingUp, Users, Calendar, ExternalLink, Globe } from "lucide-react";
 import ContactSection from "@/components/common/ContactSection";
 
+// Helper type do grupowania
+type GroupedSponsors = {
+    tierName: string;
+    rank: number;
+    sponsors: Sponsor[];
+};
+
 export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
 
-    // Filtrowanie danych
-    const sponsorsMain = sponsors.filter((s) => s.tier === "main");
-    const sponsorsStrategic = sponsors.filter((s) => s.tier === "strategic");
-    const sponsorsTech = sponsors.filter((s) => s.tier === "technical");
-    const sponsorsPartners = sponsors.filter((s) => s.tier === "partner" || !s.tier);
+    // 1. Grupowanie sponsorów według rangi (tier)
+    // Tworzymy mapę, gdzie kluczem jest nazwa rangi
+    const groupsMap = sponsors.reduce((acc, sponsor) => {
+        const tierName = sponsor.tier?.name || "Pozostali";
+        const tierRank = sponsor.tier?.rank || 99;
 
-    // Ustawiamy pierwszego głównego sponsora jako aktywnego
-    const [activeSponsor, setActiveSponsor] = useState(
-        sponsorsMain.length > 0 ? sponsorsMain[0] : null
-    );
+        if (!acc[tierName]) {
+            acc[tierName] = {
+                tierName,
+                rank: tierRank,
+                sponsors: []
+            };
+        }
+        acc[tierName].sponsors.push(sponsor);
+        return acc;
+    }, {} as Record<string, GroupedSponsors>);
 
-    // Statystyki
+    // Zamieniamy mapę na tablicę i sortujemy po randze (rank)
+    const sortedGroups = Object.values(groupsMap).sort((a, b) => a.rank - b.rank);
+
+    // Wyciągamy grupy specyficzne dla layoutów
+    // Rank 1 -> Layout "Główny"
+    const mainGroup = sortedGroups.find(g => g.rank === 1);
+
+    // Rank 2 -> Layout "Strategiczny"
+    const strategicGroup = sortedGroups.find(g => g.rank === 2);
+
+    // Rank > 2 -> Layout "Partnerzy" (lista pozostałych grup)
+    const otherGroups = sortedGroups.filter(g => g.rank > 2);
+
+
+    // 2. Logika stanu dla Sponsora Głównego (Rank 1)
+    const [activeSponsor, setActiveSponsor] = useState<Sponsor | null>(null);
+
+    // Ustawiamy domyślnego aktywnego sponsora, jeśli istnieje grupa główna
+    useEffect(() => {
+        if (mainGroup && mainGroup.sponsors.length > 0 && !activeSponsor) {
+            setActiveSponsor(mainGroup.sponsors[0]);
+        }
+    }, [mainGroup, activeSponsor]);
+
+
+    // Statystyki (Statyczne, jak w oryginale)
     const stats = [
         { value: `${sponsors.length}`, label: "Partnerów", icon: <Handshake className="text-emerald-500" size={24} /> },
         { value: "1200+", label: "Kibiców", icon: <Users className="text-emerald-500" size={24} /> },
@@ -52,21 +89,21 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                 ))}
             </section>
 
-            {/* === SPONSORZY GŁÓWNI (UKŁAD DZIELONY) === */}
-            {sponsorsMain.length > 0 && (
+            {/* === SPONSORZY GŁÓWNI (RANK 1) === */}
+            {mainGroup && mainGroup.sponsors.length > 0 && (
                 <section>
                     <div className="flex items-center gap-4 mb-10">
                         <h3 className="text-2xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-emerald-500">
-                            Główni Partnerzy
+                            {mainGroup.tierName}
                         </h3>
                         <div className="h-[1px] flex-grow bg-white/10"></div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 items-start">
 
-                        {/* LEWA KOLUMNA: Lista logotypów do wyboru */}
+                        {/* LEWA KOLUMNA: Lista logotypów */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-4">
-                            {sponsorsMain.map((sponsor) => (
+                            {mainGroup.sponsors.map((sponsor) => (
                                 <motion.div
                                     key={sponsor._id}
                                     onClick={() => setActiveSponsor(sponsor)}
@@ -94,7 +131,7 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                             ))}
                         </div>
 
-                        {/* PRAWA KOLUMNA: Karta informacyjna (Sticky) */}
+                        {/* PRAWA KOLUMNA: Karta informacyjna */}
                         <div className="lg:sticky lg:top-24">
                             <AnimatePresence mode="wait">
                                 {activeSponsor && (
@@ -109,12 +146,24 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                         {/* Tło Gradientowe */}
                                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/10 to-transparent pointer-events-none" />
 
+                                        {/* Zdjęcie w tle (jeśli jest w CMS) */}
+                                        {activeSponsor.backgroundImageUrl && (
+                                            <div className="absolute inset-0 z-0">
+                                                <Image
+                                                    src={activeSponsor.backgroundImageUrl}
+                                                    alt="bg"
+                                                    fill
+                                                    className="object-cover opacity-10 mix-blend-overlay"
+                                                />
+                                            </div>
+                                        )}
+
                                         {/* Header Karty */}
                                         <div className="relative z-10 flex flex-col gap-4 mb-6 border-b border-white/10 pb-6">
                                             <div className="flex justify-between items-start">
                                                 <div>
                                                     <span className="inline-block text-emerald-500 font-bold uppercase tracking-widest text-xs mb-2 bg-emerald-500/10 px-3 py-1 rounded-full">
-                                                        Sponsor Główny
+                                                        {activeSponsor.tier.name}
                                                     </span>
                                                     <h2 className="text-3xl md:text-4xl font-black text-white font-montserrat tracking-tight">
                                                         {activeSponsor.name}
@@ -126,11 +175,11 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                         {/* Treść */}
                                         <div className="relative z-10 flex-grow">
                                             <p className="text-gray-300 text-lg leading-relaxed">
-                                                {activeSponsor.description || "Dumny partner Kujawianki Izbica Kujawska. Wspieramy rozwój lokalnego sportu i promujemy zdrowy tryb życia wśród młodzieży."}
+                                                {activeSponsor.description || `Dumny ${activeSponsor.tier.name.toLowerCase()} Kujawianki Izbica Kujawska. Wspieramy rozwój lokalnego sportu.`}
                                             </p>
                                         </div>
 
-                                        {/* Footer Karty (Przycisk) */}
+                                        {/* Footer Karty */}
                                         <div className="relative z-10 mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
                                             {activeSponsor.website && (
                                                 <a
@@ -144,7 +193,6 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                                 </a>
                                             )}
 
-                                            {/* Ozdobna ikona globu jeśli brak www */}
                                             {!activeSponsor.website && (
                                                 <div className="text-gray-600 flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
                                                     <Globe size={16} /> Partner Lokalny
@@ -152,7 +200,7 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                             )}
                                         </div>
 
-                                        {/* PRZEKRZYWIONE LOGO W TLE (Prawy dolny róg) */}
+                                        {/* PRZEKRZYWIONE LOGO W TLE */}
                                         {activeSponsor.logoUrl && (
                                             <div className="absolute -bottom-10 -right-10 w-[350px] h-[350px] opacity-5 rotate-[-15deg] pointer-events-none">
                                                 <Image
@@ -167,23 +215,22 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                 )}
                             </AnimatePresence>
                         </div>
-
                     </div>
                 </section>
             )}
 
-            {/* === SPONSORZY STRATEGICZNI (BEZ SZAROŚCI) === */}
-            {sponsorsStrategic.length > 0 && (
+            {/* === SPONSORZY STRATEGICZNI (RANK 2) === */}
+            {strategicGroup && strategicGroup.sponsors.length > 0 && (
                 <section>
                     <div className="flex items-center gap-4 mb-10">
                         <h3 className="text-xl font-bold text-white uppercase font-montserrat tracking-widest pl-4 border-l-4 border-white/30">
-                            Partnerzy Strategiczni
+                            {strategicGroup.tierName}
                         </h3>
                         <div className="h-[1px] flex-grow bg-white/10"></div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {sponsorsStrategic.map((sponsor) => (
+                        {strategicGroup.sponsors.map((sponsor) => (
                             <motion.div
                                 key={sponsor._id}
                                 initial={{ opacity: 0 }}
@@ -197,7 +244,6 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                             src={sponsor.logoUrl}
                                             alt={sponsor.name}
                                             fill
-                                            // Usunięto grayscale
                                             className="object-contain transition-transform duration-500 group-hover:scale-110"
                                         />
                                     </div>
@@ -210,18 +256,19 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                 </section>
             )}
 
-            {/* === POZOSTALI PARTNERZY (BEZ SZAROŚCI) === */}
-            {(sponsorsTech.length > 0 || sponsorsPartners.length > 0) && (
-                <section>
+            {/* === POZOSTAŁE GRUPY (RANK > 2) === */}
+            {/* Iterujemy po każdej grupie osobno, zachowując nagłówek */}
+            {otherGroups.map((group) => (
+                <section key={group.tierName}>
                     <div className="flex items-center gap-4 mb-10">
                         <h3 className="text-lg font-bold text-gray-400 uppercase font-montserrat tracking-widest pl-4 border-l-4 border-white/10">
-                            Partnerzy i Wsparcie
+                            {group.tierName}
                         </h3>
                         <div className="h-[1px] flex-grow bg-white/10"></div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {[...sponsorsTech, ...sponsorsPartners].map((sponsor) => (
+                        {group.sponsors.map((sponsor) => (
                             <div
                                 key={sponsor._id}
                                 className="bg-white/5 hover:bg-white/10 rounded-xl aspect-square flex items-center justify-center p-6 transition-colors group border border-white/5"
@@ -232,7 +279,6 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                                             src={sponsor.logoUrl}
                                             alt={sponsor.name}
                                             fill
-                                            // Usunięto filtry (opacity/grayscale), teraz jest pełny kolor od razu
                                             className="object-contain transition-all duration-300 group-hover:scale-110"
                                         />
                                     </div>
@@ -243,7 +289,7 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
                         ))}
                     </div>
                 </section>
-            )}
+            ))}
 
             {/* === CTA / ZOSTAŃ SPONSOREM === */}
             <ContactSection
