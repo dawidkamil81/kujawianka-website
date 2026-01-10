@@ -13,7 +13,7 @@ export default async function Club100Page() {
     // 2. Filtrujemy: Wybieramy tylko tych z rangą "club100"
     // Dodajemy zabezpieczenie (allEntities || []) na wypadek braku danych
     const clubMembers = (allEntities || []).filter(
-        (entity: Sponsor) => entity.tier === "club100"
+        (entity: Sponsor) => entity.tier.name === "club100"
     );
 
     return (
