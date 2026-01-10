@@ -1,13 +1,12 @@
 import { defineField, defineType } from 'sanity'
-import { Briefcase, Handshake, Users, TrendingUp, Calendar, Trophy, Star } from 'lucide-react'
 
-// Wspólne pola (bez zmian, dla porządku)
+// Wspólne pola (nagłówek, opis)
 const commonFields = [
     defineField({
         name: 'title',
-        title: 'Tytuł strony (Nagłówek H1)',
+        title: 'Tytuł strony (H1)',
         type: 'string',
-        validation: rule => rule.required()
+        initialValue: 'Tytuł strony'
     }),
     defineField({
         name: 'description',
@@ -17,21 +16,103 @@ const commonFields = [
     }),
 ]
 
+// === 1. STRONA OFERTY (Zostawiamy tę wersję, bo działa poprawnie z frontendem) ===
 export const offerPage = defineType({
     name: 'offerPage',
-    title: 'Strona: Oferta / Współpraca',
+    title: 'Strona: Oferta',
     type: 'document',
-    fields: [...commonFields,
-    defineField({
-        name: 'content',
-        title: 'Treść oferty',
-        type: 'array',
-        of: [{ type: 'block' }]
-    })
+    fields: [
+        ...commonFields,
+
+        // Pakiety Sponsorskie
+        defineField({
+            name: 'packages',
+            title: 'Karty Pakietów (Cooperation Types)',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    defineField({ name: 'title', title: 'Nazwa Pakietu', type: 'string' }),
+                    defineField({ name: 'description', title: 'Opis', type: 'text', rows: 4 }),
+                    defineField({
+                        name: 'iconName',
+                        title: 'Ikona',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Diament (Gem)', value: 'gem' },
+                                { title: 'Cel (Target)', value: 'target' },
+                                { title: 'Koszulka (Shirt)', value: 'shirt' },
+                                { title: 'Korona (Crown)', value: 'crown' },
+                                { title: 'Uścisk dłoni (Handshake)', value: 'handshake' },
+                            ],
+                            layout: 'radio'
+                        },
+                        initialValue: 'gem'
+                    }),
+                    defineField({
+                        name: 'colorTheme',
+                        title: 'Kolorystyka karty',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Szmaragdowy (Domyślny)', value: 'emerald' },
+                                { title: 'Biały (Dla Klub 100)', value: 'white' },
+                                { title: 'Niebieski (Dla Klubowicza)', value: 'blue' },
+                            ],
+                            layout: 'radio'
+                        },
+                        initialValue: 'emerald'
+                    }),
+                    defineField({
+                        name: 'link',
+                        title: 'Link',
+                        type: 'string',
+                        initialValue: '#contact'
+                    })
+                ],
+                preview: {
+                    select: {
+                        title: 'title',
+                        subtitle: 'colorTheme'
+                    }
+                }
+            }]
+        }),
+
+        // Statystyki dla Oferty
+        defineField({
+            name: 'stats',
+            title: 'Statystyki (Kafelki)',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    defineField({ name: 'value', title: 'Wartość', type: 'string' }),
+                    defineField({ name: 'label', title: 'Etykieta', type: 'string' }),
+                    defineField({
+                        name: 'iconName',
+                        title: 'Ikona',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Uścisk dłoni', value: 'handshake' },
+                                { title: 'Ludzie', value: 'users' },
+                                { title: 'Wykres', value: 'trending' },
+                                { title: 'Kalendarz', value: 'calendar' }
+                            ]
+                        }
+                    })
+                ]
+            }]
+        }),
+
+        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
     ]
 })
 
-// === TUTAJ GŁÓWNE ZMIANY DLA STRONY SPONSORÓW ===
+// === 2. STRONA SPONSORÓW (Przywrócona pełna wersja z Twojego kodu) ===
 export const sponsorsPage = defineType({
     name: 'sponsorsPage',
     title: 'Strona: Sponsorzy',
@@ -39,7 +120,7 @@ export const sponsorsPage = defineType({
     fields: [
         ...commonFields,
 
-        // 1. SEKCJA STATYSTYK (KAFELKI)
+        // SEKCJA STATYSTYK (KAFELKI)
         defineField({
             name: 'stats',
             title: 'Kafelki ze statystykami',
@@ -58,7 +139,7 @@ export const sponsorsPage = defineType({
                         type: 'string'
                     }),
                     defineField({
-                        name: 'icon',
+                        name: 'icon', // Tutaj w Sponsorach używamy pola 'icon', w ofercie 'iconName' (zgodnie z historią zmian)
                         title: 'Ikona',
                         type: 'string',
                         options: {
@@ -85,7 +166,7 @@ export const sponsorsPage = defineType({
             validation: rule => rule.max(4).warning('Zalecane maksymalnie 4 kafelki')
         }),
 
-        // 2. SEKCJA CTA (DOLNA)
+        // SEKCJA CTA (DOLNA)
         defineField({
             name: 'ctaTitle',
             title: 'Tytuł sekcji kontaktowej (CTA)',
@@ -102,6 +183,7 @@ export const sponsorsPage = defineType({
     ]
 })
 
+// === 3. POZOSTAŁE STRONY ===
 export const partnersPage = defineType({
     name: 'partnersPage',
     title: 'Strona: Klubowicze',

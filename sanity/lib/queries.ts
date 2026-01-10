@@ -345,3 +345,25 @@ export const SQUAD_PAGE_QUERY = defineQuery(`
     }
   }
 `);
+
+
+export const OFFER_PAGE_QUERY = defineQuery(`
+  *[_id == "offerPage"][0] {
+    title,
+    description,
+    packages[] {
+      title,
+      description,
+      iconName,
+      colorTheme,
+      link
+    },
+    stats[] {
+      value,
+      label,
+      iconName
+    },
+    ctaTitle,
+    ctaDescription
+  }
+`);

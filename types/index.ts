@@ -132,3 +132,24 @@ export interface SiteSettings {
         ogImage?: any;
     };
 }
+
+// ... inne typy
+
+export type OfferPageData = {
+    title: string;
+    description: string;
+    packages?: {
+        title: string;
+        description: string;
+        iconName: string;
+        colorTheme: 'emerald' | 'white' | 'blue';
+        link: string;
+    }[];
+    stats?: {
+        value: string;
+        label: string;
+        iconName: string;
+    }[];
+    ctaTitle?: string;
+    ctaDescription?: string;
+};
