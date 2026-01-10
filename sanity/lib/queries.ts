@@ -272,3 +272,32 @@ export const DONATE_PAGE_QUERY = defineQuery(`
     }
   }
 `);
+
+export const SQUADS_NAVIGATION_QUERY = defineQuery(`
+  *[_type == "squad"] | order(order asc) {
+    name,
+    "slug": slug.current
+  }
+`);
+
+// 2. Do strony dynamicznej kadry (np. /druzyny/seniorzy)
+export const SQUAD_PAGE_QUERY = defineQuery(`
+  *[_type == "squad" && slug.current == $slug][0] {
+    name,
+    "slug": slug.current,
+    coachName,
+    coachPhone,
+    coachEmail,
+    description,
+    // Pobieramy zawodników przypisanych do TEJ KONKRETNEJ kadry
+    "players": *[_type == "player" && references(^._id)] | order(number asc) {
+       _id,
+       name,
+       surname,
+       number,
+       position,
+       "staffRole": staffRole-> name,
+       "imageUrl": image.asset->url
+    }
+  }
+`);

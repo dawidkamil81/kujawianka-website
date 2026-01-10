@@ -9,6 +9,7 @@ interface PlayerCardProps {
 export default function PlayerCard({ player }: PlayerCardProps) {
     // Sprawdzamy, czy to członek sztabu
     const isStaff = player.position === "Sztab";
+    const displayPosition = isStaff && player.staffRole ? player.staffRole : player.position;
 
     return (
         <div className="group relative aspect-[3/4] rounded-xl overflow-hidden border border-white/5 bg-[#121212] hover:border-club-green/40 hover:shadow-[0_0_15px_rgba(23,65,53,0.2)] transition-all duration-300">
@@ -32,7 +33,7 @@ export default function PlayerCard({ player }: PlayerCardProps) {
             {/* POZYCJA (Badge) */}
             <div className="absolute top-2 right-2 md:top-3 md:right-3 z-10">
                 <span className="px-2 py-0.5 md:px-2.5 text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-white bg-black/50 backdrop-blur-md border border-white/10 rounded-full shadow-lg">
-                    {player.position}
+                    {displayPosition} {/* <--- ZMIANA TUTAJ */}
                 </span>
             </div>
 

@@ -5,6 +5,7 @@ export type Player = {
     number: number;
     position: "Bramkarz" | "Obrońca" | "Pomocnik" | "Napastnik" | "Sztab";
     imageUrl: string;
+    staffRole?: string;
 };
 
 

@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * This configuration is used to for the Sanity Studio that’s mounted on the `\src\app\studio\[[...tool]]\page.tsx` route
+ * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
  */
 
 import { visionTool } from '@sanity/vision'
@@ -12,16 +12,44 @@ import { structureTool } from 'sanity/structure'
 import { apiVersion, dataset, projectId } from './sanity/env'
 import { schema } from './sanity/schemaTypes'
 import { structure } from './sanity/structureBuilder'
+
 export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
-  // Add and edit the content schema in the './sanity/schemaTypes' folder
-  schema,
+  schema: {
+    types: schema.types,
+    // --- SZABLONY WARTOŚCI POCZĄTKOWYCH ---
+    templates: (prev) => [
+      ...prev,
+      // 1. Szablon dla zwykłego zawodnika (tylko przypisuje do drużyny)
+      {
+        id: 'player-by-squad',
+        title: 'Nowy Zawodnik w Kadrze',
+        description: 'Tworzy zawodnika przypisanego do wybranej kadry',
+        schemaType: 'player',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId },
+          // Nie ustawiamy pozycji, użytkownik wybierze (Bramkarz, Obrońca itp.)
+        }),
+      },
+      // 2. NOWOŚĆ: Szablon dla SZTABU (przypisuje do drużyny ORAZ ustawia pozycję 'Sztab')
+      {
+        id: 'staff-by-squad',
+        title: 'Nowy Członek Sztabu',
+        description: 'Tworzy trenera/członka sztabu w wybranej kadrze',
+        schemaType: 'player',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId },
+          position: 'Sztab' // <--- To jest kluczowe!
+        }),
+      },
+    ],
+  },
   plugins: [
     structureTool({ structure }),
-    // Vision is for querying with GROQ from inside the Studio
-    // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
   ],
 })

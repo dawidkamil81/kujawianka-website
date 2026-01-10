@@ -10,7 +10,13 @@ import { download } from './download'
 import { siteSettings } from './siteSettings'
 import { clubPage } from './clubPage'
 import { donatePage } from './donatePage'
+import { squad } from './squad'
+import { staffRole } from "./staffRole";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, news, player, sponsor, download, page, team, table, result, clubPage, donatePage],
+  types:
+    [
+      siteSettings, news, player, sponsor, download, page,
+      team, table, result, clubPage, donatePage, squad, staffRole
+    ],
 }

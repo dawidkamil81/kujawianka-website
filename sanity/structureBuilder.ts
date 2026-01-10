@@ -1,4 +1,4 @@
-import type { StructureResolver } from 'sanity/structure'
+import { type StructureResolver } from 'sanity/structure'
 import {
   Users,
   Calendar,
@@ -13,15 +13,16 @@ import {
   Crown,
   Medal,
   Baby,
-  Heart
+  Heart,
+  ListFilter,
+  Edit,
+  Shirt,
+  UserCog // Ikona dla Sztabu
 } from 'lucide-react'
 
-// Funkcja pomocnicza do Terminarza
+// Funkcja pomocnicza do Terminarza (bez zmian)
 const createScheduleFolder = (S: any, title: string, categoryValue: string) => {
   const isSenior = categoryValue === 'senior';
-
-  // Seniorzy: pokaż wyniki BEZ kategorii (stare) LUB z kategorią 'senior'
-  // Juniorzy/Trampkarze: tylko konkretna kategoria
   const filter = isSenior
     ? '_type == "result" && round == $round && (!defined(category) || category == $category)'
     : '_type == "result" && round == $round && category == $category';
@@ -58,10 +59,21 @@ export const structure: StructureResolver = (S) =>
         .title('Ustawienia Globalne')
         .icon(Settings)
         .child(
-          S.document()
-            .schemaType('siteSettings')
-            .documentId('siteSettings')
-            .title('Konfiguracja Strony')
+          S.list()
+            .title('Konfiguracja')
+            .items([
+              S.documentListItem()
+                .schemaType('siteSettings')
+                .id('siteSettings')
+                .title('Konfiguracja Strony'),
+              S.divider(),
+              S.documentTypeListItem('squad')
+                .title('Definicje Grup / Roczniki')
+                .icon(ListFilter),
+              S.documentTypeListItem('staffRole')
+                .title('Role w Sztabie (Słownik)')
+                .icon(UserCog)
+            ])
         ),
 
       S.divider(),
@@ -73,7 +85,87 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // --- 3. TABELA I WYNIKI (Główny poziom) ---
+      // --- 3. KADRY DRUŻYN (Z PODZIAŁEM NA SZTAB I ZAWODNIKÓW) ---
+      S.listItem()
+        .title('Kadry Drużyn')
+        .icon(Users)
+        .child(
+          S.list()
+            .title('Zarządzanie Kadrami')
+            .items([
+              // A. Baza wszystkich (dla porządku)
+              S.listItem()
+                .title('Baza Globalna (Wszyscy)')
+                .icon(Users)
+                .child(S.documentTypeList('player')),
+
+              S.divider(),
+
+              // B. Lista Drużyn
+              S.listItem()
+                .title('Lista Drużyn')
+                .icon(ListFilter)
+                .child(
+                  S.documentTypeList('squad')
+                    .title('Wybierz Drużynę')
+                    .child(squadId =>
+                      S.list()
+                        .title('Zarządzanie Drużyną')
+                        .items([
+                          // 1. Konfiguracja samej drużyny (nazwa, logo)
+                          S.listItem()
+                            .title('Dane Drużyny (Konfiguracja)')
+                            .icon(Edit)
+                            .child(
+                              S.document()
+                                .schemaType('squad')
+                                .documentId(squadId)
+                            ),
+
+                          S.divider(),
+
+                          // 2. KADRA ZAWODNICZA (Tylko piłkarze)
+                          S.listItem()
+                            .title('Kadra Zawodnicza')
+                            .icon(Shirt)
+                            .child(
+                              S.documentList()
+                                .title('Lista Piłkarzy')
+                                .schemaType('player')
+                                // Filtrujemy po ID grupy ORAZ wykluczamy Sztab
+                                .filter('_type == "player" && squad._ref == $squadId && position != "Sztab"')
+                                .params({ squadId })
+                                // Używamy szablonu dla piłkarzy (bez ustawionej pozycji)
+                                .initialValueTemplates([
+                                  S.initialValueTemplateItem('player-by-squad', { squadId })
+                                ])
+                            ),
+
+                          // 3. SZTAB SZKOLENIOWY (Tylko trenerzy/sztab)
+                          S.listItem()
+                            .title('Sztab Szkoleniowy')
+                            .icon(UserCog)
+                            .child(
+                              S.documentList()
+                                .title('Lista Sztabu')
+                                .schemaType('player')
+                                // Filtrujemy po ID grupy ORAZ wymagamy pozycji Sztab
+                                .filter('_type == "player" && squad._ref == $squadId && position == "Sztab"')
+                                .params({ squadId })
+                                // Używamy szablonu dla sztabu (automatycznie ustawi position="Sztab")
+                                .initialValueTemplates([
+                                  S.initialValueTemplateItem('staff-by-squad', { squadId })
+                                ])
+                            )
+                        ])
+                    )
+                )
+            ])
+        ),
+
+      S.divider(),
+
+      // --- 4. TABELA I WYNIKI ---
       S.listItem()
         .title('Tabela i Wyniki')
         .icon(FileText)
@@ -87,7 +179,7 @@ export const structure: StructureResolver = (S) =>
                 .icon(Medal)
                 .child(
                   S.list()
-                    .title('Seniorzy')
+                    .title('Seniorzy - Liga')
                     .items([
                       S.listItem()
                         .title('Tabela Ligowa')
@@ -101,112 +193,29 @@ export const structure: StructureResolver = (S) =>
                       createScheduleFolder(S, 'Seniorzy', 'senior')
                     ])
                 ),
-              // B. JUNIORZY
+              S.divider(),
+              // B. POZOSTAŁE GRUPY
               S.listItem()
-                .title('Juniorzy')
+                .title('Tabele Grup Młodzieżowych')
                 .icon(Users)
                 .child(
-                  S.list()
-                    .title('Juniorzy')
-                    .items([
-                      S.listItem()
-                        .title('Tabela Ligowa')
-                        .icon(FileText)
-                        .child(
-                          S.documentList()
-                            .title('Tabela Ligowa')
-                            .schemaType('table')
-                            .filter('_type == "table" && category == "junior"')
-                        ),
-                      createScheduleFolder(S, 'Juniorzy', 'junior')
-                    ])
-                ),
-              // C. TRAMPKARZE
-              S.listItem()
-                .title('Trampkarze')
-                .icon(Baby)
-                .child(
-                  S.list()
-                    .title('Trampkarze')
-                    .items([
-                      S.listItem()
-                        .title('Tabela Ligowa')
-                        .icon(FileText)
-                        .child(
-                          S.documentList()
-                            .title('Tabela Ligowa')
-                            .schemaType('table')
-                            .filter('_type == "table" && category == "trampkarz"')
-                        ),
-                      createScheduleFolder(S, 'Trampkarze', 'trampkarz')
-                    ])
-                ),
+                  S.documentTypeList('squad')
+                    .title('Wybierz Grupę')
+                    .child(squadId =>
+                      S.documentList()
+                        .title('Tabele')
+                        .schemaType('table')
+                        .filter('_type == "table" && squad._ref == $squadId')
+                        .params({ squadId })
+                    )
+                )
             ])
         ),
 
-      // --- 4. DRUŻYNY (Główny poziom) ---
-      S.listItem()
-        .title('Kadra')
-        .icon(Users)
-        .child(
-          S.list()
-            .title('Wybierz Kategorię')
-            .items([
-              // A. SENIORZY
-              S.listItem()
-                .title('Seniorzy')
-                .icon(Medal)
-                .child(
-                  S.list()
-                    .title('Seniorzy - Zarządzanie')
-                    .items([
-                      S.listItem()
-                        .title('Kadra Zawodnicza')
-                        .child(
-                          S.documentList()
-                            .title('Seniorzy - Kadra')
-                            .schemaType('player')
-                            .filter('_type == "player" && (!defined(category) || category == "senior") && position != "Sztab"')
-                        ),
-                      S.listItem()
-                        .title('Sztab Szkoleniowy')
-                        .child(
-                          S.documentList()
-                            .title('Seniorzy - Sztab')
-                            .schemaType('player')
-                            .filter('_type == "player" && (!defined(category) || category == "senior") && position == "Sztab"')
-                        )
-                    ])
-                ),
+      S.divider(),
 
-              // B. JUNIORZY
-              S.listItem()
-                .title('Juniorzy')
-                .icon(Users)
-                .child(
-                  S.documentList()
-                    .title('Kadra Juniorów')
-                    .schemaType('player')
-                    .filter('_type == "player" && category == "junior"')
-                ),
-
-              // C. TRAMPKARZE
-              S.listItem()
-                .title('Trampkarze')
-                .icon(Baby)
-                .child(
-                  S.documentList()
-                    .title('Kadra Trampkarzy')
-                    .schemaType('player')
-                    .filter('_type == "player" && category == "trampkarz"')
-                ),
-            ])
-        ),
-
-      // --- 5. BAZA KLUBÓW (Główny poziom) ---
-      S.documentTypeListItem('team')
-        .title('Loga zespołów')
-        .icon(Shield),
+      // --- 5. BAZA KLUBÓW ---
+      S.documentTypeListItem('team').title('Loga zespołów').icon(Shield),
 
       S.divider(),
 
@@ -218,18 +227,36 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Strefa Biznesowa')
             .items([
-              S.listItem().title('Sponsorzy').icon(Gem).child(
-                S.documentList().title('Sponsorzy').schemaType('sponsor')
-                  .filter('_type == "sponsor" && tier in ["main", "strategic", "technical"]')
-              ),
-              S.listItem().title('Klubowicze').icon(Handshake).child(
-                S.documentList().title('Klubowicze').schemaType('sponsor')
-                  .filter('_type == "sponsor" && tier == "partner"')
-              ),
-              S.listItem().title('Klub 100').icon(Crown).child(
-                S.documentList().title('Klub 100').schemaType('sponsor')
-                  .filter('_type == "sponsor" && tier == "club100"')
-              ),
+              S.listItem()
+                .title('Sponsorzy')
+                .icon(Gem)
+                .child(
+                  S.documentList()
+                    .title('Lista Sponsorów')
+                    .id('sponsorsList')
+                    .schemaType('sponsor')
+                    .filter('_type == "sponsor" && tier in ["main", "strategic", "technical"]')
+                ),
+              S.listItem()
+                .title('Klubowicze')
+                .icon(Handshake)
+                .child(
+                  S.documentList()
+                    .title('Lista Klubowiczów')
+                    .id('partnersList')
+                    .schemaType('sponsor')
+                    .filter('_type == "sponsor" && tier == "partner"')
+                ),
+              S.listItem()
+                .title('Klub 100')
+                .icon(Crown)
+                .child(
+                  S.documentList()
+                    .title('Lista Klub 100')
+                    .id('club100List')
+                    .schemaType('sponsor')
+                    .filter('_type == "sponsor" && tier == "club100"')
+                ),
             ])
         ),
 
@@ -251,7 +278,6 @@ export const structure: StructureResolver = (S) =>
                   S.document()
                     .schemaType('clubPage')
                     .documentId('clubPage')
-                    .title('Edycja strony Klubowej')
                 ),
               S.listItem()
                 .title('Przekaż 1.5%')
@@ -259,13 +285,10 @@ export const structure: StructureResolver = (S) =>
                 .child(
                   S.document()
                     .schemaType('donatePage')
-                    .documentId('donatePage') // Singleton ID
-                    .title('Edycja strony 1.5%')
+                    .documentId('donatePage')
                 ),
             ])
         ),
-
-
       S.documentTypeListItem('download')
         .title('Pliki do pobrania')
         .icon(Download),

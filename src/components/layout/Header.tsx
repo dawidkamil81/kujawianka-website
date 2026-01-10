@@ -14,9 +14,10 @@ import { useRouter } from "next/navigation";
 // Definiujemy propsy, które komponent otrzymuje z Layoutu
 interface HeaderProps {
     settings?: SiteSettings | null;
+    squads?: { name: string; slug: string }[]; // <--- Nowy prop (Lista drużyn z CMS)
 }
 
-export default function Header({ settings }: HeaderProps) {
+export default function Header({ settings, squads }: HeaderProps) { // <--- Dodano squads tutaj
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const pathname = usePathname();
@@ -25,20 +26,14 @@ export default function Header({ settings }: HeaderProps) {
     useEffect(() => {
         // Ustawiamy interwał na 60 sekund (60000 ms)
         const interval = setInterval(() => {
-            // router.refresh() wymusza ponowne pobranie danych z serwera (revalidację ISR)
-            // Nie powoduje to pełnego przeładowania strony (nie ma mignięcia białego ekranu)
             router.refresh();
         }, 60000);
 
-        // Czyszczenie interwału przy odmontowaniu komponentu (zabezpieczenie)
         return () => clearInterval(interval);
     }, [router]);
 
     // --- LOGIKA DANYCH Z SANITY ---
-    // 1. Logo: Jeśli jest w CMS, użyj go. Jeśli nie, weź domyślne z /public/logo.png
     const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
-
-    // 2. Tytuł: Jeśli jest w CMS, użyj go. Jeśli nie, weź domyślny.
     const siteTitle = settings?.title || "Kujawianka Izbica Kujawska";
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -56,7 +51,6 @@ export default function Header({ settings }: HeaderProps) {
         return pathname?.startsWith(path);
     };
 
-    // === ZMIANA 1: Zmiana breakpointów w klasach CSS (md -> lg) ===
     const getVisualClasses = (path: string) => {
         const active = isActive(path);
 
@@ -64,7 +58,6 @@ export default function Header({ settings }: HeaderProps) {
             ? "opacity-100"
             : "opacity-60 hover:opacity-100";
 
-        // ZMIANA: md:w-auto -> lg:w-auto, md:py-2 -> lg:py-2
         const baseClasses = `
             relative flex items-center justify-center gap-1 w-full py-4 font-semibold lg:w-auto lg:py-2 
             text-white transition-all duration-300 ${visualState}
@@ -81,27 +74,25 @@ export default function Header({ settings }: HeaderProps) {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md shadow-lg text-white">
-            {/* ZMIANA: md:px-8 -> lg:px-8 */}
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
 
                 {/* Logo i Tytuł */}
                 <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
                     <div className="relative h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
                         <Image
-                            src={logoSrc} // Używamy zmiennej
+                            src={logoSrc}
                             alt={siteTitle}
                             fill
                             className="object-contain"
                             priority
                         />
                     </div>
-                    {/* ZMIANA: md:text-xl -> lg:text-xl */}
                     <h1 className="text-sm font-bold uppercase tracking-wide md:text-lg lg:text-xl text-white drop-shadow-sm">
-                        Kujawianka Izbica Kujawska {/* Używamy zmiennej */}
+                        Kujawianka Izbica Kujawska
                     </h1>
                 </Link>
 
-                {/* Hamburger (Mobilny) - ZMIANA: md:hidden -> lg:hidden */}
+                {/* Hamburger (Mobilny) */}
                 <button
                     className="flex p-2 text-white/80 hover:text-white lg:hidden hover:bg-white/10 rounded-lg transition-colors"
                     onClick={toggleMenu}
@@ -111,7 +102,6 @@ export default function Header({ settings }: HeaderProps) {
                 </button>
 
                 {/* Nawigacja */}
-                {/* ZMIANA: Wszystkie prefiksy md: zamienione na lg: */}
                 <nav
                     className={`
                         absolute left-0 top-full w-full flex-col bg-[#174135] lg:bg-transparent border-b border-white/10 lg:border-none transition-all duration-300 lg:static lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:p-0
@@ -123,10 +113,9 @@ export default function Header({ settings }: HeaderProps) {
                         Aktualności
                     </Link>
 
-                    {/* Dropdown: Drużyny */}
+                    {/* Dropdown: Drużyny (DYNAMICZNY) */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
-                        // ZMIANA: window.innerWidth >= 1024
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
@@ -143,13 +132,25 @@ export default function Header({ settings }: HeaderProps) {
                             lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
                             ${openDropdown === "teams" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
                         `}>
-                            <Link href="/druzyny/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
-                            <Link href="/druzyny/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
-                            <Link href="/druzyny/trampkarze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Trampkarze</Link>
+                            {/* Renderowanie dynamicznej listy drużyn z CMS */}
+                            {squads && squads.length > 0 ? (
+                                squads.map((squad) => (
+                                    <Link
+                                        key={squad.slug}
+                                        href={`/druzyny/${squad.slug}`}
+                                        className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                                        onClick={closeMenu}
+                                    >
+                                        {squad.name}
+                                    </Link>
+                                ))
+                            ) : (
+                                <span className="block px-4 py-3 text-xs text-white/30">Brak drużyn</span>
+                            )}
                         </div>
                     </div>
 
-                    {/* Dropdown: Wyniki */}
+                    {/* Dropdown: Wyniki (Na razie statyczny) */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
