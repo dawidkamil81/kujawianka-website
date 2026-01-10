@@ -9,7 +9,7 @@ export default async function KlubowiczePage() {
 
     // 2. Filtrujemy: Wybieramy tylko tych, którzy są "Klubowiczami" (tier == 'partner')
     const clubMembers = (allEntities || []).filter(
-        (entity: Sponsor) => entity.tier === "partner"
+        (entity: Sponsor) => entity.tier.name === "partner"
     );
 
     return (
