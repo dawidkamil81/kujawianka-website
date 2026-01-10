@@ -46,6 +46,18 @@ export type Sponsor = {
     backgroundImageUrl?: string;
 };
 
+export type SponsorsPageData = {
+    title: string;
+    description: string;
+    stats?: {
+        value: string;
+        label: string;
+        icon: "handshake" | "users" | "trending" | "calendar" | "trophy" | "star";
+    }[];
+    ctaTitle?: string;
+    ctaDescription?: string;
+};
+
 // src/types/index.ts
 
 // ... (Player, NewsItem, Sponsor, Match - upewnij się, że masz Match)

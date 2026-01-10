@@ -98,6 +98,34 @@ export const ALL_SPONSORS_QUERY = defineQuery(`
   }
 `);
 
+export const SPONSORS_PAGE_QUERY = defineQuery(`
+  {
+    "pageData": *[_id == "sponsorsPage"][0] {
+      title,
+      description,
+      stats[] {
+        value,
+        label,
+        icon
+      },
+      ctaTitle,
+      ctaDescription
+    },
+    "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+      _id,
+      name,
+      "logoUrl": logo.asset->url,
+      website,
+      description,
+      "backgroundImageUrl": backgroundImage.asset->url,
+      tier->{
+        name,
+        rank
+      }
+    }
+  }
+`);
+
 // ... inne zapytania
 
 export const RESULTS_PAGE_QUERY = defineQuery(`
