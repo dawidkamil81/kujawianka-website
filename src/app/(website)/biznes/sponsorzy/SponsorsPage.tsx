@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sponsor } from "@/types/index";
 import { Handshake, TrendingUp, Users, Calendar, ExternalLink, Globe } from "lucide-react";
+import ContactSection from "@/components/common/ContactSection";
 
 export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
 
@@ -245,25 +246,10 @@ export default function SponsorsPage({ sponsors }: { sponsors: Sponsor[] }) {
             )}
 
             {/* === CTA / ZOSTAŃ SPONSOREM === */}
-            <section className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#121212] flex flex-col items-center justify-center py-20 px-6 text-center">
-                {/* Tło CTA */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(23,65,53,0.3),transparent_70%)] pointer-events-none" />
-
-                <div className="relative z-10 max-w-2xl">
-                    <h2 className="text-3xl md:text-4xl font-black text-white uppercase font-montserrat mb-6">
-                        Dołącz do <span className="text-emerald-500">Rodziny</span> Kujawianki
-                    </h2>
-                    <p className="text-gray-400 mb-10 text-lg">
-                        Budujmy razem silną markę i wspierajmy lokalny sport. Sprawdź naszą ofertę sponsorską.
-                    </p>
-                    <Link
-                        href="/biznes/oferta"
-                        className="inline-flex items-center justify-center px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest rounded-full transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                    >
-                        Zobacz Ofertę
-                    </Link>
-                </div>
-            </section>
+            <ContactSection
+                title="Dołącz do Rodziny Kujawianki"
+                description="Budujmy razem silną markę i wspierajmy lokalny sport. Sprawdź naszą ofertę sponsorską."
+            />
 
         </div>
     );
