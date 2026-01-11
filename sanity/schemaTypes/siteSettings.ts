@@ -72,6 +72,40 @@ export const siteSettings = defineType({
             ]
         }),
 
+        defineField({
+            name: 'footerCertificates',
+            title: 'Certyfikaty w stopce',
+            description: 'Logotypy partnerów, certyfikaty, licencje (widoczne pod opisem w stopce)',
+            type: 'array',
+            of: [{
+                type: 'image',
+                options: { hotspot: true },
+                fields: [
+                    defineField({ name: 'alt', title: 'Opis (Alt)', type: 'string' }),
+                    defineField({ name: 'url', title: 'Link (opcjonalny)', type: 'url' })
+                ]
+            }]
+        }),
+
+        defineField({
+            name: 'footerDownloads',
+            title: 'Pliki do pobrania w stopce',
+            description: 'Np. Oferta PDF, Statut, Logo Pack',
+            type: 'array',
+            of: [{
+                type: 'file',
+                options: { storeOriginalFilename: true },
+                fields: [
+                    defineField({
+                        name: 'title',
+                        title: 'Nazwa wyświetlana na przycisku',
+                        type: 'string',
+                        validation: Rule => Rule.required()
+                    })
+                ]
+            }]
+        }),
+
         // --- SEO ---
         defineField({
             name: 'seo',

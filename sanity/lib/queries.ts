@@ -356,6 +356,7 @@ export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0] {
     title,
     logo,
+    // Twoje istniejące social media
     socialLinks {
       facebook { url, isVisible },
       instagram { url, isVisible },
@@ -364,9 +365,24 @@ export const SETTINGS_QUERY = defineQuery(`
       twitter { url, isVisible }
     },
     contact,
-    seo
+    seo,
+
+    // --- NOWE POLA DO STOPKI ---
+    
+    // 1. Certyfikaty: Pobieramy URL obrazka, alt i link zewnętrzny
+    footerCertificates[] {
+      "imageUrl": asset->url,
+      alt,
+      url
+    },
+
+    // 2. Pliki: Pobieramy URL pliku i tytuł przycisku
+    footerDownloads[] {
+      "fileUrl": asset->url,
+      title
+    }
   }
-`)
+`);
 
 export const CLUB_PAGE_QUERY = defineQuery(`
   *[_id == "clubPage"][0] {
