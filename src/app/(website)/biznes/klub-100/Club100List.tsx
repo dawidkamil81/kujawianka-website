@@ -11,7 +11,7 @@ import {
     Ticket
 } from "lucide-react";
 import { motion } from "framer-motion";
-import ContactSection from "@/components/common/ContactSection";
+import ContactSection from "@/components/sections/ContactSection";
 import { Sponsor, Club100PageData } from "@/types/index";
 
 // Mapa ikon dostępnych w CMS

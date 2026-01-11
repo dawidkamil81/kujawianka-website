@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Sponsor, PartnersPageData } from "@/types/index";
-import ContactSection from "@/components/common/ContactSection";
+import ContactSection from "@/components/sections/ContactSection";
 
 // Mapowanie nazw ikon z CMS na komponenty
 const iconMap: Record<string, React.ElementType> = {

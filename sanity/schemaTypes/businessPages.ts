@@ -106,6 +106,11 @@ export const offerPage = defineType({
                 ]
             }]
         }),
+        defineField({
+            name: 'contentBuilder',
+            title: 'Dynamiczne Sekcje Strony',
+            type: 'pageBuilder' // <--- To musi tu być
+        }),
 
         defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
         defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })

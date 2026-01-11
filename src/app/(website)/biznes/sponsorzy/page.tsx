@@ -25,7 +25,7 @@ export default async function Sponsors() {
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
-        bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
+      bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]">
 
             {/* Ozdobny particle */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 

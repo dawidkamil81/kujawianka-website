@@ -1,6 +1,66 @@
 import { defineQuery } from "next-sanity";
 
 
+
+const PAGE_BUILDER_FIELDS = `
+  contentBuilder[] {
+    _type,
+    _key,
+    
+    // Pola wspólne (tekstowe)
+    heading,
+    title,
+    description,
+    content,
+    isCentered,
+    layout,
+    columns,
+    eyebrow, // <--- DODAJ TO
+    design,
+
+    // Specyficzne dla sekcji z obrazkiem (rozwiń asset)
+    _type == "imageTextSection" => {
+      image { asset-> }
+    },
+
+    // Specyficzne dla sekcji Features (rozwiń listę itemów)
+    _type == "featuresSection" => {
+      items[] {
+        title,
+        description,
+        iconName
+      }
+    },
+
+    _type == "tableSection" => {
+        heading,
+        layout,
+        content,
+        tableRows[] {
+            _key,
+            isHeader,
+            cells
+        }
+    },
+    _type == "gallerySection" => {
+        heading,
+        description,
+        columns,
+        images[] {
+            _key,
+            asset->,
+            alt
+        }
+    },
+
+    // Specyficzne dla sekcji Kontaktowej (jeśli ma unikalne pola)
+    _type == "contactSection" => {
+        title,
+        description
+    }
+  }
+`;
+
 export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
   *[_type == "player"] | order(number asc)[0...4] {
     _id,
@@ -414,31 +474,8 @@ export const OFFER_PAGE_QUERY = defineQuery(`
       iconName
     },
     ctaTitle,
-    ctaDescription
+    ctaDescription,
+    ${PAGE_BUILDER_FIELDS}
   }
 `);
 
-// export const PARTNERS_PAGE_QUERY = defineQuery(`
-//   {
-//     "pageData": *[_id == "partnersPage"][0] {
-//       title,
-//       description,
-//       benefitsTitle,
-//       benefits[] {
-//         title,
-//         description,
-//         iconName
-//       },
-//       ctaTitle,
-//       ctaDescription
-//     },
-//     // Pobieramy sponsorów, których ranga to "Klubowicz"
-//     "members": *[_type == "sponsor" && tier->name == "Klubowicz"] | order(name asc) {
-//       _id,
-//       name,
-//       "logoUrl": logo.asset->url,
-//       website,
-//       description
-//     }
-//   }
-// `);

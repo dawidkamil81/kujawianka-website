@@ -15,7 +15,7 @@ export default function ContactSection({
     return (
         <section id="contact" className="py-24 relative overflow-hidden">
             {/* Tło sekcji (gradient od dołu) */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(23,65,53,0.2),transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0, transparent_70%)] pointer-events-none" />
 
             <div className="mx-auto max-w-[1200px] px-4 relative z-10">
                 <motion.div

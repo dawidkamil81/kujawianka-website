@@ -8,7 +8,7 @@ import {
     Handshake, TrendingUp, Users, Calendar, ExternalLink, Globe,
     Trophy, Star
 } from "lucide-react";
-import ContactSection from "@/components/common/ContactSection";
+import ContactSection from "@/components/sections/ContactSection";
 
 // Helper type do grupowania
 type GroupedSponsors = {

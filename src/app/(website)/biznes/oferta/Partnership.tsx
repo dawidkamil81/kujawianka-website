@@ -14,8 +14,10 @@ import {
     ArrowRight,
     TrendingUp
 } from "lucide-react";
-import ContactSection from "@/components/common/ContactSection";
 import { OfferPageData } from "@/types/index";
+
+// IMPORTUJEMY RENDERER SEKCJI
+import SectionsRenderer from "@/components/sections/SectionsRenderer";
 
 // 1. Mapowanie ikon
 const iconMap: Record<string, React.ElementType> = {
@@ -56,9 +58,8 @@ const colorThemes: Record<string, any> = {
 };
 
 interface PartnershipProps {
-    // ZMIANA: Zamiast tablicy sponsorów, przyjmujemy tylko liczbę
     sponsorsCount: number;
-    pageData?: OfferPageData;
+    pageData?: any; // Tymczasowo any lub zaktualizowany OfferPageData zawierający contentBuilder
 }
 
 export default function Partnership({ sponsorsCount, pageData }: PartnershipProps) {
@@ -72,7 +73,6 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
         }
     };
 
-    // Helper do kolorowania tytułu
     const renderColoredTitle = (title: string) => {
         const words = title.trim().split(/\s+/);
         if (words.length < 2) return <span className="text-white">{title}</span>;
@@ -85,19 +85,17 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
         );
     };
 
-    // Pakiety z CMS
     const packages = pageData?.packages || [];
 
-    // Statystyki z CMS (z obsługą AUTO)
-    const stats = pageData?.stats?.map(stat => ({
+    const stats = pageData?.stats?.map((stat: any) => ({
         ...stat,
-        // ZMIANA: Używamy sponsorsCount zamiast sponsors.length
         value: stat.value?.toUpperCase() === 'AUTO' ? `${sponsorsCount}` : stat.value,
     })) || [];
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
-        bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,#1a1a1a_100%)]">
+      bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]"
+        >
 
             {/* Ozdobny particle */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
@@ -120,7 +118,7 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
 
                 {/* === PAKIETY SPONSORSKIE === */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-32">
-                    {packages.map((pkg, index) => {
+                    {packages.map((pkg: any, index: number) => {
                         const theme = colorThemes[pkg.colorTheme] || colorThemes.emerald;
                         const IconComponent = iconMap[pkg.iconName] || Gem;
 
@@ -129,17 +127,12 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
                                 key={index}
                                 className={`group relative flex flex-col p-8 md:p-10 rounded-3xl bg-[#121212] border border-white/10 transition-all duration-500 ${theme.borderColor} ${theme.shadowColor}`}
                             >
-                                {/* Ikona w tle */}
                                 <div className="absolute top-4 right-4 opacity-5 scale-150 grayscale group-hover:grayscale-0 group-hover:scale-125 transition-transform duration-700 pointer-events-none">
                                     <IconComponent size={40} className={theme.iconColor} />
                                 </div>
-
-                                {/* Główna ikona */}
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-colors duration-300 ${theme.bgColor}`}>
                                     <IconComponent size={40} className={theme.iconColor} />
                                 </div>
-
-                                {/* Treść */}
                                 <div className="flex-grow">
                                     <h3 className={`text-2xl font-black text-white uppercase font-montserrat mb-4 transition-colors duration-300 ${theme.textColor}`}>
                                         {pkg.title}
@@ -148,8 +141,6 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
                                         {pkg.description}
                                     </p>
                                 </div>
-
-                                {/* Call to Action */}
                                 <div className="mt-8 pt-8 border-t border-white/5 flex items-center justify-between">
                                     <span className="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
                                         Dowiedz się więcej
@@ -158,8 +149,6 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
                                         <ArrowRight size={16} />
                                     </div>
                                 </div>
-
-                                {/* Link logic */}
                                 {pkg.link === "#contact" ? (
                                     <div
                                         onClick={scrollToContact}
@@ -176,7 +165,7 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
 
                 {/* === STATYSTYKI === */}
                 <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {stats.map((stat, index) => {
+                    {stats.map((stat: any, index: number) => {
                         const IconComponent = iconMap[stat.iconName] || Handshake;
                         return (
                             <div
@@ -197,13 +186,13 @@ export default function Partnership({ sponsorsCount, pageData }: PartnershipProp
                     })}
                 </section>
 
-                {/* === KONTAKT === */}
-                <div id="contact">
-                    <ContactSection
-                        title={pageData?.ctaTitle || "Dołącz do gry"}
-                        description={pageData?.ctaDescription || "Zainteresowała Cię nasza oferta? Skontaktuj się z nami i omówmy szczegóły."}
-                    />
-                </div>
+                {/* === SEKCJE DYNAMICZNE (Z CMS) === */}
+                {/* Wstawiamy je tutaj, aby były wewnątrz kontenera i na tym samym tle */}
+                {pageData?.contentBuilder && pageData.contentBuilder.length > 0 && (
+                    <div className="mt-24 md:mt-32">
+                        <SectionsRenderer sections={pageData.contentBuilder} />
+                    </div>
+                )}
 
             </div>
         </main>
