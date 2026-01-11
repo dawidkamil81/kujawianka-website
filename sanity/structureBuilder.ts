@@ -17,7 +17,8 @@ import {
   Edit,
   Shirt,
   UserCog,
-  Tag
+  Tag,
+  Database
 } from 'lucide-react'
 
 // Funkcja pomocnicza do Terminarza (bez zmian)
@@ -63,12 +64,24 @@ export const structure: StructureResolver = (S) =>
             .title('Konfiguracja')
             .items([
               S.documentListItem().schemaType('siteSettings').id('siteSettings').title('Konfiguracja Strony'),
-              S.divider(),
-              S.documentTypeListItem('squad').title('Dane drużyn (grupy wiekowe)'),
-              S.documentTypeListItem('staffRole').title('Role w Sztabie'),
-              S.documentTypeListItem('sponsorTier').title('Typy Sponsorów / Rang').icon(Tag)
+
             ])
         ),
+
+
+      S.listItem()
+        .title('Edycja Struktur Danych')
+        .icon(Database)
+        .child(
+          S.list()
+            .title('Konfiguracja')
+            .items([
+              S.documentTypeListItem('squad').title('Drużyny i Grupy wiekowe').icon(Users),
+              S.documentTypeListItem('staffRole').title('Role w Sztabie'),
+              S.documentTypeListItem('sponsorTier').title('Kategorie sponsorów').icon(Tag)
+            ])
+        ),
+
 
       S.divider(),
 
@@ -194,7 +207,7 @@ export const structure: StructureResolver = (S) =>
                 .icon(Crown),
 
               S.divider(),
-              S.documentTypeListItem('sponsorTier').title('Zarządzaj Rangami (Dla firm)').icon(Tag),
+              S.documentTypeListItem('sponsorTier').title('Zarządaj kategoriami sponsorów').icon(Tag),
             ])
         ),
 
@@ -213,10 +226,10 @@ export const structure: StructureResolver = (S) =>
               S.listItem().title('O Klubie').icon(Shield).child(S.document().schemaType('clubPage').documentId('clubPage')),
               S.listItem().title('Przekaż 1.5%').icon(Heart).child(S.document().schemaType('donatePage').documentId('donatePage')),
               S.divider(),
-              S.listItem().title('Współpraca / Oferta').icon(Handshake).child(S.document().schemaType('offerPage').documentId('offerPage')),
-              S.listItem().title('Strona: Sponsorzy').icon(Briefcase).child(S.document().schemaType('sponsorsPage').documentId('sponsorsPage')),
-              S.listItem().title('Strona: Klubowicze').icon(Users).child(S.document().schemaType('partnersPage').documentId('partnersPage')),
-              S.listItem().title('Strona: Klub 100').icon(Crown).child(S.document().schemaType('club100Page').documentId('club100Page')),
+              S.listItem().title('Współpraca').icon(Handshake).child(S.document().schemaType('offerPage').documentId('offerPage')),
+              S.listItem().title('Sponsorzy').icon(Briefcase).child(S.document().schemaType('sponsorsPage').documentId('sponsorsPage')),
+              S.listItem().title('Klubowicze').icon(Users).child(S.document().schemaType('partnersPage').documentId('partnersPage')),
+              S.listItem().title('Klub 100').icon(Crown).child(S.document().schemaType('club100Page').documentId('club100Page')),
             ])
         ),
       S.documentTypeListItem('download').title('Pliki do pobrania').icon(Download),
