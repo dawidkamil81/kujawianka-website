@@ -6,7 +6,6 @@ import { Facebook, Instagram, Mail, MapPin, Phone, ArrowRight, Shield, Youtube, 
 import { urlFor } from "@/sanity/lib/image";
 import type { SiteSettings } from "@/types";
 
-// --- CUSTOMOWE IKONY ---
 // 1. TikTok
 const TikTokIcon = ({ className }: { className?: string }) => (
     <svg
