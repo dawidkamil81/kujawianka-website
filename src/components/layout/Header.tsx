@@ -5,34 +5,34 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
-// Importujemy funkcję pomocniczą do obrazów Sanity oraz typ ustawień
 import { urlFor } from "@/sanity/lib/image";
 import type { SiteSettings } from "@/types";
-// import { useEffect } from "react";
-// import { useRouter } from "next/navigation";
+// USUŃ: import { useEffect } from "react"; 
+// USUŃ: import { useRouter } from "next/navigation";
 
-// Definiujemy propsy, które komponent otrzymuje z Layoutu
 interface HeaderProps {
     settings?: SiteSettings | null;
-    squads?: { name: string; slug: string }[]; // <--- Nowy prop (Lista drużyn z CMS)
+    squads?: { name: string; slug: string }[];
 }
 
-export default function Header({ settings, squads }: HeaderProps) { // <--- Dodano squads tutaj
+export default function Header({ settings, squads }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const pathname = usePathname();
-    // const router = useRouter();
+    // USUŃ: const router = useRouter();
 
-    // useEffect(() => {
-    //     // Ustawiamy interwał na 60 sekund (60000 ms)
-    //     const interval = setInterval(() => {
-    //         router.refresh();
-    //     }, 60000);
+    // USUŃ TEN BLOK useEffect:
+    /*
+    useEffect(() => {
+        const interval = setInterval(() => {
+            router.refresh();
+        }, 60000);
 
-    //     return () => clearInterval(interval);
-    // }, [router]);
+        return () => clearInterval(interval);
+    }, [router]);
+    */
 
-    // --- LOGIKA DANYCH Z SANITY ---
+    // Reszta kodu bez zmian...
     const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
     const siteTitle = settings?.title || "Kujawianka Izbica Kujawska";
 
@@ -108,12 +108,11 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                         ${isMenuOpen ? "flex opacity-100 visible shadow-xl" : "hidden opacity-0 invisible lg:flex lg:opacity-100 lg:visible lg:shadow-none"}
                     `}
                 >
-                    {/* Aktualności */}
                     <Link href="/aktualnosci" className={getVisualClasses("/aktualnosci")} onClick={closeMenu}>
                         Aktualności
                     </Link>
 
-                    {/* Dropdown: Drużyny (DYNAMICZNY) */}
+                    {/* Dropdown: Drużyny */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
@@ -132,7 +131,6 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                             lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
                             ${openDropdown === "teams" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
                         `}>
-                            {/* Renderowanie dynamicznej listy drużyn z CMS */}
                             {squads && squads.length > 0 ? (
                                 squads.map((squad) => (
                                     <Link
@@ -150,7 +148,7 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                         </div>
                     </div>
 
-                    {/* Dropdown: Wyniki (Na razie statyczny) */}
+                    {/* Dropdown: Wyniki */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
@@ -175,7 +173,6 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                         </div>
                     </div>
 
-                    {/* Klub */}
                     <Link href="/klub" className={getVisualClasses("/klub")} onClick={closeMenu}>
                         Klub
                     </Link>
@@ -205,6 +202,7 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                             <Link href="/biznes/klub-100" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
                         </div>
                     </div>
+
                     <Link href="/do-pobrania" className={getVisualClasses("/do-pobrania")} onClick={closeMenu}>
                         Do pobrania
                     </Link>
