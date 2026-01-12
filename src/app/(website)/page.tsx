@@ -1,3 +1,4 @@
+export const revalidate = 60; // Odświeżanie Route Cache (HTML) co 60s
 
 import { client } from "@/sanity/lib/client"; // Klient standardowy (do planowania newsów)
 import { sanityFetch } from "@/sanity/lib/live"; // Klient Live (do wyników na żywo)
