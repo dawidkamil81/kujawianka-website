@@ -8,8 +8,8 @@ import { Menu, X, ChevronDown } from "lucide-react";
 // Importujemy funkcję pomocniczą do obrazów Sanity oraz typ ustawień
 import { urlFor } from "@/sanity/lib/image";
 import type { SiteSettings } from "@/types";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { useEffect } from "react";
+// import { useRouter } from "next/navigation";
 
 // Definiujemy propsy, które komponent otrzymuje z Layoutu
 interface HeaderProps {
@@ -21,16 +21,16 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const pathname = usePathname();
-    const router = useRouter();
+    // const router = useRouter();
 
-    useEffect(() => {
-        // Ustawiamy interwał na 60 sekund (60000 ms)
-        const interval = setInterval(() => {
-            router.refresh();
-        }, 60000);
+    // useEffect(() => {
+    //     // Ustawiamy interwał na 60 sekund (60000 ms)
+    //     const interval = setInterval(() => {
+    //         router.refresh();
+    //     }, 60000);
 
-        return () => clearInterval(interval);
-    }, [router]);
+    //     return () => clearInterval(interval);
+    // }, [router]);
 
     // --- LOGIKA DANYCH Z SANITY ---
     const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
