@@ -7,7 +7,6 @@ import { urlFor } from "@/sanity/lib/image";
 import type { SiteSettings } from "@/types";
 
 // --- CUSTOMOWE IKONY ---
-//test
 // 1. TikTok
 const TikTokIcon = ({ className }: { className?: string }) => (
     <svg
