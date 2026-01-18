@@ -181,3 +181,39 @@ img {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+
+  /* Nowa klasa dla customowego scrollbara */
+  .scrollbar-custom {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  /* Chrome, Edge, Safari */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    /* Wąski pasek */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+    /* Tło paska niewidoczne */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Kolor suwaka (półprzezroczysty biały) */
+    border-radius: 20px;
+    /* Zaokrąglone rogi */
+    border: transparent;
+    /* Brak obramowania */
+  }
+
+  /* Efekt po najechaniu na pasek */
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    /* Rozjaśnienie */
+  }
+}

@@ -2,29 +2,24 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ChevronDown } from "lucide-react";
-// Importujemy funkcję pomocniczą do obrazów Sanity oraz typ ustawień
 import { urlFor } from "@/sanity/lib/image";
 import type { SiteSettings } from "@/types";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-// Definiujemy propsy, które komponent otrzymuje z Layoutu
 interface HeaderProps {
     settings?: SiteSettings | null;
-    squads?: { name: string; slug: string }[]; // <--- Nowy prop (Lista drużyn z CMS)
+    squads?: { name: string; slug: string }[];
 }
 
-export default function Header({ settings, squads }: HeaderProps) { // <--- Dodano squads tutaj
+export default function Header({ settings, squads }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const pathname = usePathname();
     const router = useRouter();
 
     useEffect(() => {
-        // Ustawiamy interwał na 60 sekund (60000 ms)
         const interval = setInterval(() => {
             router.refresh();
         }, 60000);
@@ -32,7 +27,6 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
         return () => clearInterval(interval);
     }, [router]);
 
-    // --- LOGIKA DANYCH Z SANITY ---
     const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
     const siteTitle = settings?.title || "Kujawianka Izbica Kujawska";
 
@@ -70,6 +64,18 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
         `;
 
         return `${baseClasses} ${underlineClasses}`;
+    };
+
+    // Pomocnicza klasa dla kontenera dropdown (Grid trick dla płynnej animacji)
+    const getDropdownWrapperClasses = (isOpen: boolean, alignment: 'left' | 'right' | 'center' = 'center') => {
+        let alignClass = "lg:left-1/2 lg:-translate-x-1/2"; // default center
+        if (alignment === 'right') alignClass = "lg:right-0";
+
+        return `
+            bg-[#141414] w-full transition-all duration-300 grid
+            lg:absolute ${alignClass} lg:top-full lg:mt-2 lg:w-56 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
+            ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 invisible"}
+        `;
     };
 
     return (
@@ -113,7 +119,7 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                         Aktualności
                     </Link>
 
-                    {/* Dropdown: Drużyny (DYNAMICZNY) */}
+                    {/* Dropdown: Drużyny */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
@@ -127,30 +133,31 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "teams" ? "rotate-180" : ""}`} />
                         </button>
 
-                        <div className={`
-                            bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
-                            ${openDropdown === "teams" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
-                        `}>
-                            {/* Renderowanie dynamicznej listy drużyn z CMS */}
-                            {squads && squads.length > 0 ? (
-                                squads.map((squad) => (
-                                    <Link
-                                        key={squad.slug}
-                                        href={`/druzyny/${squad.slug}`}
-                                        className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                                        onClick={closeMenu}
-                                    >
-                                        {squad.name}
-                                    </Link>
-                                ))
-                            ) : (
-                                <span className="block px-4 py-3 text-xs text-white/30">Brak drużyn</span>
-                            )}
+                        {/* Wrapper animacji Grid */}
+                        <div className={getDropdownWrapperClasses(openDropdown === "teams")}>
+                            <div className="overflow-hidden">
+                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
+                                <div className="max-h-80 overflow-y-auto py-2 scrollbar-custom">
+                                    {squads && squads.length > 0 ? (
+                                        squads.map((squad) => (
+                                            <Link
+                                                key={squad.slug}
+                                                href={`/druzyny/${squad.slug}`}
+                                                className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                                                onClick={closeMenu}
+                                            >
+                                                {squad.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span className="block px-4 py-3 text-xs text-white/30">Brak drużyn</span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Dropdown: Wyniki (Na razie statyczny) */}
+                    {/* Dropdown: Wyniki */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
@@ -164,14 +171,15 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "results" ? "rotate-180" : ""}`} />
                         </button>
 
-                        <div className={`
-                            bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
-                            ${openDropdown === "results" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
-                        `}>
-                            <Link href="/wyniki/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
-                            <Link href="/wyniki/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
-                            <Link href="/wyniki/trampkarze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Trampkarze</Link>
+                        <div className={getDropdownWrapperClasses(openDropdown === "results")}>
+                            <div className="overflow-hidden">
+                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
+                                <div className="max-h-60 overflow-y-auto py-2 scrollbar-custom">
+                                    <Link href="/wyniki/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
+                                    <Link href="/wyniki/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
+                                    <Link href="/wyniki/trampkarze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Trampkarze</Link>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -194,17 +202,19 @@ export default function Header({ settings, squads }: HeaderProps) { // <--- Doda
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "biznes" ? "rotate-180" : ""}`} />
                         </button>
 
-                        <div className={`
-                            bg-[#141414] w-full overflow-hidden transition-all duration-200
-                            lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-48 lg:rounded-lg lg:border lg:border-white/10 lg:shadow-xl
-                            ${openDropdown === "biznes" ? "max-h-60 opacity-100 py-2" : "max-h-0 opacity-0 lg:invisible py-0"}
-                        `}>
-                            <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
-                            <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>
-                            <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klubowicze</Link>
-                            <Link href="/biznes/klub-100" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
+                        <div className={getDropdownWrapperClasses(openDropdown === "biznes", 'right')}>
+                            <div className="overflow-hidden">
+                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
+                                <div className="max-h-60 overflow-y-auto py-2 scrollbar-custom">
+                                    <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
+                                    <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>
+                                    <Link href="/biznes/klubowicze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klubowicze</Link>
+                                    <Link href="/biznes/klub-100" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Klub 100</Link>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                     <Link href="/do-pobrania" className={getVisualClasses("/do-pobrania")} onClick={closeMenu}>
                         Do pobrania
                     </Link>

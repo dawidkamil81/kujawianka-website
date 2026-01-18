@@ -1,4 +1,4 @@
-// src/components/Home/Home.tsx
+// src/components/Home/HomePage.tsx
 "use client";
 
 import HeroSection from "./HeroSection";
@@ -14,18 +14,17 @@ type ResultsDataPacket = {
     teams: Team[];
 };
 
-// Nowy typ dla danych MatchCenter
 type MatchCenterDataPacket = {
     nextMatch: Match | null;
     lastMatches: Match[];
     teams: Team[];
-    clubLogo?: string; // <--- Dodajemy to pole (opcjonalne, bo może nie być ustawione)
+    clubLogo?: string;
 };
 
 interface HomeProps {
     players: Player[];
     news: NewsItem[];
-    sponsors: Sponsor[];
+    sponsors: Sponsor[]; // <--- ZMIANA: Wracamy do tablicy Sponsor[]
     resultsData: ResultsDataPacket;
     matchCenterData: MatchCenterDataPacket;
 }
@@ -42,12 +41,11 @@ export default function Home({ players, news, sponsors, resultsData, matchCenter
             <div className="relative z-10 flex flex-col w-full">
                 <HeroSection news={news} />
 
-                {/* Przekazujemy dedykowane dane */}
                 <MatchCenter
                     nextMatch={matchCenterData.nextMatch}
                     lastMatches={matchCenterData.lastMatches}
                     teams={matchCenterData.teams}
-                    clubLogo={matchCenterData.clubLogo} // <--- Przekazujemy tutaj
+                    clubLogo={matchCenterData.clubLogo}
                 />
 
                 <ResultsTable
@@ -57,6 +55,8 @@ export default function Home({ players, news, sponsors, resultsData, matchCenter
                 />
 
                 <PlayersTeaser players={players} />
+
+                {/* Przekazujemy tablicę sponsorów */}
                 <SponsorsTeaser sponsors={sponsors} />
             </div>
         </main>

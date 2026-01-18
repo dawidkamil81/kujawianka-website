@@ -159,6 +159,19 @@ export const SPONSORS_PAGE_QUERY = defineQuery(`
   }
 `);
 
+export const HOMEPAGE_SPONSORS_QUERY = defineQuery(`
+  *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+    _id,
+    name,
+    "logoUrl": logo.asset->url,
+    website,
+    tier->{
+      name,
+      rank
+    }
+  }
+`);
+
 export const CLUB100_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "club100Page"][0] {
