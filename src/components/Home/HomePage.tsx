@@ -19,6 +19,7 @@ type MatchCenterDataPacket = {
     nextMatch: Match | null;
     lastMatches: Match[];
     teams: Team[];
+    clubLogo?: string; // <--- Dodajemy to pole (opcjonalne, bo może nie być ustawione)
 };
 
 interface HomeProps {
@@ -26,7 +27,7 @@ interface HomeProps {
     news: NewsItem[];
     sponsors: Sponsor[];
     resultsData: ResultsDataPacket;
-    matchCenterData: MatchCenterDataPacket; // <--- Nowy prop
+    matchCenterData: MatchCenterDataPacket;
 }
 
 export default function Home({ players, news, sponsors, resultsData, matchCenterData }: HomeProps) {
@@ -46,6 +47,7 @@ export default function Home({ players, news, sponsors, resultsData, matchCenter
                     nextMatch={matchCenterData.nextMatch}
                     lastMatches={matchCenterData.lastMatches}
                     teams={matchCenterData.teams}
+                    clubLogo={matchCenterData.clubLogo} // <--- Przekazujemy tutaj
                 />
 
                 <ResultsTable

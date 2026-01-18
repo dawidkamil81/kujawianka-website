@@ -10,6 +10,7 @@ interface MatchCenterProps {
     nextMatch: Match | null;
     lastMatches: Match[];
     teams: Team[];
+    clubLogo?: string; // <--- DODANO: Opcjonalne logo z ustawień
 }
 
 // Stała nazwa naszej drużyny do wykrywania lokalizacji
@@ -151,9 +152,20 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
 
 // --- GŁÓWNY KOMPONENT ---
 
-export default function MatchCenter({ nextMatch, lastMatches, teams }: MatchCenterProps) {
+// ZMIANA: Dodano clubLogo do propsów
+export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }: MatchCenterProps) {
+
+    // ZMIANA: Zaktualizowana logika pobierania loga
     const getLogo = (teamName: string) => {
-        const team = teams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
+        const cleanName = teamName.toLowerCase();
+
+        // 1. Jeśli to nasza drużyna (Kujawianka) i mamy clubLogo z propsów -> użyj go
+        if (cleanName.includes("kujawianka") && clubLogo) {
+            return clubLogo;
+        }
+
+        // 2. W przeciwnym razie szukaj w teams
+        const team = teams.find(t => t.name.toLowerCase() === cleanName);
         return team?.logoUrl || "/logo.png";
     };
 

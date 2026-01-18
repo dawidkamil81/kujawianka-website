@@ -62,13 +62,17 @@ const PAGE_BUILDER_FIELDS = `
 `;
 
 export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
-  *[_type == "player"] | order(number asc)[0...4] {
+  // Filtrujemy graczy, którzy należą do kadry o slugu "seniorzy"
+  *[_type == "player" && squad->slug.current == "seniorzy"] | order(number asc)[0...4] {
     _id,
     name,
     surname,
     number,
     position,
-    "imageUrl": image.asset->url
+    // Pobieramy nazwę roli ze zreferowanego dokumentu staffRole
+    "staffRole": staffRole->name, 
+    "imageUrl": image.asset->url,
+    "slug": slug.current
   }
 `);
 
@@ -115,21 +119,7 @@ export const ALL_NEWS_QUERY = defineQuery(`
 
 
 
-// export const ALL_SPONSORS_QUERY = defineQuery(`
-//   *[_type == "sponsor"] | order(tier->rank asc, name asc) {
-//     _id,
-//     name,
-//     "logoUrl": logo.asset->url,
-//     website,
-//     description,
-//     "backgroundImageUrl": backgroundImage.asset->url,
-//     // Pobieramy dane z relacji tier
-//     tier->{
-//       name,
-//       rank
-//     }
-//   }
-// `);
+
 
 export const ALL_SPONSORS_QUERY = defineQuery(`
   *[_type in ["sponsor", "partner", "club100"]] {
@@ -147,33 +137,7 @@ export const ALL_SPONSORS_QUERY = defineQuery(`
   } | order(tier.rank asc, name asc)
 `);
 
-// export const SPONSORS_PAGE_QUERY = defineQuery(`
-//   {
-//     "pageData": *[_id == "sponsorsPage"][0] {
-//       title,
-//       description,
-//       stats[] {
-//         value,
-//         label,
-//         icon
-//       },
-//       ctaTitle,
-//       ctaDescription
-//     },
-//     "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
-//       _id,
-//       name,
-//       "logoUrl": logo.asset->url,
-//       website,
-//       description,
-//       "backgroundImageUrl": backgroundImage.asset->url,
-//       tier->{
-//         name,
-//         rank
-//       }
-//     }
-//   }
-// `);
+
 
 export const ALL_SUPPORTERS_COUNT_QUERY = defineQuery(`
   count(*[_type in ["sponsor", "partner", "club100"]])
@@ -306,7 +270,7 @@ export const MATCH_CENTER_QUERY = defineQuery(`
       _id,
       homeTeam,
       awayTeam,
-      date, // Może być null/undefined
+      date,
       round,
       "stadium": "Stadion Miejski"
     },
@@ -322,7 +286,9 @@ export const MATCH_CENTER_QUERY = defineQuery(`
     "teams": *[_type == "team"] {
       name,
       "logoUrl": logo.asset->url
-    }
+    },
+    // NOWE POLE: Pobieramy logo z ustawień strony
+    "clubLogo": *[_type == "siteSettings"][0].logo.asset->url
   }
 `);
 
