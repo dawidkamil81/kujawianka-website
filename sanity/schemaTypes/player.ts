@@ -4,7 +4,18 @@ export const player = defineType({
     name: 'player',
     title: 'Zawodnik',
     type: 'document',
+
+    // 1. Definiujemy grupę dla porządku w panelu
+    fieldsets: [
+        {
+            name: 'stats',
+            title: 'Statystyki (Obecny Sezon)',
+            options: { collapsible: true, collapsed: false }
+        }
+    ],
+
     fields: [
+        // --- DANE PODSTAWOWE ---
         defineField({ name: 'name', title: 'Imię', type: 'string' }),
         defineField({ name: 'surname', title: 'Nazwisko', type: 'string' }),
         defineField({ name: 'number', title: 'Numer', type: 'number' }),
@@ -22,30 +33,73 @@ export const player = defineType({
                 ]
             }
         }),
-        defineField({ name: 'matches', title: 'Mecze', type: 'number' }),
-        defineField({ name: 'goals', title: 'Bramki', type: 'number' }),
-        defineField({ name: 'assists', title: 'Asysty', type: 'number' }),
-        defineField({ name: 'yellowCards', title: 'Żółte kartki', type: 'number' }),
-        defineField({ name: 'redCards', title: 'Czerwone kartki', type: 'number' }),
+
+        // --- STATYSTYKI (Wszystkie w fieldsecie 'stats') ---
+        defineField({
+            name: 'matches',
+            title: 'Rozegrane mecze',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0
+        }),
+        defineField({
+            name: 'goals',
+            title: 'Bramki',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0
+        }),
+        defineField({
+            name: 'assists',
+            title: 'Asysty',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0
+        }),
+        defineField({
+            name: 'cleanSheets',
+            title: 'Czyste konta',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0,
+            // Ukrywamy to pole, jeśli zawodnik nie jest bramkarzem
+            hidden: ({ document }) => document?.position !== 'Bramkarz'
+        }),
+        defineField({
+            name: 'yellowCards',
+            title: 'Żółte kartki',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0
+        }),
+        defineField({
+            name: 'redCards',
+            title: 'Czerwone kartki',
+            type: 'number',
+            fieldset: 'stats',
+            initialValue: 0
+        }),
+
+        // --- RESZTA PÓL ---
         defineField({ name: 'image', title: 'Zdjęcie', type: 'image', options: { hotspot: true } }),
+
         defineField({
             name: 'squad',
             title: 'Przypisana Kadra',
-            type: 'reference', // Kluczowa zmiana: Referencja do dokumentu
+            type: 'reference',
             to: [{ type: 'squad' }],
             description: 'Wybierz grupę wiekową, do której należy ten zawodnik.',
             validation: (rule) => rule.required(),
         }),
+
         defineField({
             name: 'staffRole',
             title: 'Rola w Sztabie',
             type: 'reference',
-            to: [{ type: 'staffRole' }], // Pobiera opcje z nowego dokumentu
+            to: [{ type: 'staffRole' }],
             description: 'Wybierz funkcję (np. Trener, Fizjoterapeuta)',
-            // To pole pokaże się TYLKO jeśli wybrano pozycję "Sztab"
             hidden: ({ document }) => document?.position !== 'Sztab',
             validation: (rule) => rule.custom((value, context) => {
-                // Wymagamy tego pola tylko dla sztabu
                 // @ts-ignore
                 if (context.document?.position === 'Sztab' && !value) {
                     return 'Musisz wybrać rolę dla członka sztabu'
@@ -54,6 +108,7 @@ export const player = defineType({
             })
         }),
     ],
+
     // --- SEKCJA PODGLĄDU ---
     preview: {
         select: {
@@ -61,11 +116,10 @@ export const player = defineType({
             surname: 'surname',
             media: 'image',
             position: 'position',
-            staffRoleName: 'staffRole.name' // Pobieramy nazwę roli z referencji
+            staffRoleName: 'staffRole.name'
         },
         prepare({ name, surname, media, position, staffRoleName }) {
             const title = name && surname ? `${name} ${surname}` : (name || surname || 'Nowy')
-            // Jeśli to sztab i mamy wybraną rolę, wyświetl rolę. Jeśli nie - pozycję.
             const subtitle = position === 'Sztab' && staffRoleName ? staffRoleName : position
 
             return {

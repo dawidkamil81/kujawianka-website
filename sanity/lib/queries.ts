@@ -445,7 +445,17 @@ export const SQUAD_PAGE_QUERY = defineQuery(`
        number,
        position,
        "staffRole": staffRole-> name,
-       "imageUrl": image.asset->url
+       "imageUrl": image.asset->url,
+       
+       // NOWE: Pobieramy statystyki
+       "stats": {
+         "matches": coalesce(matches, 0),
+         "goals": coalesce(goals, 0),
+         "assists": coalesce(assists, 0),
+         "cleanSheets": coalesce(cleanSheets, 0),
+         "yellowCards": coalesce(yellowCards, 0),
+         "redCards": coalesce(redCards, 0)
+       }
     }
   }
 `);

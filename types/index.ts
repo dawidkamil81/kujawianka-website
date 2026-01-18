@@ -6,6 +6,15 @@ export type Player = {
     position: "Bramkarz" | "Obrońca" | "Pomocnik" | "Napastnik" | "Sztab";
     imageUrl: string;
     staffRole?: string;
+    // NOWE POLE: Statystyki
+    stats?: {
+        matches: number;
+        goals: number;
+        assists: number;
+        cleanSheets?: number; // Tylko dla bramkarzy
+        yellowCards: number;
+        redCards: number;
+    };
 };
 
 
