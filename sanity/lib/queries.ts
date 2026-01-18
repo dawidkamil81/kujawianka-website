@@ -356,7 +356,6 @@ export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0] {
     title,
     logo,
-    // Twoje istniejące social media
     socialLinks {
       facebook { url, isVisible },
       instagram { url, isVisible },
@@ -367,16 +366,16 @@ export const SETTINGS_QUERY = defineQuery(`
     contact,
     seo,
 
-    // --- NOWE POLA DO STOPKI ---
+    // --- POPRAWKA TUTAJ ---
     
-    // 1. Certyfikaty: Pobieramy URL obrazka, alt i link zewnętrzny
-    footerCertificates[] {
+    // ZMIANA: Usuwamy nawiasy [] (tablica) i zmieniamy nazwę na liczbę pojedynczą
+    footerCertificate {
       "imageUrl": asset->url,
       alt,
       url
     },
 
-    // 2. Pliki: Pobieramy URL pliku i tytuł przycisku
+    // 2. Pliki: (bez zmian)
     footerDownloads[] {
       "fileUrl": asset->url,
       title
@@ -495,3 +494,33 @@ export const OFFER_PAGE_QUERY = defineQuery(`
   }
 `);
 
+
+export const NEWS_SLIDER_QUERY = defineQuery(`
+  *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url,
+    isHighlighted
+  }
+`);
+
+// 2. Grid z paginacją (wyklucza newsy ze slidera, żeby się nie powtarzały)
+export const NEWS_PAGINATED_QUERY = defineQuery(`
+  *[_type == "news" && !(_id in $excludeIds) && publishedAt < now()] | order(publishedAt desc)[$start...$end] {
+    _id,
+    title,
+    "slug": slug.current,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url,
+    isHighlighted
+  }
+`);
+
+// 3. Licznik newsów (do obliczenia liczby stron)
+export const NEWS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "news" && !(_id in $excludeIds) && publishedAt < now()])
+`);

@@ -36,7 +36,8 @@ interface FooterProps {
 }
 
 export default function Footer({ settings }: FooterProps) {
-    const { contact, socialLinks, footerCertificates, footerDownloads } = settings || {};
+    // ZMIANA: footerCertificate (pojedyncza liczba) zamiast footerCertificates
+    const { contact, socialLinks, footerCertificate, footerDownloads } = settings || {};
 
     const logoSrc = settings?.logo ? urlFor(settings.logo).url() : "/logo.png";
     const address = contact?.address || "ul. Sportowa 1a\n87-865 Izbica Kujawska";
@@ -100,9 +101,9 @@ export default function Footer({ settings }: FooterProps) {
             <div className="relative z-10 mx-auto max-w-7xl px-6 pt-20 pb-10">
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-8">
 
-                    {/* === Kolumna 1: Logo + Certyfikaty === */}
-                    <div className="flex flex-col items-center lg:items-start space-y-8">
-                        <Link href="/" className="group relative h-32 w-32 transition-transform duration-300 hover:scale-105">
+                    {/* === Kolumna 1: Logo + Certyfikat === */}
+                    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4">
+                        <Link href="/" className="group relative h-24 w-24 shrink-0 transition-transform duration-300 hover:scale-105">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#174135] to-[#da1818] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
                             <Image
                                 src={logoSrc}
@@ -112,31 +113,26 @@ export default function Footer({ settings }: FooterProps) {
                             />
                         </Link>
 
-                        {/* CERTYFIKATY */}
-                        {footerCertificates && footerCertificates.length > 0 && (
-                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                                {footerCertificates.map((cert: any, idx: number) => (
-                                    <div
-                                        key={idx}
-                                        className="relative h-14 w-auto min-w-[50px] opacity-80 hover:opacity-100 transition-all duration-300"
-                                    >
-                                        {cert.url ? (
-                                            <a href={cert.url} target="_blank" rel="noopener noreferrer">
-                                                <img
-                                                    src={cert.imageUrl}
-                                                    alt={cert.alt || "Partner"}
-                                                    className="h-full w-auto object-contain"
-                                                />
-                                            </a>
-                                        ) : (
-                                            <img
-                                                src={cert.imageUrl}
-                                                alt={cert.alt || "Partner"}
-                                                className="h-full w-auto object-contain"
-                                            />
-                                        )}
-                                    </div>
-                                ))}
+                        {/* ZMIANA: Obsługa pojedynczego certyfikatu */}
+                        {footerCertificate && (
+                            <div className="relative h-24 w-24 opacity-80 hover:opacity-100 transition-all duration-300">
+                                {footerCertificate.url ? (
+                                    <a href={footerCertificate.url} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                                        <img
+                                            // Zakładam, że imageUrl przychodzi z zapytania (podobnie jak wcześniej dla listy)
+                                            // Jeśli nie, może być potrzebne: urlFor(footerCertificate).url()
+                                            src={footerCertificate.imageUrl}
+                                            alt={footerCertificate.alt || "Certyfikat"}
+                                            className="h-full w-full object-contain"
+                                        />
+                                    </a>
+                                ) : (
+                                    <img
+                                        src={footerCertificate.imageUrl}
+                                        alt={footerCertificate.alt || "Certyfikat"}
+                                        className="h-full w-full object-contain"
+                                    />
+                                )}
                             </div>
                         )}
                     </div>
@@ -244,11 +240,11 @@ export default function Footer({ settings }: FooterProps) {
                                         href={`${file.fileUrl}?dl=`}
                                         className="flex items-center gap-4 group w-full lg:w-auto"
                                     >
-                                        {/* Ikona - STYL SKOPIOWANY Z KONTAKTU */}
+                                        {/* Ikona */}
                                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#2ea07b] backdrop-blur-sm transition-colors duration-300 group-hover:border-[#da1818]/50 group-hover:bg-[#da1818]/10 group-hover:text-[#da1818]">
                                             <Download size={18} />
                                         </div>
-                                        {/* Tekst - Świeci na biało po najechaniu */}
+                                        {/* Tekst */}
                                         <span className="text-white/70 text-sm font-medium transition-colors duration-300 group-hover:text-white truncate">
                                             {file.title}
                                         </span>
