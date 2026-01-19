@@ -73,18 +73,15 @@ export const siteSettings = defineType({
         }),
 
         defineField({
-            name: 'footerCertificates',
-            title: 'Certyfikaty w stopce',
-            description: 'Logotypy partnerów, certyfikaty, licencje (widoczne pod opisem w stopce)',
-            type: 'array',
-            of: [{
-                type: 'image',
-                options: { hotspot: true },
-                fields: [
-                    defineField({ name: 'alt', title: 'Opis (Alt)', type: 'string' }),
-                    defineField({ name: 'url', title: 'Link (opcjonalny)', type: 'url' })
-                ]
-            }]
+            name: 'footerCertificate', // Liczba pojedyncza
+            title: 'Certyfikat w stopce',
+            description: 'Logotyp partnera, certyfikat lub licencja (widoczny obok logo w stopce)',
+            type: 'image', // Typ image zamiast array
+            options: { hotspot: true },
+            fields: [
+                defineField({ name: 'alt', title: 'Opis (Alt)', type: 'string' }),
+                defineField({ name: 'url', title: 'Link (opcjonalny)', type: 'url' })
+            ]
         }),
 
         defineField({

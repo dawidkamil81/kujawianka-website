@@ -14,7 +14,6 @@ import {
     ArrowRight,
     TrendingUp
 } from "lucide-react";
-import { OfferPageData } from "@/types/index";
 
 // IMPORTUJEMY RENDERER SEKCJI
 import SectionsRenderer from "@/components/sections/SectionsRenderer";

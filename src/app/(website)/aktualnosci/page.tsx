@@ -1,8 +1,13 @@
-import { client } from "@/sanity/lib/client"; // <--- ZMIANA 1: Importujemy 'client'
+import { client } from "@/sanity/lib/client";
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";
 import HeroNewsSlider from "@/components/Home/HeroNewsSlider";
-import { NEWS_PAGE_QUERY } from "@/sanity/lib/queries";
+import Pagination from "@/components/common/Pagination";
+import {
+    NEWS_SLIDER_QUERY,
+    NEWS_PAGINATED_QUERY,
+    NEWS_COUNT_QUERY
+} from "@/sanity/lib/queries";
 
 // Helper do daty
 const formatDate = (dateString: string) => {
@@ -13,30 +18,42 @@ const formatDate = (dateString: string) => {
     });
 };
 
-export default async function NewsPage() {
-    // === ZMIANA 2 i 3: Używamy client.fetch zamiast sanityFetch ===
-    // Dzięki temu możemy przekazać { next: { revalidate: 60 } }
-    const newsList = await client.fetch(NEWS_PAGE_QUERY, {}, {
+const ITEMS_PER_PAGE = 9;
+
+interface PageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function NewsPage(props: PageProps) {
+    const searchParams = await props.searchParams;
+    const currentPage = Number(searchParams?.page) || 1;
+
+    const sliderNews: NewsItem[] = await client.fetch(NEWS_SLIDER_QUERY, {}, {
         next: { revalidate: 60 }
     });
 
-    // === DALSZA CZĘŚĆ KODU BEZ ZMIAN ===
+    const sliderIds = sliderNews.map((item) => item._id);
 
-    // 1. Wybieramy wszystkie wyróżnione artykuły
-    const allHighlighted = newsList.filter((item: NewsItem) => item.isHighlighted === true);
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
 
-    // 2. Do slidera bierzemy tylko 5 najnowszych wyróżnionych (zgodnie z limitem)
-    const sliderNews = allHighlighted.slice(0, 5);
+    const [paginatedNews, totalCount] = await Promise.all([
+        client.fetch(NEWS_PAGINATED_QUERY,
+            { excludeIds: sliderIds, start, end },
+            { next: { revalidate: 60 } }
+        ),
+        client.fetch(NEWS_COUNT_QUERY,
+            { excludeIds: sliderIds },
+            { next: { revalidate: 60 } }
+        )
+    ]);
 
-    // ... reszta logiki (otherNews, return JSX) pozostaje identyczna ...
-    const sliderIds = new Set(sliderNews.map((item: NewsItem) => item._id));
-    const otherNews = newsList.filter((item: NewsItem) => !sliderIds.has(item._id));
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
     return (
         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e] 
       bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]"
         >
-            {/* ... reszta kodu JSX bez zmian ... */}
             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0 
         bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]"
             />
@@ -51,27 +68,32 @@ export default async function NewsPage() {
                     </h1>
                 </div>
 
-                {/* SLIDER - TYLKO TOP 5 WYRÓŻNIONYCH */}
-                {sliderNews.length > 0 && (
+                {currentPage === 1 && sliderNews.length > 0 && (
                     <div className="mx-auto mb-20 max-w-5xl">
                         <HeroNewsSlider news={sliderNews} />
                     </div>
                 )}
 
-                {/* POZOSTAŁE WPISY (W TYM WYRÓŻNIONE POWYŻEJ LIMITU) */}
-                {otherNews.length > 0 && (
-                    <div className="relative flex items-center justify-center mb-12">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10"></div>
-                        </div>
-                        <span className="relative z-10 bg-[#0e0e0e] px-4 text-sm font-bold uppercase tracking-widest text-gray-500">
-                            {sliderNews.length > 0 ? "Pozostałe wpisy" : "Najnowsze wpisy"}
+                {/* NAGŁÓWEK LISTY (PEŁNA SZEROKOŚĆ) */}
+                {(paginatedNews.length > 0 || currentPage > 1) && (
+                    <div className="flex items-center justify-center mb-12 gap-4 w-full">
+                        {/* Lewa linia (usunęliśmy max-w-[200px]) */}
+                        <div className="h-px bg-white/10 flex-1"></div>
+
+                        {/* Tekst */}
+                        <span className="text-sm font-bold uppercase tracking-widest text-gray-500 whitespace-nowrap px-4">
+                            {currentPage === 1 && sliderNews.length > 0
+                                ? "Pozostałe wpisy"
+                                : `Wpisy - Strona ${currentPage}`}
                         </span>
+
+                        {/* Prawa linia (usunęliśmy max-w-[200px]) */}
+                        <div className="h-px bg-white/10 flex-1"></div>
                     </div>
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {otherNews.map((item: NewsItem) => (
+                    {paginatedNews.map((item: NewsItem) => (
                         <div key={item._id} className="h-full">
                             <NewsCard
                                 title={item.title}
@@ -84,112 +106,19 @@ export default async function NewsPage() {
                     ))}
                 </div>
 
-                {newsList.length === 0 && (
+                {paginatedNews.length === 0 && currentPage === 1 && sliderNews.length === 0 && (
                     <div className="py-20 text-center border border-white/5 rounded-3xl bg-white/5">
                         <p className="text-gray-400 text-lg italic">
                             Brak aktualności w tej chwili.
                         </p>
                     </div>
                 )}
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                />
             </div>
         </main>
     );
 }
-
-
-// export const revalidate = 60;
-
-// import { sanityFetch } from "@/sanity/lib/live";
-// import { NewsItem } from "@/types";
-// import NewsCard from "@/components/common/NewsCard";
-// import HeroNewsSlider from "@/components/Home/HeroNewsSlider";
-// import { NEWS_PAGE_QUERY } from "@/sanity/lib/queries";
-
-// // Helper do daty
-// const formatDate = (dateString: string) => {
-//     return new Date(dateString).toLocaleDateString("pl-PL", {
-//         day: "numeric",
-//         month: "long",
-//         year: "numeric",
-//     });
-// };
-
-// export default async function NewsPage() {
-//     const { data: newsList } = await sanityFetch({ query: NEWS_PAGE_QUERY });
-
-//     // === ZMIANA LOGIKI ===
-
-//     // 1. Wybieramy wszystkie wyróżnione artykuły
-//     const allHighlighted = newsList.filter((item: NewsItem) => item.isHighlighted === true);
-
-//     // 2. Do slidera bierzemy tylko 5 najnowszych wyróżnionych (zgodnie z limitem)
-//     const sliderNews = allHighlighted.slice(0, 5);
-
-//     // 3. Reszta trafia na listę (siatkę).
-//     // Są to: artykuły niewyróżnione ORAZ wyróżnione, które nie zmieściły się w pierwszej 5-tce.
-//     // Używamy filtrowania po ID, żeby wykluczyć te, które już są w sliderze.
-//     const sliderIds = new Set(sliderNews.map((item: NewsItem) => item._id));
-//     const otherNews = newsList.filter((item: NewsItem) => !sliderIds.has(item._id));
-
-//     return (
-//         <main className="flex flex-col min-h-screen w-full text-white bg-[#0e0e0e]
-//       bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))]"
-//         >
-//             <div className="pointer-events-none absolute top-0 left-0 w-full h-full z-0
-//         bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]"
-//             />
-
-//             <div className="relative z-10 container mx-auto px-4 py-20">
-//                 <div className="flex flex-col items-center justify-center mb-12 space-y-4">
-//                     <span className="inline-block py-1.5 px-4 rounded-full bg-club-green/10 border border-club-green/20 text-club-green-light font-bold text-xs uppercase tracking-widest backdrop-blur-md">
-//                         Co słychać w klubie?
-//                     </span>
-//                     <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white font-montserrat text-center drop-shadow-2xl">
-//                         Aktualności <span className="text-emerald-500">Klubowe</span>
-//                     </h1>
-//                 </div>
-
-//                 {/* SLIDER - TYLKO TOP 5 WYRÓŻNIONYCH */}
-//                 {sliderNews.length > 0 && (
-//                     <div className="mx-auto mb-20 max-w-5xl">
-//                         <HeroNewsSlider news={sliderNews} />
-//                     </div>
-//                 )}
-
-//                 {/* POZOSTAŁE WPISY (W TYM WYRÓŻNIONE POWYŻEJ LIMITU) */}
-//                 {otherNews.length > 0 && (
-//                     <div className="relative flex items-center justify-center mb-12">
-//                         <div className="absolute inset-0 flex items-center">
-//                             <div className="w-full border-t border-white/10"></div>
-//                         </div>
-//                         <span className="relative z-10 bg-[#0e0e0e] px-4 text-sm font-bold uppercase tracking-widest text-gray-500">
-//                             {sliderNews.length > 0 ? "Pozostałe wpisy" : "Najnowsze wpisy"}
-//                         </span>
-//                     </div>
-//                 )}
-
-//                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-//                     {otherNews.map((item: NewsItem) => (
-//                         <div key={item._id} className="h-full">
-//                             <NewsCard
-//                                 title={item.title}
-//                                 slug={typeof item.slug === 'string' ? item.slug : (item.slug as any)?.current || ""}
-//                                 imageUrl={item.imageUrl || ""}
-//                                 date={formatDate(item.publishedAt)}
-//                                 compact={false}
-//                             />
-//                         </div>
-//                     ))}
-//                 </div>
-
-//                 {newsList.length === 0 && (
-//                     <div className="py-20 text-center border border-white/5 rounded-3xl bg-white/5">
-//                         <p className="text-gray-400 text-lg italic">
-//                             Brak aktualności w tej chwili.
-//                         </p>
-//                     </div>
-//                 )}
-//             </div>
-//         </main>
-//     );
-// }

@@ -12,6 +12,7 @@ export default async function Sponsors() {
     // Pobieramy dane strony ORAZ listę sponsorów z nowego zapytania
     const { data } = await sanityFetch({ query: SPONSORS_PAGE_QUERY });
 
+
     // Zabezpieczenie na wypadek braku danych (np. przed pierwszym uzupełnieniem w CMS)
     const pageData = data?.pageData || {
         title: "Nasi Partnerzy",

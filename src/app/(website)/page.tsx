@@ -5,7 +5,7 @@ import { sanityFetch } from "@/sanity/lib/live"; // Klient Live (do wyników na 
 import {
   HOMEPAGE_PLAYERS_QUERY,
   HOMEPAGE_NEWS_QUERY,
-  ALL_SPONSORS_QUERY,
+  HOMEPAGE_SPONSORS_QUERY, // <--- ZMIANA: Używamy nowego zapytania
   HOMEPAGE_RESULTS_QUERY,
   MATCH_CENTER_QUERY
 } from "@/sanity/lib/queries";
@@ -13,31 +13,29 @@ import Home from "@/components/Home/HomePage";
 
 export default async function Page() {
   const [players, news, sponsors, resultsData, matchCenterData] = await Promise.all([
-    // 1. ZAWODNICY: Mogą być Live (rzadko się zmieniają, ale nie zaszkodzi)
+    // 1. ZAWODNICY: Live
     sanityFetch({ query: HOMEPAGE_PLAYERS_QUERY }),
 
-    // 2. NEWSY: Muszą być przez client.fetch z revalidate, żeby działało planowanie postów!
+    // 2. NEWSY: Standardowy klient (dla revalidate i planowania postów)
     client.fetch(HOMEPAGE_NEWS_QUERY, {}, { next: { revalidate: 60 } }),
 
-    // 3. SPONSORZY: Live
-    sanityFetch({ query: ALL_SPONSORS_QUERY }),
+    // 3. SPONSORZY: Live (Nowe zapytanie dzielące na main/carousel)
+    sanityFetch({ query: HOMEPAGE_SPONSORS_QUERY }),
 
-    // 4. WYNIKI i TABELA: Koniecznie Live (natychmiastowa aktualizacja po gwizdku)
+    // 4. WYNIKI i TABELA: Live
     sanityFetch({ query: HOMEPAGE_RESULTS_QUERY }),
 
-    // 5. CENTRUM MECZOWE: Koniecznie Live
+    // 5. CENTRUM MECZOWE: Live
     sanityFetch({ query: MATCH_CENTER_QUERY })
   ]);
 
   return (
     <Home
-      // UWAGA: Tu musimy pamiętać, co z czego pochodzi:
-
-      players={players.data}       // z sanityFetch -> ma .data
-      news={news}                  // z client.fetch -> NIE ma .data (czyste dane)
-      sponsors={sponsors.data}     // z sanityFetch -> ma .data
-      resultsData={resultsData.data} // z sanityFetch -> ma .data
-      matchCenterData={matchCenterData.data} // z sanityFetch -> ma .data
+      players={players.data}
+      news={news}
+      sponsors={sponsors.data} // To teraz jest tablica Sponsor[], co pasuje do HomePage
+      resultsData={resultsData.data}
+      matchCenterData={matchCenterData.data}
     />
   );
 }
