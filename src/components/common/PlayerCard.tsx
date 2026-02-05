@@ -31,6 +31,7 @@ export default function PlayerCard({ player }: PlayerCardProps) {
     return (
         <div
             // 1. GŁÓWNY KONTENER
+            // Używamy [perspective:1000px] dla pewności działania na iOS
             className={`group relative aspect-[3/4] w-full [perspective:1000px] ${canFlip ? 'cursor-pointer' : ''}`}
             onClick={() => canFlip && setIsFlipped(!isFlipped)}
         >
