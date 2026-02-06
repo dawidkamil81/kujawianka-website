@@ -57,6 +57,17 @@ export default defineConfig({
           tier: { _type: 'reference', _ref: tierId },
         }),
       },
+      {
+        id: 'match-report-by-squad',
+        title: 'Raport dla Drużyny',
+        description: 'Nowy raport meczowy dla konkretnej kadry',
+        schemaType: 'matchReport',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId }, // Automatycznie przypisz drużynę
+          title: 'Nowy Mecz', // Domyślny tytuł
+        }),
+      },
     ],
   },
   plugins: [

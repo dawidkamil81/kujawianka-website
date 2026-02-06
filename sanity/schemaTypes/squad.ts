@@ -69,6 +69,14 @@ export const squad = defineType({
             description: 'Tutaj wpisz godziny treningów, informacje o naborze, wymagane dokumenty itp.',
             icon: CalendarRange
         }),
+        defineField({
+            name: 'lastLineup',
+            title: 'Ostatni Skład (Pamięć Systemowa)',
+            type: 'array',
+            of: [{ type: 'reference', to: [{ type: 'player' }] }],
+            hidden: true, // Ukrywamy to, bo będzie edytowane automatycznie przez nasz Panel
+            description: 'Przechowuje listę zawodników, którzy zagrali w ostatnim meczu, aby ułatwić wypełnianie formularza.'
+        }),
     ],
     preview: {
         select: {

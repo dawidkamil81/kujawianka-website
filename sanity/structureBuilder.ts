@@ -1,4 +1,6 @@
 import { type StructureResolver } from 'sanity/structure'
+// Upewnij się, że ścieżka do komponentu jest poprawna
+import { SquadStatsEditor } from './components/SquadStatsEditor'
 import {
   Users,
   Calendar,
@@ -18,7 +20,8 @@ import {
   Shirt,
   UserCog,
   Tag,
-  Database
+  Database,
+  ClipboardList,
 } from 'lucide-react'
 
 // Funkcja pomocnicza do Terminarza (bez zmian)
@@ -64,10 +67,8 @@ export const structure: StructureResolver = (S) =>
             .title('Konfiguracja')
             .items([
               S.documentListItem().schemaType('siteSettings').id('siteSettings').title('Konfiguracja Strony'),
-
             ])
         ),
-
 
       S.listItem()
         .title('Edycja Struktur Danych')
@@ -81,7 +82,6 @@ export const structure: StructureResolver = (S) =>
               S.documentTypeListItem('sponsorTier').title('Kategorie sponsorów').icon(Tag)
             ])
         ),
-
 
       S.divider(),
 
@@ -110,14 +110,40 @@ export const structure: StructureResolver = (S) =>
                       S.list()
                         .title('Zarządzanie Drużyną')
                         .items([
-                          S.listItem().title('Dane Drużyny').icon(Edit).child(S.document().schemaType('squad').documentId(squadId)),
+                          // 1. DANE DRUŻYNY (Standardowy formularz)
+                          S.listItem()
+                            .title('Dane Drużyny')
+                            .icon(Edit)
+                            .child(
+                              S.document().schemaType('squad').documentId(squadId)
+                            ),
+
                           S.divider(),
+
+                          // 2. KADRA (Lista)
                           S.listItem().title('Kadra Zawodnicza').icon(Shirt).child(
                             S.documentList().title('Lista Piłkarzy').schemaType('player')
                               .filter('_type == "player" && squad._ref == $squadId && position != "Sztab"')
                               .params({ squadId })
                               .initialValueTemplates([S.initialValueTemplateItem('player-by-squad', { squadId })])
                           ),
+
+                          // 3. STATYSTYKI ZAWODNIKÓW (Twój edytor - widoczny POD kadrą)
+                          S.listItem()
+                            .title('Statystyki zawodników')
+                            .icon(ClipboardList) // Ikona notatnika
+                            .child(
+                              // Otwieramy dokument squad, ale wymuszamy widok TYLKO komponentu
+                              S.document()
+                                .schemaType('squad')
+                                .documentId(squadId)
+                                .title('Edycja Statystyk') // Tytuł na górze paska
+                                .views([
+                                  S.view.component(SquadStatsEditor).title('Statystyki')
+                                ])
+                            ),
+
+                          // 4. SZTAB
                           S.listItem().title('Sztab Szkoleniowy').icon(UserCog).child(
                             S.documentList().title('Lista Sztabu').schemaType('player')
                               .filter('_type == "player" && squad._ref == $squadId && position == "Sztab"')
@@ -163,7 +189,7 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('team').title('Loga zespołów').icon(Shield),
       S.divider(),
 
-      // --- 6. BIZNES I PARTNERZY (POPRAWIONE FILTROWANIE) ---
+      // --- 6. BIZNES I PARTNERZY ---
       S.listItem()
         .title('Biznes i Partnerzy')
         .icon(Briefcase)
@@ -171,14 +197,13 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Strefa Biznesowa')
             .items([
-              // 1. SPONSORZY BIZNESOWI (Tylko typ 'sponsor')
+              // 1. SPONSORZY BIZNESOWI
               S.listItem()
                 .title('Sponsorzy Biznesowi')
                 .icon(Gem)
                 .child(
                   S.documentTypeList('sponsorTier')
                     .title('Kategorie Sponsorów')
-                    // Wykluczamy Klubowiczów i Klub 100 z listy kategorii, żeby nie mylić admina
                     .filter('_type == "sponsorTier" && name != "Klubowicz" && name != "Klub 100"')
                     .child(tierId =>
                       S.documentList()
@@ -194,14 +219,12 @@ export const structure: StructureResolver = (S) =>
 
               S.divider(),
 
-              // 2. KLUBOWICZE (Typ 'partner')
-              // Klikając "Utwórz" tutaj, otworzy się formularz BEZ wyboru rangi!
+              // 2. KLUBOWICZE
               S.documentTypeListItem('partner')
                 .title('Klubowicze')
                 .icon(Users),
 
-              // 3. KLUB 100 (Typ 'club100')
-              // Klikając "Utwórz" tutaj, otworzy się formularz BEZ wyboru rangi!
+              // 3. KLUB 100
               S.documentTypeListItem('club100')
                 .title('Klub 100')
                 .icon(Crown),

@@ -20,6 +20,8 @@ import { pageBuilder } from './sections/pageBuilder'
 import { featuresSection } from './sections/featuresSection'
 import { tableSection } from './sections/tableSection'
 import { gallerySection } from './sections/gallerySection'
+import { matchReport } from './matchReport'
+import { playerStatsRow } from './objects/playerStatsRow'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types:
@@ -28,6 +30,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
       team, table, result, clubPage, donatePage, squad, staffRole,
       sponsorTier, offerPage, sponsorsPage, partnersPage, club100Page,
       textSection, imageTextSection, contactSection, featuresSection,
-      tableSection, gallerySection, pageBuilder
+      tableSection, gallerySection, pageBuilder, matchReport, playerStatsRow,
     ],
 }
