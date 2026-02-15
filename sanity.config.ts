@@ -46,7 +46,7 @@ export default defineConfig({
           position: 'Sztab' // <--- To jest kluczowe!
         }),
       },
-      // 3. NOWOŚĆ: Szablon dla SPONSORA (przypisuje automatycznie rangę/tier)
+      // 3. Szablon dla SPONSORA (przypisuje automatycznie rangę/tier)
       {
         id: 'sponsor-by-tier',
         title: 'Sponsor w tej kategorii',
@@ -57,6 +57,7 @@ export default defineConfig({
           tier: { _type: 'reference', _ref: tierId },
         }),
       },
+      // 4. Szablon dla Raportu Meczowego
       {
         id: 'match-report-by-squad',
         title: 'Raport dla Drużyny',
@@ -66,6 +67,17 @@ export default defineConfig({
         value: ({ squadId }: { squadId: string }) => ({
           squad: { _type: 'reference', _ref: squadId }, // Automatycznie przypisz drużynę
           title: 'Nowy Mecz', // Domyślny tytuł
+        }),
+      },
+      // 5. NOWOŚĆ: Szablon dla TABELI (Naprawia błąd)
+      {
+        id: 'table-by-squad',
+        title: 'Tabela dla Drużyny',
+        description: 'Tworzy tabelę przypisaną do wybranej kadry',
+        schemaType: 'table',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId },
         }),
       },
     ],

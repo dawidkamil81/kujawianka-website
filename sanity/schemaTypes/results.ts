@@ -25,6 +25,14 @@ export const result = defineType({
     fields: [
         // Pola informacyjne
         defineField({
+            name: 'squad',
+            title: 'Przypisana Kadra',
+            type: 'reference',
+            to: [{ type: 'squad' }],
+            description: 'Wybierz, której drużyny dotyczy ten mecz',
+            validation: (rule) => rule.required()
+        }),
+        defineField({
             name: 'round',
             title: 'Kolejka',
             type: 'number',

@@ -10,7 +10,8 @@ import type { SiteSettings } from "@/types";
 
 interface HeaderProps {
     settings?: SiteSettings | null;
-    squads?: { name: string; slug: string }[];
+    // Dodajemy opcjonalne pole 'hasTable' do typu propsów
+    squads?: { name: string; slug: string; hasTable?: boolean }[];
 }
 
 export default function Header({ settings, squads }: HeaderProps) {
@@ -66,9 +67,8 @@ export default function Header({ settings, squads }: HeaderProps) {
         return `${baseClasses} ${underlineClasses}`;
     };
 
-    // Pomocnicza klasa dla kontenera dropdown (Grid trick dla płynnej animacji)
     const getDropdownWrapperClasses = (isOpen: boolean, alignment: 'left' | 'right' | 'center' = 'center') => {
-        let alignClass = "lg:left-1/2 lg:-translate-x-1/2"; // default center
+        let alignClass = "lg:left-1/2 lg:-translate-x-1/2";
         if (alignment === 'right') alignClass = "lg:right-0";
 
         return `
@@ -78,11 +78,14 @@ export default function Header({ settings, squads }: HeaderProps) {
         `;
     };
 
+    // Filtrujemy drużyny, które mają przypisaną tabelę
+    const squadsWithTable = squads?.filter(s => s.hasTable) || [];
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] backdrop-blur-md shadow-lg text-white">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
 
-                {/* Logo i Tytuł */}
+                {/* Logo */}
                 <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
                     <div className="relative h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
                         <Image
@@ -98,7 +101,7 @@ export default function Header({ settings, squads }: HeaderProps) {
                     </h1>
                 </Link>
 
-                {/* Hamburger (Mobilny) */}
+                {/* Hamburger */}
                 <button
                     className="flex p-2 text-white/80 hover:text-white lg:hidden hover:bg-white/10 rounded-lg transition-colors"
                     onClick={toggleMenu}
@@ -114,29 +117,23 @@ export default function Header({ settings, squads }: HeaderProps) {
                         ${isMenuOpen ? "flex opacity-100 visible shadow-xl" : "hidden opacity-0 invisible lg:flex lg:opacity-100 lg:visible lg:shadow-none"}
                     `}
                 >
-                    {/* Aktualności */}
                     <Link href="/aktualnosci" className={getVisualClasses("/aktualnosci")} onClick={closeMenu}>
                         Aktualności
                     </Link>
 
-                    {/* Dropdown: Drużyny */}
+                    {/* --- DROPDOWN: DRUŻYNY (Wszystkie) --- */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("teams")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
-                        <button
-                            className={getVisualClasses("/druzyny")}
-                            onClick={() => toggleDropdown("teams")}
-                        >
+                        <button className={getVisualClasses("/druzyny")} onClick={() => toggleDropdown("teams")}>
                             Drużyny
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "teams" ? "rotate-180" : ""}`} />
                         </button>
 
-                        {/* Wrapper animacji Grid */}
                         <div className={getDropdownWrapperClasses(openDropdown === "teams")}>
                             <div className="overflow-hidden">
-                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
                                 <div className="max-h-80 overflow-y-auto py-2 scrollbar-custom">
                                     {squads && squads.length > 0 ? (
                                         squads.map((squad) => (
@@ -157,33 +154,40 @@ export default function Header({ settings, squads }: HeaderProps) {
                         </div>
                     </div>
 
-                    {/* Dropdown: Wyniki */}
+                    {/* --- DROPDOWN: WYNIKI (Tylko z hasTable: true) --- */}
                     <div
                         className="relative w-full lg:w-auto text-center group"
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("results")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
-                        <button
-                            className={getVisualClasses("/wyniki")}
-                            onClick={() => toggleDropdown("results")}
-                        >
+                        <button className={getVisualClasses("/wyniki")} onClick={() => toggleDropdown("results")}>
                             Wyniki
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "results" ? "rotate-180" : ""}`} />
                         </button>
 
                         <div className={getDropdownWrapperClasses(openDropdown === "results")}>
                             <div className="overflow-hidden">
-                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
-                                <div className="max-h-60 overflow-y-auto py-2 scrollbar-custom">
-                                    <Link href="/wyniki/seniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Seniorzy</Link>
-                                    <Link href="/wyniki/juniorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Juniorzy</Link>
-                                    <Link href="/wyniki/trampkarze" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Trampkarze</Link>
+                                <div className="max-h-80 overflow-y-auto py-2 scrollbar-custom">
+                                    {squadsWithTable.length > 0 ? (
+                                        squadsWithTable.map((squad) => (
+                                            <Link
+                                                key={squad.slug}
+                                                // Tutaj używamy już dynamicznej ścieżki dla wszystkich
+                                                href={`/wyniki/${squad.slug}`}
+                                                className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                                                onClick={closeMenu}
+                                            >
+                                                {squad.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span className="block px-4 py-3 text-xs text-white/30">Brak wyników</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Klub */}
                     <Link href="/klub" className={getVisualClasses("/klub")} onClick={closeMenu}>
                         Klub
                     </Link>
@@ -194,17 +198,12 @@ export default function Header({ settings, squads }: HeaderProps) {
                         onMouseEnter={() => window.innerWidth >= 1024 && setOpenDropdown("biznes")}
                         onMouseLeave={() => window.innerWidth >= 1024 && setOpenDropdown(null)}
                     >
-                        <button
-                            className={getVisualClasses("/biznes")}
-                            onClick={() => toggleDropdown("biznes")}
-                        >
+                        <button className={getVisualClasses("/biznes")} onClick={() => toggleDropdown("biznes")}>
                             Biznes
                             <ChevronDown size={16} className={`transition-transform duration-200 ${openDropdown === "biznes" ? "rotate-180" : ""}`} />
                         </button>
-
                         <div className={getDropdownWrapperClasses(openDropdown === "biznes", 'right')}>
                             <div className="overflow-hidden">
-                                {/* Scroll Container: Dodano klasę 'scrollbar-custom' */}
                                 <div className="max-h-60 overflow-y-auto py-2 scrollbar-custom">
                                     <Link href="/biznes/oferta" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Współpraca</Link>
                                     <Link href="/biznes/sponsorzy" className="block px-4 py-3 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors" onClick={closeMenu}>Sponsorzy</Link>

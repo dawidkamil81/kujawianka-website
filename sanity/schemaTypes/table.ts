@@ -6,6 +6,14 @@ export const table = defineType({
     type: 'document',
     fields: [
         defineField({
+            name: 'squad',
+            title: 'Przypisana Kadra',
+            type: 'reference',
+            to: [{ type: 'squad' }],
+            description: 'Wybierz, której drużyny dotyczy ta tabela (np. Seniorzy, Juniorzy)',
+            validation: (rule) => rule.required()
+        }),
+        defineField({
             name: 'season',
             title: 'Sezon',
             type: 'string',

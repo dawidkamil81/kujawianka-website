@@ -424,7 +424,9 @@ export const DONATE_PAGE_QUERY = defineQuery(`
 export const SQUADS_NAVIGATION_QUERY = defineQuery(`
   *[_type == "squad"] | order(order asc) {
     name,
-    "slug": slug.current
+    "slug": slug.current,
+    // Sprawdzamy, czy istnieje tabela przypisana do tej kadry
+    "hasTable": count(*[_type == "table" && squad._ref == ^._id]) > 0
   }
 `);
 
@@ -513,3 +515,60 @@ export const NEWS_PAGINATED_QUERY = defineQuery(`
 export const NEWS_COUNT_QUERY = defineQuery(`
   count(*[_type == "news" && !(_id in $excludeIds) && publishedAt < now()])
 `);
+
+
+export const YOUTH_SQUADS_LIST_QUERY = defineQuery(`
+  *[_type == "squad" && slug.current != "seniorzy"] | order(order asc) {
+    _id,
+    name,
+    "slug": slug.current,
+    description,
+    // Możemy pobrać np. zdjęcie trenera lub pierwsze zdjęcie z galerii jako tło
+    coachName
+  }
+`);
+
+// 2. Pobiera tabelę i mecze dla KONKRETNEJ kadry (na podstawie sluga)
+export const SQUAD_RESULTS_QUERY = defineQuery(`
+  {
+    // Pobieramy tabelę przypisaną do danej kadry
+    "table": *[_type == "table" && squad->slug.current == $slug][0] {
+      season,
+      rows[] {
+        "_key": _key,
+        position,
+        teamName,
+        matches,
+        points,
+        won,
+        drawn,
+        lost,
+        goals
+      }
+    },
+    // Pobieramy mecze przypisane do danej kadry
+    "matches": *[_type == "result" && squad->slug.current == $slug] | order(round asc) {
+      _id,
+      round,
+      date,
+      homeTeam,
+      awayTeam,
+      homeScore,
+      awayScore,
+      "isFinished": defined(homeScore)
+    },
+    // Zespoły (loga) pobieramy wszystkie, bo mogą się powtarzać
+    "teams": *[_type == "team"] {
+      name,
+      "logoUrl": logo.asset->url
+    },
+    // Dane o samej kadrze (nazwa)
+    "squadInfo": *[_type == "squad" && slug.current == $slug][0] {
+        name,
+        coachName
+    }
+  }
+`);
+
+
+
