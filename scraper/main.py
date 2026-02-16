@@ -203,7 +203,6 @@ def get_matches(soup, senior_id):
                                 "_type": "reference",
                                 "_ref": senior_id
                             },
-                            "category": "senior",
                             "source": "scraper",      # <--- TO JEST KLUCZOWE: Oznacza mecz jako automatyczny
                         }
                     })

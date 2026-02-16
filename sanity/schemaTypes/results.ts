@@ -4,7 +4,6 @@ export const result = defineType({
     name: 'result',
     title: 'Wyniki Meczów',
     type: 'document',
-    // Sortowanie w panelu admina
     orderings: [
         {
             title: 'Kolejka (Rosnąco)',
@@ -23,7 +22,6 @@ export const result = defineType({
         }
     ],
     fields: [
-        // 1. Wybór źródła danych - TO JEST KLUCZ DO HYBRYDY
         defineField({
             name: 'source',
             title: 'Źródło danych',
@@ -35,7 +33,7 @@ export const result = defineType({
                 ],
                 layout: 'radio'
             },
-            initialValue: 'manual', // Domyślnie manualne dla wygody trenera
+            initialValue: 'manual',
             validation: Rule => Rule.required()
         }),
 
@@ -61,28 +59,23 @@ export const result = defineType({
         }),
 
         // --- SEKCJA GOSPODARZA ---
-
-        // Opcja A: Wybór z listy (dla Manual)
         defineField({
             name: 'homeTeamRef',
             title: 'Gospodarz (Wybierz z listy)',
             type: 'reference',
-            to: [{ type: 'team' }], // Odwołanie do pliku teams.ts
-            hidden: ({ document }) => document?.source === 'scraper', // Ukryj, jeśli to wpis ze scrapera
+            to: [{ type: 'team' }],
+            hidden: ({ document }) => document?.source === 'scraper',
         }),
 
-        // Opcja B: Tekst (dla Scrapera)
         defineField({
             name: 'homeTeam',
             title: 'Gospodarz (Tekst - Scraper)',
             type: 'string',
-            readOnly: true, // Scraper sam to wpisuje, admin nie powinien ruszać
-            hidden: ({ document }) => document?.source === 'manual' // Ukryj, jeśli dodajemy ręcznie
+            readOnly: true,
+            hidden: ({ document }) => document?.source === 'manual'
         }),
 
         // --- SEKCJA GOŚCIA ---
-
-        // Opcja A: Wybór z listy (dla Manual)
         defineField({
             name: 'awayTeamRef',
             title: 'Gość (Wybierz z listy)',
@@ -91,7 +84,6 @@ export const result = defineType({
             hidden: ({ document }) => document?.source === 'scraper',
         }),
 
-        // Opcja B: Tekst (dla Scrapera)
         defineField({
             name: 'awayTeam',
             title: 'Gość (Tekst - Scraper)',
@@ -112,23 +104,13 @@ export const result = defineType({
             type: 'number'
         }),
 
-        // --- DODATKOWE ---
         defineField({
-            name: 'category',
-            title: 'Kategoria Wiekowa (Opcjonalne)',
+            name: 'season',
+            title: 'Sezon',
             type: 'string',
-            options: {
-                list: [
-                    { title: 'Seniorzy', value: 'senior' },
-                    { title: 'Juniorzy', value: 'junior' },
-                    { title: 'Trampkarze', value: 'trampkarz' }
-                ],
-                layout: 'radio'
-            },
-            initialValue: 'junior',
+            initialValue: '2025/2026'
         }),
 
-        // Pole ID dla scrapera (aby nie dublować meczów)
         defineField({
             name: 'externalId',
             title: 'External ID (Tylko Scraper)',
@@ -142,7 +124,7 @@ export const result = defineType({
             source: 'source',
             homeString: 'homeTeam',
             awayString: 'awayTeam',
-            homeRef: 'homeTeamRef.name', // Pobieramy nazwę z referencji
+            homeRef: 'homeTeamRef.name',
             awayRef: 'awayTeamRef.name',
             hScore: 'homeScore',
             aScore: 'awayScore',
@@ -150,7 +132,6 @@ export const result = defineType({
             squadName: 'squad.name'
         },
         prepare({ source, homeString, awayString, homeRef, awayRef, hScore, aScore, round, squadName }) {
-            // Magia podglądu: wybieramy nazwę zależnie od źródła
             const home = source === 'manual' ? homeRef : homeString
             const away = source === 'manual' ? awayRef : awayString
 
@@ -158,7 +139,7 @@ export const result = defineType({
                 ? `${hScore}:${aScore}`
                 : '-:-'
 
-            const sourceLabel = source === 'scraper' ? '🤖 Auto' : '👤 Ręczny'
+            const sourceLabel = source === 'scraper' ? ' Auto' : 'Ręczny'
 
             return {
                 title: `${home || '?'} vs ${away || '?'}`,

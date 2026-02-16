@@ -17,39 +17,26 @@ export default defineConfig({
     templates: (prev) => [
       ...prev,
 
-      // --- 1. Szablon dla GRUP MŁODZIEŻOWYCH (Manualne) ---
-      // Używany, gdy tworzysz mecz w folderze konkretnej drużyny młodzieżowej
+      // --- 1. UNIWERSALNY SZABLON MECZU ---
+      // To on odpowiada za automatyczne wypełnienie kadry i źródła
       {
-        id: 'result-by-squad-id',
-        title: 'Nowy Mecz (Młodzież)',
+        id: 'result-in-round',
+        title: 'Nowy Mecz',
         schemaType: 'result',
-        parameters: [{ name: 'squadId', type: 'string' }, { name: 'round', type: 'number' }],
-        value: ({ squadId, round }: { squadId: string, round: number }) => ({
-          squad: { _type: 'reference', _ref: squadId }, // Przypisz drużynę
-          round: round,                                 // Przypisz kolejkę
-          season: '2025/2026',
-          source: 'manual'                              // <--- TUTAJ: Wymuszamy tryb ręczny
-        }),
-      },
-
-      // --- 2. Szablon dla SENIORÓW (Scraper) ---
-      // Używany, gdy tworzysz mecz w folderze Seniorów
-      {
-        id: 'result-for-seniorzy',
-        title: 'Mecz Seniorów (Scraper)',
-        schemaType: 'result',
-        parameters: [{ name: 'round', type: 'number' }],
-        value: ({ round }: { round: number }) => ({
-          // Tutaj musisz wpisać ID dokumentu "Seniorzy". 
-          // Jeśli nie znasz ID, scraper i tak nadpisze dane, ale dla porządku w panelu:
+        parameters: [
+          { name: 'squadId', type: 'string' }, // Musi dostać ID drużyny
+          { name: 'round', type: 'number' },
+          { name: 'source', type: 'string' }
+        ],
+        value: ({ squadId, round, source }: { squadId: string, round: number, source: string }) => ({
+          squad: { _type: 'reference', _ref: squadId }, // <--- TU PRZYPISUJEMY KADRĘ
           round: round,
-          season: '2025/2026',
-          source: 'scraper',                             // <--- TUTAJ: Wymuszamy tryb scrapera
-          category: 'senior'
+          season: '2025/2026', // Możesz zmienić na dynamiczny jeśli trzeba
+          source: source
         }),
       },
 
-      // --- 3. TABELA (Naprawa błędu z poprzedniego kroku) ---
+      // --- 2. POZOSTAŁE SZABLONY (Bez zmian) ---
       {
         id: 'table-by-squad',
         title: 'Tabela dla Drużyny',
@@ -57,8 +44,6 @@ export default defineConfig({
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId } }),
       },
-
-      // --- 4. KONFIGURACJA LIGI ---
       {
         id: 'league-config-by-squad',
         title: 'Konfiguracja Ligi',
@@ -66,8 +51,6 @@ export default defineConfig({
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId } }),
       },
-
-      // --- 5. POZOSTAŁE SZABLONY (Bez zmian) ---
       {
         id: 'player-by-squad',
         title: 'Nowy Zawodnik',
