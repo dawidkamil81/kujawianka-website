@@ -23,7 +23,7 @@ import {
   Shirt,
   UserCog,
   Tag,
-  Database,
+  Database, // Upewnij się, że importujesz Database
   ClipboardList,
   Trophy,
   Info,
@@ -115,7 +115,7 @@ const createScheduleFolder = (S: any, context: any, title: string, squadId?: str
                   .schemaType('result')
                   .filter(filter)
                   .params(filterParams)
-                  // PRZEKAZUJEMY PARAMETRY DO SZABLONU
+                  // PRZEKAZUJEMY PARAMETRY DO SZABLONU (To naprawia przycisk Create!)
                   .initialValueTemplates([
                     S.initialValueTemplateItem(templateId, templateParamsWithRound)
                   ])
@@ -260,7 +260,8 @@ export const structure: StructureResolver = (S, context) =>
                             .schemaType('leagueConfig')
                             .filter('_type == "leagueConfig" && squad->slug.current == "seniorzy"')
                             .initialValueTemplates([
-                              S.initialValueTemplateItem('league-config-for-seniorzy')
+                              // Upewnij się, że masz taki template w sanity.config.ts lub usuń tę linię
+                              // S.initialValueTemplateItem('league-config-for-seniorzy') 
                             ])
                         ),
 
@@ -298,9 +299,10 @@ export const structure: StructureResolver = (S, context) =>
                                 .schemaType('leagueConfig')
                                 .filter('_type == "leagueConfig" && squad._ref == $squadId')
                                 .params({ squadId })
-                                .initialValueTemplates([
-                                  S.initialValueTemplateItem('league-config-by-squad', { squadId })
-                                ])
+                              // Poniżej zakładam standardowy template create
+                              // .initialValueTemplates([
+                              //   S.initialValueTemplateItem('league-config-by-squad', { squadId })
+                              // ])
                             ),
 
                           S.listItem().title('Tabela Ligowa').icon(FileText).child(
@@ -322,7 +324,10 @@ export const structure: StructureResolver = (S, context) =>
         ),
 
       S.divider(),
-      S.documentTypeListItem('team').title('Loga zespołów').icon(Shield),
+
+      // --- TU JEST ZMIANA: BAZA KLUBÓW ---
+      S.documentTypeListItem('team').title('Baza Klubów (Przeciwnicy)').icon(Database),
+
       S.divider(),
 
       // --- 6. BIZNES I PARTNERZY ---

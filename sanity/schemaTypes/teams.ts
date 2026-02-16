@@ -1,24 +1,22 @@
 import { defineField, defineType } from 'sanity'
 
 export const team = defineType({
-    name: 'team', // Ważne: liczba pojedyncza, tak jak w zapytaniach GROQ
-    title: 'Baza Zespołów (Loga)',
+    name: 'team',
+    title: 'Kluby (Baza)',
     type: 'document',
     fields: [
         defineField({
             name: 'name',
-            title: 'Nazwa Zespołu',
+            title: 'Nazwa Klubu',
             type: 'string',
-            description: 'Wpisz nazwę DOKŁADNIE taką, jak pojawia się na 90minut.pl (kopiuj-wklej).',
-            validation: (rule) => rule.required(),
+            validation: Rule => Rule.required()
         }),
         defineField({
-            name: 'logo', // Zmienione z 'image' na 'logo', żeby pasowało do kodu frontend
+            name: 'logo',
             title: 'Herb Klubu',
             type: 'image',
-            options: { hotspot: true },
-            validation: (rule) => rule.required(),
-        }),
+            options: { hotspot: true }
+        })
     ],
     preview: {
         select: {
