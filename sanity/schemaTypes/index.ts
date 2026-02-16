@@ -22,6 +22,7 @@ import { tableSection } from './sections/tableSection'
 import { gallerySection } from './sections/gallerySection'
 import { matchReport } from './matchReport'
 import { playerStatsRow } from './objects/playerStatsRow'
+import { leagueConfig } from './leagueConfig'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types:
@@ -31,5 +32,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
       sponsorTier, offerPage, sponsorsPage, partnersPage, club100Page,
       textSection, imageTextSection, contactSection, featuresSection,
       tableSection, gallerySection, pageBuilder, matchReport, playerStatsRow,
+      leagueConfig,
     ],
 }

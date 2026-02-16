@@ -1,6 +1,9 @@
 import { type StructureResolver } from 'sanity/structure'
-// Upewnij się, że ścieżka do komponentu jest poprawna
+// Upewnij się, że te pliki istnieją w sanity/components/
 import { SquadStatsEditor } from './components/SquadStatsEditor'
+import { SquadTablePreview } from './components/SquadTablePreview'
+import { EmptySchedule } from './components/EmptySchedule'
+
 import {
   Users,
   Calendar,
@@ -23,54 +26,107 @@ import {
   Database,
   ClipboardList,
   Trophy,
+  Info,
 } from 'lucide-react'
 
-// Funkcja pomocnicza do Terminarza
-// ZMIANA: Teraz przyjmuje opcjonalnie squadId zamiast sztywnej kategorii tekstowej
-const createScheduleFolder = (S: any, title: string, squadId?: string, specificSlug?: string) => {
-  // Jeśli podano specificSlug (np. 'seniorzy'), filtrujemy po slugu kadry.
-  // Jeśli podano squadId (dla grup młodzieżowych), filtrujemy po referencji ID.
-
-  let filter = '_type == "result" && round == $round';
-  const params: any = { round: 1 }; // round będzie nadpisane w pętli
-
-  if (specificSlug) {
-    filter += ` && squad->slug.current == "${specificSlug}"`;
-  } else if (squadId) {
-    filter += ` && squad._ref == $squadId`;
-    params.squadId = squadId;
-  }
-
+// --- FUNKCJA POMOCNICZA: TERMINARZ (DYNAMICZNY) ---
+const createScheduleFolder = (S: any, context: any, title: string, squadId?: string, specificSlug?: string) => {
   return S.listItem()
     .title(`Terminarz - ${title}`)
     .icon(Calendar)
-    .child(
-      S.list()
-        .title(`${title} - Kolejki`)
-        .items(
-          Array.from({ length: 34 }, (_, i) => i + 1).map((round) =>
+    .child(async () => {
+      const client = context.getClient({ apiVersion: '2024-01-01' });
+
+      // 1. Domyślnie 0 kolejek.
+      let roundsCount = 0;
+
+      try {
+        let query = '';
+        const params: any = {};
+
+        if (specificSlug === 'seniorzy') {
+          query = `*[_type == "leagueConfig" && squad->slug.current == $slug][0].roundsCount`;
+          params.slug = specificSlug;
+        } else if (squadId) {
+          query = `*[_type == "leagueConfig" && squad._ref == $squadId][0].roundsCount`;
+          params.squadId = squadId;
+        }
+
+        const result = await client.fetch(query, params);
+        if (typeof result === 'number' && result > 0) {
+          roundsCount = result;
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania liczby kolejek:", error);
+      }
+
+      // Jeśli brak kolejek, wyświetlamy komponent informacyjny
+      if (roundsCount === 0) {
+        return S.list()
+          .title(`${title} - Brak konfiguracji`)
+          .items([
             S.listItem()
+              .title('Brak zdefiniowanych kolejek')
+              .icon(Info)
+              .child(
+                S.component()
+                  .id('empty-schedule-info')
+                  .component(EmptySchedule)
+              )
+          ]);
+      }
+
+      // 2. Definiujemy ID szablonu
+      let templateId = '';
+      let baseTemplateParams: any = {};
+
+      if (specificSlug === 'seniorzy') {
+        templateId = 'result-for-seniorzy';
+      } else if (squadId) {
+        templateId = 'result-by-squad-id';
+        baseTemplateParams = { squadId };
+      }
+
+      // 3. Budowanie listy kolejek
+      return S.list()
+        .title(`${title} - Kolejki (${roundsCount})`)
+        .items(
+          Array.from({ length: roundsCount }, (_, i) => i + 1).map((round) => {
+            // Tutaj tworzymy filtry dla każdej kolejki
+            let filter = '_type == "result" && round == $round';
+            const filterParams: any = { round };
+
+            if (specificSlug === 'seniorzy') {
+              filter += ` && squad->slug.current == "${specificSlug}"`;
+            } else if (squadId) {
+              filter += ` && squad._ref == $squadId`;
+              filterParams.squadId = squadId;
+            }
+
+            // Łączymy parametry bazowe (squadId) z numerem kolejki (round)
+            const templateParamsWithRound = { ...baseTemplateParams, round };
+
+            return S.listItem()
               .title(`Kolejka ${round}`)
               .child(
                 S.documentList()
                   .title(`Mecze - Kolejka ${round}`)
+                  .id(`matches-${title}-${round}`)
                   .schemaType('result')
                   .filter(filter)
-                  .params({ ...params, round }) // Przekazujemy round i ewentualnie squadId
-                  .initialValueTemplates(
-                    // Przy tworzeniu nowego meczu w tym folderze, chcemy wstępnie wypełnić dane
-                    squadId
-                      ? [S.initialValueTemplateItem('match-report-by-squad', { squadId })]
-                      : [] // Dla seniorów logika może być inna lub standardowa
-                  )
+                  .params(filterParams)
+                  // PRZEKAZUJEMY PARAMETRY DO SZABLONU
+                  .initialValueTemplates([
+                    S.initialValueTemplateItem(templateId, templateParamsWithRound)
+                  ])
                   .defaultOrdering([{ field: 'date', direction: 'asc' }])
               )
-          )
-        )
-    )
+          })
+        );
+    });
 }
 
-export const structure: StructureResolver = (S) =>
+export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Panel Administratora')
     .items([
@@ -126,12 +182,18 @@ export const structure: StructureResolver = (S) =>
                       S.list()
                         .title('Zarządzanie Drużyną')
                         .items([
-                          // 1. DANE DRUŻYNY
+                          // 1. DANE DRUŻYNY + PODGLĄD TABELI
                           S.listItem()
                             .title('Dane Drużyny')
                             .icon(Edit)
                             .child(
-                              S.document().schemaType('squad').documentId(squadId)
+                              S.document()
+                                .schemaType('squad')
+                                .documentId(squadId)
+                                .views([
+                                  S.view.form().title('Edycja Danych'),
+                                  S.view.component(SquadTablePreview).title('Podgląd Tabeli')
+                                ])
                             ),
 
                           S.divider(),
@@ -173,15 +235,15 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // --- 4. WYNIKI I TABELE (ZMODYFIKOWANE) ---
+      // --- 4. WYNIKI I TABELE ---
       S.listItem()
         .title('Tabela i Wyniki')
-        .icon(Trophy) // Ikona pucharu pasuje lepiej
+        .icon(Trophy)
         .child(
           S.list()
             .title('Wybierz Kategorię')
             .items([
-              // A. SENIORZY (Specjalna kategoria na górze)
+              // A. SENIORZY
               S.listItem()
                 .title('Seniorzy')
                 .icon(Medal)
@@ -189,26 +251,37 @@ export const structure: StructureResolver = (S) =>
                   S.list()
                     .title('Seniorzy')
                     .items([
+                      S.listItem()
+                        .title('Informacje o rozgrywkach')
+                        .icon(Info)
+                        .child(
+                          S.documentList()
+                            .title('Konfiguracja Ligi')
+                            .schemaType('leagueConfig')
+                            .filter('_type == "leagueConfig" && squad->slug.current == "seniorzy"')
+                            .initialValueTemplates([
+                              S.initialValueTemplateItem('league-config-for-seniorzy')
+                            ])
+                        ),
+
                       S.listItem().title('Tabela Ligowa').icon(FileText).child(
                         S.documentList()
                           .title('Tabela Seniorów')
                           .schemaType('table')
-                          // Filtrujemy po slugu kadry "seniorzy"
                           .filter('_type == "table" && squad->slug.current == "seniorzy"')
                       ),
-                      // Terminarz dla seniorów (szukamy po slugu "seniorzy")
-                      createScheduleFolder(S, 'Seniorzy', undefined, 'seniorzy')
+                      // Terminarz
+                      createScheduleFolder(S, context, 'Seniorzy', undefined, 'seniorzy')
                     ])
                 ),
 
               S.divider(),
 
-              // B. GRUPY MŁODZIEŻOWE (Dynamiczna lista)
+              // B. GRUPY MŁODZIEŻOWE
               S.listItem()
                 .title('Grupy Młodzieżowe')
                 .icon(Users)
                 .child(
-                  // Lista wszystkich kadr OPRÓCZ seniorów
                   S.documentTypeList('squad')
                     .title('Wybierz Grupę')
                     .filter('_type == "squad" && slug.current != "seniorzy"')
@@ -216,7 +289,20 @@ export const structure: StructureResolver = (S) =>
                       S.list()
                         .title('Opcje')
                         .items([
-                          // 1. Tabela dla konkretnej grupy
+                          S.listItem()
+                            .title('Informacje o rozgrywkach')
+                            .icon(Info)
+                            .child(
+                              S.documentList()
+                                .title('Konfiguracja Ligi')
+                                .schemaType('leagueConfig')
+                                .filter('_type == "leagueConfig" && squad._ref == $squadId')
+                                .params({ squadId })
+                                .initialValueTemplates([
+                                  S.initialValueTemplateItem('league-config-by-squad', { squadId })
+                                ])
+                            ),
+
                           S.listItem().title('Tabela Ligowa').icon(FileText).child(
                             S.documentList()
                               .title('Tabela')
@@ -224,14 +310,11 @@ export const structure: StructureResolver = (S) =>
                               .filter('_type == "table" && squad._ref == $squadId')
                               .params({ squadId })
                               .initialValueTemplates([
-                                // Opcjonalnie: szablon tworzenia tabeli z przypisanym ID
                                 S.initialValueTemplateItem('table-by-squad', { squadId })
-                                // (Upewnij się, że masz taki szablon w sanity.config.ts jeśli chcesz z tego korzystać, 
-                                // w przeciwnym razie usuń tę linię initialValueTemplates)
                               ])
                           ),
-                          // 2. Terminarz dla konkretnej grupy
-                          createScheduleFolder(S, 'Terminarz', squadId)
+
+                          createScheduleFolder(S, context, 'Terminarz', squadId)
                         ])
                     )
                 )
@@ -250,7 +333,6 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Strefa Biznesowa')
             .items([
-              // 1. SPONSORZY BIZNESOWI
               S.listItem()
                 .title('Sponsorzy Biznesowi')
                 .icon(Gem)
@@ -269,19 +351,9 @@ export const structure: StructureResolver = (S) =>
                         ])
                     )
                 ),
-
               S.divider(),
-
-              // 2. KLUBOWICZE
-              S.documentTypeListItem('partner')
-                .title('Klubowicze')
-                .icon(Users),
-
-              // 3. KLUB 100
-              S.documentTypeListItem('club100')
-                .title('Klub 100')
-                .icon(Crown),
-
+              S.documentTypeListItem('partner').title('Klubowicze').icon(Users),
+              S.documentTypeListItem('club100').title('Klub 100').icon(Crown),
               S.divider(),
               S.documentTypeListItem('sponsorTier').title('Zarządaj kategoriami sponsorów').icon(Tag),
             ])
