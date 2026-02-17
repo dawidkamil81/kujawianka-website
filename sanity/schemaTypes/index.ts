@@ -23,15 +23,20 @@ import { gallerySection } from './sections/gallerySection'
 import { matchReport } from './matchReport'
 import { playerStatsRow } from './objects/playerStatsRow'
 import { leagueConfig } from './leagueConfig'
+import { competition } from './competition'
+import { standing } from './standing'
+import { fixture } from './fixture'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types:
     [
       siteSettings, news, player, sponsor, partner, club100, download,
-      team, table, result, clubPage, donatePage, squad, staffRole,
+      table, result, clubPage, donatePage, squad, staffRole,
       sponsorTier, offerPage, sponsorsPage, partnersPage, club100Page,
       textSection, imageTextSection, contactSection, featuresSection,
       tableSection, gallerySection, pageBuilder, matchReport, playerStatsRow,
-      leagueConfig,
+      leagueConfig, competition,
+      standing,
+      fixture, team,
     ],
 }

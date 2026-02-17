@@ -12,68 +12,85 @@ export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
+
   schema: {
     types: schema.types,
     templates: (prev) => [
       ...prev,
 
-      // --- 1. UNIWERSALNY SZABLON MECZU ---
-      // To on odpowiada za automatyczne wypełnienie kadry i źródła
+      // --- 1. NOWE SZABLONY (Dla struktury Competition) ---
+
+      // A. Tworzenie nowych Rozgrywek (przypisanych do konkretnej Kadry)
       {
-        id: 'result-in-round',
-        title: 'Nowy Mecz',
-        schemaType: 'result',
-        parameters: [
-          { name: 'squadId', type: 'string' }, // Musi dostać ID drużyny
-          { name: 'round', type: 'number' },
-          { name: 'source', type: 'string' }
-        ],
-        value: ({ squadId, round, source }: { squadId: string, round: number, source: string }) => ({
-          squad: { _type: 'reference', _ref: squadId }, // <--- TU PRZYPISUJEMY KADRĘ
-          round: round,
-          season: '2025/2026', // Możesz zmienić na dynamiczny jeśli trzeba
-          source: source
-        }),
+        id: 'competition-by-squad',
+        title: 'Rozgrywki dla kadry',
+        schemaType: 'competition',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId }
+        })
       },
 
-      // --- 2. POZOSTAŁE SZABLONY (Bez zmian) ---
+      // B. Tworzenie Tabeli (przypisanej do Rozgrywek)
       {
-        id: 'table-by-squad',
-        title: 'Tabela dla Drużyny',
-        schemaType: 'table',
-        parameters: [{ name: 'squadId', type: 'string' }],
-        value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId } }),
+        id: 'standing-by-competition',
+        title: 'Tabela dla rozgrywek',
+        schemaType: 'standing',
+        parameters: [{ name: 'competitionId', type: 'string' }],
+        value: ({ competitionId }: { competitionId: string }) => ({
+          competition: { _type: 'reference', _ref: competitionId }
+        })
       },
+
+      // C. Tworzenie Kolejki/Terminarza (przypisanej do Rozgrywek)
       {
-        id: 'league-config-by-squad',
-        title: 'Konfiguracja Ligi',
-        schemaType: 'leagueConfig',
-        parameters: [{ name: 'squadId', type: 'string' }],
-        value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId } }),
+        id: 'fixture-by-competition',
+        title: 'Kolejka dla rozgrywek',
+        schemaType: 'fixture',
+        parameters: [{ name: 'competitionId', type: 'string' }],
+        value: ({ competitionId }: { competitionId: string }) => ({
+          competition: { _type: 'reference', _ref: competitionId }
+        })
       },
+
+      // --- 2. STARE, ALE NADAL POTRZEBNE SZABLONY ---
+
+      // Tworzenie zawodnika w konkretnej kadrze
       {
         id: 'player-by-squad',
         title: 'Nowy Zawodnik',
         schemaType: 'player',
         parameters: [{ name: 'squadId', type: 'string' }],
-        value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId } }),
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId }
+        }),
       },
+
+      // Tworzenie członka sztabu w konkretnej kadrze
       {
         id: 'staff-by-squad',
         title: 'Nowy Członek Sztabu',
         schemaType: 'player',
         parameters: [{ name: 'squadId', type: 'string' }],
-        value: ({ squadId }: { squadId: string }) => ({ squad: { _type: 'reference', _ref: squadId }, position: 'Sztab' }),
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId },
+          position: 'Sztab'
+        }),
       },
+
+      // Tworzenie sponsora w konkretnej kategorii
       {
         id: 'sponsor-by-tier',
         title: 'Sponsor w tej kategorii',
         schemaType: 'sponsor',
         parameters: [{ name: 'tierId', type: 'string' }],
-        value: ({ tierId }: { tierId: string }) => ({ tier: { _type: 'reference', _ref: tierId } }),
+        value: ({ tierId }: { tierId: string }) => ({
+          tier: { _type: 'reference', _ref: tierId }
+        }),
       },
     ],
   },
+
   plugins: [
     structureTool({ structure }),
     visionTool({ defaultApiVersion: apiVersion }),

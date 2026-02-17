@@ -2,59 +2,48 @@ import { defineField, defineType } from 'sanity'
 
 export const table = defineType({
     name: 'table',
-    title: 'Tabela Ligowa',
+    title: 'Tabela',
     type: 'document',
     fields: [
-        defineField({
-            name: 'squad',
-            title: 'Przypisana Kadra',
-            type: 'reference',
-            to: [{ type: 'squad' }],
-            description: 'Wybierz, której drużyny dotyczy ta tabela (np. Seniorzy, Juniorzy)',
-            validation: (rule) => rule.required()
-        }),
-        defineField({
-            name: 'season',
-            title: 'Sezon',
-            type: 'string',
-            initialValue: '2025/2026'
-        }),
+        defineField({ name: 'squad', title: 'Kadra', type: 'reference', to: [{ type: 'squad' }], readOnly: true }),
+        defineField({ name: 'season', title: 'Sezon', type: 'string' }),
+
         defineField({
             name: 'rows',
-            title: 'Wiersze Tabeli',
+            title: 'Drużyny w tabeli',
             type: 'array',
-            of: [
-                {
-                    type: 'object',
-                    name: 'tableRow',
-                    title: 'Wiersz',
-                    fields: [
-                        defineField({ name: 'teamName', title: 'Nazwa drużyny', type: 'string' }),
-                        defineField({ name: 'position', title: 'Pozycja', type: 'number' }),
-                        defineField({ name: 'matches', title: 'Mecze (M)', type: 'number' }),
-                        defineField({ name: 'points', title: 'Punkty (Pkt)', type: 'number' }),
-                        defineField({ name: 'won', title: 'Zwycięstwa (Z)', type: 'number' }),
-                        defineField({ name: 'drawn', title: 'Remisy (R)', type: 'number' }),
-                        defineField({ name: 'lost', title: 'Porażki (P)', type: 'number' }),
-                        defineField({ name: 'goals', title: 'Bilans bramkowy', type: 'string' }),
-                    ],
-                    preview: {
-                        select: {
-                            title: 'teamName',
-                            position: 'position',
-                            points: 'points',
-                            media: 'teamLogo'
-                        },
-                        prepare({ title, position, points, media }) {
-                            return {
-                                title: `${position}. ${title}`,
-                                subtitle: `${points} pkt`,
-                                media: media
-                            }
+            of: [{
+                type: 'object',
+                fields: [
+                    defineField({
+                        name: 'team',
+                        title: 'Klub',
+                        type: 'reference',
+                        to: [{ type: 'team' }],
+                        description: 'Wybierz klub z bazy lub stwórz nowy klikając "Create new" w rozwijanym menu.'
+                    }),
+                    defineField({ name: 'matches', title: 'M', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'points', title: 'PKT', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'won', title: 'Z', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'drawn', title: 'R', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'lost', title: 'P', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'goalsScored', title: 'B+', type: 'number', initialValue: 0 }),
+                    defineField({ name: 'goalsLost', title: 'B-', type: 'number', initialValue: 0 }),
+                ],
+                preview: {
+                    select: { title: 'team.name', points: 'points', matches: 'matches', media: 'team.logo' },
+                    prepare({ title, points, matches, media }) {
+                        return {
+                            title: title || 'Brak klubu',
+                            subtitle: `M: ${matches || 0} | Pkt: ${points || 0}`,
+                            media: media
                         }
                     }
-                },
-            ],
-        }),
+                }
+            }]
+        })
     ],
+    preview: {
+        select: { title: 'season', subtitle: 'squad.name' }
+    }
 })

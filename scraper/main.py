@@ -6,15 +6,15 @@ from dotenv import load_dotenv
 from slugify import slugify
 import uuid 
 from datetime import datetime
+import time
 
 load_dotenv()
 
 API_KEY = os.getenv("SANITY_API_KEY") 
 DATASET = os.getenv("SANITY_DATASET")
 PROJECT_ID = os.getenv("SANITY_PROJECT_ID")
-# URL do mutacji (zapisu)
+
 SANITY_MUTATE_URL = f"https://{PROJECT_ID}.api.sanity.io/v2021-06-07/data/mutate/{DATASET}"
-# URL do zapytań (odczytu)
 SANITY_QUERY_URL = f"https://{PROJECT_ID}.api.sanity.io/v2021-06-07/data/query/{DATASET}"
 
 URL = "http://www.90minut.pl/liga/1/liga14189.html"
@@ -29,6 +29,24 @@ MONTHS = {
     'września': '09', 'października': '10', 'listopada': '11', 'grudnia': '12'
 }
 
+# --- CZARNA LISTA ---
+# Te słowa są ignorowane, żeby nie tworzyć śmieciowych drużyn
+IGNORED_NAMES = {
+    "nazwa", "druzyna", "drużyna", "klub", "zespol", "zespół", 
+    "gospodarze", "goscie", "goście", "wynik", "poz", "lp", "m"
+}
+
+# --- CACHE ---
+TEAM_CACHE = {}
+
+def normalize_team_name(text):
+    if not text: return ""
+    text = text.lower()
+    text = text.replace('\xa0', ' ')
+    text = text.replace('.', '')
+    clean_parts = text.split()
+    return " ".join(clean_parts)
+
 def parse_polish_date(date_str):
     if not date_str: return None
     try:
@@ -39,203 +57,250 @@ def parse_polish_date(date_str):
         day = parts[0].zfill(2)
         month_name = parts[1].lower()
         
-        time = "12:00:00"
+        time_part = "12:00:00"
         if len(parts) >= 3:
             time_parts = parts[2].split(':')
             if len(time_parts) == 2:
-                time = f"{parts[2]}:00"
+                time_part = f"{parts[2]}:00"
         
         month_num = MONTHS.get(month_name)
         if not month_num: return None
 
-        year = "2025" if int(month_num) >= 8 else "2026"
-        return f"{year}-{month_num}-{day}T{time}"
+        year = "2025" if int(month_num) >= 7 else "2026"
+        return f"{year}-{month_num}-{day}T{time_part}"
     except:
         return None
 
-# --- NOWA FUNKCJA: POBIERANIE ID SENIORÓW ---
-def get_senior_squad_id():
-    print("🔍 Szukam ID drużyny 'Seniorzy' w Sanity...")
-    # Zapytanie GROQ szukające drużyny po slugu
-    query = '*[_type == "squad" && slug.current == "seniorzy"][0]._id'
-    
+# --- 1. PRELOAD ZESPOŁÓW ---
+def preload_teams():
+    print("📥 Pobieranie bazy zespołów...")
+    query = '*[_type == "team"]{_id, name}'
     try:
-        # Enkodowanie zapytania i wysłanie requestu
         response = requests.get(
             SANITY_QUERY_URL, 
             params={'query': query},
             headers={"Authorization": f"Bearer {API_KEY}"}
         )
         data = response.json()
+        teams = data.get('result', [])
         
-        if 'result' in data and data['result']:
-            print(f"✅ Znaleziono ID Seniorów: {data['result']}")
-            return data['result']
+        for team in teams:
+            t_id = team['_id']
+            t_name = team.get('name', '')
+            normalized_key = normalize_team_name(t_name)
+            if normalized_key:
+                TEAM_CACHE[normalized_key] = t_id
+            
+        print(f"✅ Załadowano {len(TEAM_CACHE)} zespołów do pamięci.")
+    except Exception as e:
+        print(f"❌ Błąd preloadu: {e}")
+
+# --- 2. POBIERANIE ID ROZGRYWEK ---
+def get_competition_id(squad_slug="seniorzy"):
+    print(f"🔍 Szukam rozgrywek dla: {squad_slug}...")
+    query = f'*[_type == "competition" && squad->slug.current == "{squad_slug}"][0]._id'
+    try:
+        response = requests.get(
+            SANITY_QUERY_URL, 
+            params={'query': query},
+            headers={"Authorization": f"Bearer {API_KEY}"}
+        )
+        result = response.json().get('result')
+        if result:
+            print(f"✅ ID Rozgrywek: {result}")
+            return result
         else:
-            print("❌ BŁĄD: Nie znaleziono drużyny o slugu 'seniorzy'. Upewnij się, że taka drużyna istnieje w panelu!")
             return None
     except Exception as e:
-        print(f"❌ Błąd połączenia z Sanity: {e}")
+        print(f"❌ Błąd Sanity: {e}")
         return None
 
-# --- AKTUALIZACJA TABELI ---
-def get_table(soup, senior_id):
-    if not senior_id:
-        print("⚠️ Pomijam tabelę z powodu braku ID Seniorów.")
-        return
+# --- 3. TWORZENIE ZESPOŁU (BEZ SLUGA NA SIŁĘ) ---
+def get_or_create_team(raw_name):
+    if not raw_name: return None
 
-    print("🔄 Przetwarzam tabelę...")
-    table = soup.find('table', {'class': 'main2'})
-    if not table: table = soup.find('table', {'class': 'main'})
-    if not table:
-        print("⚠️ Nie znaleziono tabeli ligowej.")
-        return
+    # Normalizacja i Walidacja
+    target_key = normalize_team_name(raw_name)
+    
+    if not target_key or target_key in IGNORED_NAMES:
+        return None
+        
+    if target_key in TEAM_CACHE:
+        return TEAM_CACHE[target_key]
 
-    rows = table.find_all('tr')
-    table_rows = []
+    # Tworzenie nowego
+    pretty_name = raw_name.replace('\xa0', ' ').strip()
+    print(f"✨ Tworzę zespół: '{pretty_name}'")
+    
+    # --- ZMIANA: USUNIĘTO SLUG Z PAYLOADU ---
+    # Wysyłamy tylko nazwę, bo tego wymaga schemat 'team'
+    new_team_payload = {
+        "mutations": [{
+            "create": {
+                "_type": "team",
+                "name": pretty_name
+                # Tutaj usunęliśmy pole "slug", które powodowało błąd
+            }
+        }]
+    }
+    
+    try:
+        res = requests.post(SANITY_MUTATE_URL, headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}, data=json.dumps(new_team_payload))
+        if res.status_code == 200:
+            created_ids = res.json().get('results', [])
+            if created_ids:
+                new_id = created_ids[0].get('id')
+                TEAM_CACHE[target_key] = new_id
+                return new_id
+    except Exception as e:
+        print(f"❌ Błąd tworzenia zespołu: {e}")
+    
+    return None
 
-    for row in rows:
+# --- 4. TABELA ---
+def process_table(soup, competition_id):
+    if not competition_id: return
+    print("\n📊 --- Tabela ---")
+    
+    table = soup.find('table', {'class': 'main2'}) or soup.find('table', {'class': 'main'})
+    if not table: return
+
+    standing_rows = []
+    for row in table.find_all('tr'):
         cols = row.find_all('td')
         if len(cols) < 8: continue
+        
         try:
-            position = int(cols[0].text.strip().replace('.', ''))
-            team_name = cols[1].text.strip()
-            matches = int(cols[2].text.strip())
-            points = int(cols[3].text.strip())
-            won = int(cols[4].text.strip())
-            drawn = int(cols[5].text.strip())
-            lost = int(cols[6].text.strip())
-            goals = cols[7].text.strip()
+            # Walidacja czy wiersz to dane (czy ma liczbę meczów)
+            matches_text = cols[2].text.strip()
+            if not matches_text.isdigit(): continue
 
-            table_rows.append({
-                "_type": "tableRow",       
+            raw_team_name = cols[1].text
+            team_id = get_or_create_team(raw_team_name)
+            if not team_id: continue
+
+            standing_rows.append({
+                "_type": "standingRow",       
                 "_key": str(uuid.uuid4()), 
-                "position": position,
-                "teamName": team_name,
-                "matches": matches,
-                "points": points,
-                "won": won,
-                "drawn": drawn,
-                "lost": lost,
-                "goals": goals 
+                "team": { "_type": "reference", "_ref": team_id },
+                "matches": int(matches_text),
+                "points": int(cols[3].text.strip()),
+                "won": int(cols[4].text.strip()),
+                "drawn": int(cols[5].text.strip()),
+                "lost": int(cols[6].text.strip()),
+                "goals": cols[7].text.strip()
             })
-        except ValueError:
-            continue 
+        except ValueError: continue 
 
-    if table_rows:
+    if standing_rows:
         payload = {
             "mutations": [{"createOrReplace": {
-                "_id": "tabela-ligowa-glowna", 
-                "_type": "table",
-                "season": "2025/2026",
-                # DODANO: Przypisanie do kadry seniorów
-                "squad": {
-                    "_type": "reference",
-                    "_ref": senior_id
-                },
-                "rows": table_rows
+                "_id": f"standing-{competition_id}", 
+                "_type": "standing",
+                "competition": { "_type": "reference", "_ref": competition_id },
+                "season": "2024/2025", 
+                "rows": standing_rows
             }}]
         }
-        res = requests.post(SANITY_MUTATE_URL, headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}, data=json.dumps(payload))
-        if res.status_code == 200: print("✅ Tabela zaktualizowana.")
-        else: print(f"❌ Błąd tabeli: {res.text}")
+        requests.post(SANITY_MUTATE_URL, headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}, data=json.dumps(payload))
+        print(f"✅ Tabela zaktualizowana.")
 
-# --- AKTUALIZACJA MECZÓW ---
-def get_matches(soup, senior_id):
-    if not senior_id:
-        print("⚠️ Pomijam mecze z powodu braku ID Seniorów.")
-        return
-
-    print("🔄 Przetwarzam mecze...")
-    all_tables = soup.find_all('table', class_='main')
+# --- 5. TERMINARZ ---
+def process_fixtures(soup, competition_id):
+    if not competition_id: return
+    print("\n⚽ --- Terminarz ---")
     
-    matches_mutations = []
+    rounds_data = {}
     current_round = 0
     
-    for table in all_tables:
+    for table in soup.find_all('table', class_='main'):
         text = table.get_text().strip()
         if "Kolejka" in text:
             try:
                 parts = text.split("Kolejka")[1].strip().split()
-                possible_number = ''.join(filter(str.isdigit, parts[0]))
-                if possible_number:
-                    current_round = int(possible_number)
+                current_round = int(''.join(filter(str.isdigit, parts[0])))
             except: pass
             continue
 
         if current_round > 0:
-            rows = table.find_all('tr')
-            for row in rows:
+            for row in table.find_all('tr'):
                 cells = row.find_all('td')
                 if len(cells) < 3: continue
 
                 try:
-                    home_team = cells[0].get_text(strip=True)
-                    score_raw = cells[1].get_text(strip=True)
-                    away_team = cells[2].get_text(strip=True)
-                    date_raw = cells[3].get_text(strip=True) if len(cells) > 3 else ""
-                    parsed_date = parse_polish_date(date_raw)
+                    raw_home = cells[0].get_text()
+                    # Szybka walidacja przed zapytaniem API
+                    if normalize_team_name(raw_home) in IGNORED_NAMES: continue
 
+                    raw_away = cells[2].get_text()
+                    
+                    home_id = get_or_create_team(raw_home)
+                    away_id = get_or_create_team(raw_away)
+                    
+                    if not home_id or not away_id: continue
+
+                    score_raw = cells[1].get_text(strip=True)
+                    date_raw = cells[3].get_text(strip=True) if len(cells) > 3 else ""
+                    
                     home_score = None
                     away_score = None
                     if "-" in score_raw and any(c.isdigit() for c in score_raw):
-                        parts = score_raw.split("-")
                         try:
+                            parts = score_raw.split("-")
                             home_score = int(parts[0])
                             away_score = int(parts[1])
                         except: pass
+                        
+                    ext_id = f"m-{current_round}-{slugify(raw_home)}-{slugify(raw_away)}"
 
-                    match_id = f"match-r{current_round}-{slugify(home_team)}-{slugify(away_team)}"
+                    match_obj = {
+                        "_key": str(uuid.uuid4()),
+                        "_type": "match",
+                        "dataSource": "scraper",
+                        "externalId": ext_id,
+                        "homeTeam": {"_type": "reference", "_ref": home_id},
+                        "awayTeam": {"_type": "reference", "_ref": away_id},
+                        "homeScore": home_score,
+                        "awayScore": away_score,
+                        "isFinished": True 
+                    }
+                    if parse_polish_date(date_raw): 
+                        match_obj["date"] = parse_polish_date(date_raw)
 
-                    matches_mutations.append({
-                        "createOrReplace": {
-                            "_id": match_id,
-                            "_type": "result",
-                            "round": current_round,
-                            "homeTeam": home_team,
-                            "awayTeam": away_team,
-                            "homeScore": home_score,
-                            "awayScore": away_score,
-                            "date": parsed_date,
-                            "externalId": match_id,
-                            # DODANO: Przypisanie do kadry i kategorii
-                            "squad": {
-                                "_type": "reference",
-                                "_ref": senior_id
-                            },
-                            "source": "scraper",      # <--- TO JEST KLUCZOWE: Oznacza mecz jako automatyczny
-                        }
-                    })
-                except Exception:
-                    continue
+                    if current_round not in rounds_data: rounds_data[current_round] = []
+                    rounds_data[current_round].append(match_obj)
 
-    if matches_mutations:
-        print(f"📦 Znaleziono {len(matches_mutations)} meczów.")
-        payload = { "mutations": matches_mutations }
-        
-        res = requests.post(
-            SANITY_MUTATE_URL,
-            headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
-            data=json.dumps(payload)
-        )
-        if res.status_code == 200: print("✅ Mecze zaktualizowane.")
-        else: print(f"❌ Błąd meczów: {res.text}")
-    else:
-        print("⚠️ Nie znaleziono meczów.")
+                except Exception: continue
+
+    mutations = []
+    for r_num, matches in rounds_data.items():
+        mutations.append({
+            "createOrReplace": {
+                "_id": f"fixture-{competition_id}-r{r_num}",
+                "_type": "fixture",
+                "competition": { "_type": "reference", "_ref": competition_id },
+                "roundNumber": r_num,
+                "matches": matches
+            }
+        })
+
+    if mutations:
+        chunk_size = 5
+        for i in range(0, len(mutations), chunk_size):
+            chunk = mutations[i:i + chunk_size]
+            payload = { "mutations": chunk }
+            res = requests.post(SANITY_MUTATE_URL, headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"}, data=json.dumps(payload))
+            if res.status_code == 200: print(f"✅ Zapisano kolejki (partia {i//chunk_size + 1})")
 
 if __name__ == "__main__":
     try:
-        # 1. Najpierw pobieramy ID Seniorów
-        senior_id = get_senior_squad_id()
-
-        # 2. Pobieramy stronę
-        response = requests.get(URL, headers=headers)
-        response.encoding = 'ISO-8859-2'
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # 3. Uruchamiamy funkcje przekazując ID
-        get_table(soup, senior_id)
-        get_matches(soup, senior_id)
-        
+        preload_teams()
+        comp_id = get_competition_id("seniorzy")
+        if comp_id:
+            response = requests.get(URL, headers=headers)
+            response.encoding = 'ISO-8859-2' 
+            soup = BeautifulSoup(response.text, 'html.parser')
+            process_table(soup, comp_id)
+            process_fixtures(soup, comp_id)
     except Exception as e:
-        print(f"Błąd krytyczny: {e}")
+        print(f"🔥 Błąd: {e}")
