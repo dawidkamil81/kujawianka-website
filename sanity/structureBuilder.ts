@@ -1,6 +1,5 @@
 import { type StructureResolver } from 'sanity/structure'
 import { SquadStatsEditor } from './components/SquadStatsEditor'
-import { SquadTablePreview } from './components/SquadTablePreview'
 
 import {
   Users,
@@ -135,7 +134,6 @@ export const structure: StructureResolver = async (S, context) => {
                           // Edycja samej drużyny
                           S.listItem().title('Dane Drużyny').icon(Edit).child(
                             S.document().schemaType('squad').documentId(squadId)
-                              .views([S.view.form().title('Edycja'), S.view.component(SquadTablePreview).title('Podgląd')])
                           ),
                           S.divider(),
                           // Lista piłkarzy

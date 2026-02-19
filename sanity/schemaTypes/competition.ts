@@ -53,7 +53,7 @@ export const competition = defineType({
                 { name: 'roundsCount', title: 'Liczba kolejek', type: 'number' },
                 { name: 'promotionSpots', title: 'Miejsca premiowane awansem', type: 'number' },
                 { name: 'promotionPlayoffSpots', title: 'Miejsca barażowe (awans)', type: 'number' },
-                { name: 'relegationPlayoffSpots', title: 'Miejsca barażowe (spadek)', type: 'number' },
+                { name: 'relegationPlayoffSpots', title: 'Miejsca barażowe (utrzymanie)', type: 'number' },
                 { name: 'relegationSpots', title: 'Miejsca spadkowe', type: 'number' },
             ]
         })
