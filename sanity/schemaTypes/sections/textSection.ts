@@ -37,7 +37,7 @@ export const textSection = defineType({
             options: {
                 list: [
                     { title: 'Standardowy (Czysty)', value: 'standard' },
-                    { title: 'Karta (Ramka Glassmorphism)', value: 'card' }
+                    { title: 'Przeźroczysty (Karta)', value: 'card' }
                 ],
                 layout: 'radio'
             },

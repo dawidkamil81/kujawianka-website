@@ -15,7 +15,7 @@ export const news = defineType({
             name: 'isHighlighted',
             title: 'Wyróżniony artykuł',
             type: 'boolean',
-            description: 'Zaznacz, aby wyróżnić ten artykuł (np. dodać odznakę "Wyróżniony" lub wyświetlić w sliderze).',
+            description: 'Zaznacz, aby wyróżnić ten artykuł (np. dodać odznakę "Wyróżniony" i wyświetlić na stronie głównej).',
             initialValue: false, // Domyślnie wyłączone
         }),
         defineField({

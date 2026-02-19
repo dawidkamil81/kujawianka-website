@@ -6,11 +6,17 @@ import { useState, useEffect } from "react";
 import { MapPin, Calendar, ArrowRight, Shield } from "lucide-react";
 import { Match, Team } from "@/types/index";
 
+// 1. ZMIANA: Tworzymy rozszerzony typ, aby poinformować TypeScript o dodatkowych polach z GROQ
+type ExtendedMatch = Match & {
+    _id?: string;
+    round?: number;
+};
+
 interface MatchCenterProps {
-    nextMatch: Match | null;
-    lastMatches: Match[];
+    nextMatch: ExtendedMatch | null;
+    lastMatches: ExtendedMatch[];
     teams: Team[];
-    clubLogo?: string; // <--- DODANO: Opcjonalne logo z ustawień
+    clubLogo?: string;
 }
 
 // Stała nazwa naszej drużyny do wykrywania lokalizacji
@@ -82,19 +88,25 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
     );
 };
 
-// Helper do sprawdzania lokalizacji (Dom/Wyjazd)
-const getLocation = (match: Match) => {
-    if (match.homeTeam.includes(CLUB_NAME_PART)) return "Dom";
+// 2. ZMIANA: Używamy ExtendedMatch
+const getLocation = (match: ExtendedMatch) => {
+    const homeName = match.homeTeam?.name || "";
+    if (homeName.includes(CLUB_NAME_PART)) return "Dom";
     return "Wyjazd";
 };
 
 // --- 2. KARTA OSTATNIEGO MECZU ---
-const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: string) => string }) => {
+const LastMatchCard = ({ match, getLogo }: { match: ExtendedMatch; getLogo: (name: string) => string }) => {
     const formattedDate = match.date
         ? new Date(match.date).toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" })
         : "Data nieznana";
 
     const location = getLocation(match);
+
+    const homeName = match.homeTeam?.name || "Nieznana drużyna";
+    const awayName = match.awayTeam?.name || "Nieznana drużyna";
+    const homeLogo = match.homeTeam?.logoUrl || getLogo(homeName);
+    const awayLogo = match.awayTeam?.logoUrl || getLogo(awayName);
 
     return (
         <div className="relative w-full rounded-3xl border border-white/10 bg-[#121212] overflow-hidden group/last shadow-xl hover:shadow-[0_0_20px_rgba(23,65,53,0.15)] transition-all duration-300">
@@ -103,17 +115,17 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
 
                 <div className="mb-4 text-center">
                     <span className="text-[10px] font-bold text-club-green uppercase tracking-wider border border-club-green/20 px-3 py-1 rounded-full bg-club-green/5">
-                        Kolejka {match.round}
+                        Kolejka {match.round || "-"}
                     </span>
                 </div>
 
                 <div className="w-full flex items-center justify-between gap-2 mb-4">
                     <div className="flex flex-col items-center w-1/3">
                         <div className="relative w-14 h-14 mb-2 transition-transform duration-500 group-hover/last:scale-110">
-                            <Image src={getLogo(match.homeTeam)} alt={match.homeTeam} fill className="object-contain" />
+                            <Image src={homeLogo} alt={homeName} fill className="object-contain" />
                         </div>
                         <span className="text-[10px] font-bold text-center text-gray-400 uppercase leading-tight line-clamp-2">
-                            {match.homeTeam}
+                            {homeName}
                         </span>
                     </div>
                     <div className="flex flex-col items-center justify-center w-1/3">
@@ -125,10 +137,10 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
                     </div>
                     <div className="flex flex-col items-center w-1/3">
                         <div className="relative w-14 h-14 mb-2 transition-transform duration-500 group-hover/last:scale-110">
-                            <Image src={getLogo(match.awayTeam)} alt={match.awayTeam} fill className="object-contain" />
+                            <Image src={awayLogo} alt={awayName} fill className="object-contain" />
                         </div>
                         <span className="text-[10px] font-bold text-center text-gray-400 uppercase leading-tight line-clamp-2">
-                            {match.awayTeam}
+                            {awayName}
                         </span>
                     </div>
                 </div>
@@ -151,20 +163,16 @@ const LastMatchCard = ({ match, getLogo }: { match: Match; getLogo: (name: strin
 }
 
 // --- GŁÓWNY KOMPONENT ---
-
-// ZMIANA: Dodano clubLogo do propsów
 export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }: MatchCenterProps) {
 
-    // ZMIANA: Zaktualizowana logika pobierania loga
     const getLogo = (teamName: string) => {
+        if (!teamName) return "/logo.png";
         const cleanName = teamName.toLowerCase();
 
-        // 1. Jeśli to nasza drużyna (Kujawianka) i mamy clubLogo z propsów -> użyj go
         if (cleanName.includes("kujawianka") && clubLogo) {
             return clubLogo;
         }
 
-        // 2. W przeciwnym razie szukaj w teams
         const team = teams.find(t => t.name.toLowerCase() === cleanName);
         return team?.logoUrl || "/logo.png";
     };
@@ -180,6 +188,11 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
 
     const nextMatchLocation = nextMatch ? getLocation(nextMatch) : null;
     const formattedNextDate = nextMatch ? formatNextMatchDate(nextMatch.date) : null;
+
+    const nextHomeName = nextMatch?.homeTeam?.name || "Nieznana drużyna";
+    const nextAwayName = nextMatch?.awayTeam?.name || "Nieznana drużyna";
+    const nextHomeLogo = nextMatch?.homeTeam?.logoUrl || getLogo(nextHomeName);
+    const nextAwayLogo = nextMatch?.awayTeam?.logoUrl || getLogo(nextAwayName);
 
     return (
         <section className="relative w-full py-16 bg-[#0e0e0e] overflow-hidden border-t border-white/5">
@@ -210,16 +223,15 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
                                     <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">Najbliższe spotkanie</span>
                                 </div>
 
-                                {/* DRUŻYNY i VS */}
                                 <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-12 mb-8">
 
                                     {/* Gospodarz */}
                                     <div className="flex flex-col items-center gap-3 md:gap-4">
                                         <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 drop-shadow-[0_0_25px_rgba(23,65,53,0.4)] transition-transform duration-500 group-hover:scale-110">
-                                            <Image src={getLogo(nextMatch.homeTeam)} alt={nextMatch.homeTeam} fill className="object-contain" />
+                                            <Image src={nextHomeLogo} alt={nextHomeName} fill className="object-contain" />
                                         </div>
                                         <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[120px] md:max-w-[180px]">
-                                            {nextMatch.homeTeam}
+                                            {nextHomeName}
                                         </h3>
                                     </div>
 
@@ -227,7 +239,6 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
                                     <div className="flex flex-col items-center justify-center relative min-w-[50px] md:min-w-0">
                                         <span className="text-4xl md:text-6xl font-black text-white/10 font-montserrat absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 select-none">VS</span>
 
-                                        {/* Timer widoczny TYLKO na desktopie (md:block) - tak jak w oryginale */}
                                         <div className="hidden md:block mt-20 scale-100">
                                             <CountdownTimer targetDate={nextMatch.date} />
                                         </div>
@@ -236,15 +247,15 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
                                     {/* Gość */}
                                     <div className="flex flex-col items-center gap-3 md:gap-4">
                                         <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 group-hover:scale-110">
-                                            <Image src={getLogo(nextMatch.awayTeam)} alt={nextMatch.awayTeam} fill className="object-contain" />
+                                            <Image src={nextAwayLogo} alt={nextAwayName} fill className="object-contain" />
                                         </div>
                                         <h3 className="text-sm sm:text-lg md:text-2xl font-bold text-white text-center font-montserrat leading-tight max-w-[120px] md:max-w-[180px]">
-                                            {nextMatch.awayTeam}
+                                            {nextAwayName}
                                         </h3>
                                     </div>
                                 </div>
 
-                                {/* Timer widoczny TYLKO na mobile (md:hidden) - poniżej drużyn */}
+                                {/* Timer widoczny TYLKO na mobile */}
                                 <div className="md:hidden mb-8 scale-95">
                                     <CountdownTimer targetDate={nextMatch.date} />
                                 </div>
@@ -254,7 +265,7 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
                                     <div className="flex items-center justify-center gap-3 text-gray-400">
                                         <Shield size={18} className="text-club-green" />
                                         <span className="text-sm font-medium uppercase tracking-wide">
-                                            Kolejka {nextMatch.round}
+                                            Kolejka {nextMatch.round || "-"}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-center gap-3 text-gray-400 border-y md:border-y-0 md:border-x border-white/5 py-2 md:py-0">
@@ -292,7 +303,8 @@ export default function MatchCenter({ nextMatch, lastMatches, teams, clubLogo }:
                         </div>
                         {lastMatches && lastMatches.length > 0 ? (
                             lastMatches.map((match) => (
-                                <LastMatchCard key={match._id} match={match} getLogo={getLogo} />
+                                // Używamy _id lub _key w zależności od tego, co dostarczyło zapytanie GROQ
+                                <LastMatchCard key={match._id || match._key} match={match} getLogo={getLogo} />
                             ))
                         ) : (
                             <div className="p-4 text-center text-gray-500 border border-white/5 rounded-2xl">Brak rozegranych meczy.</div>

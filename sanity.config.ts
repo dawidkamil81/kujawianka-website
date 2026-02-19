@@ -1,14 +1,9 @@
 'use client'
 
-/**
- * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
- */
-
 import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 
-// Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
 import { apiVersion, dataset, projectId } from './sanity/env'
 import { schema } from './sanity/schemaTypes'
 import { structure } from './sanity/structureBuilder'
@@ -17,48 +12,85 @@ export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
+
   schema: {
     types: schema.types,
-    // --- SZABLONY WARTOŚCI POCZĄTKOWYCH ---
     templates: (prev) => [
       ...prev,
-      // 1. Szablon dla zwykłego zawodnika (tylko przypisuje do drużyny)
+
+      // --- 1. NOWE SZABLONY (Dla struktury Competition) ---
+
+      // A. Tworzenie nowych Rozgrywek (przypisanych do konkretnej Kadry)
+      {
+        id: 'competition-by-squad',
+        title: 'Rozgrywki dla kadry',
+        schemaType: 'competition',
+        parameters: [{ name: 'squadId', type: 'string' }],
+        value: ({ squadId }: { squadId: string }) => ({
+          squad: { _type: 'reference', _ref: squadId }
+        })
+      },
+
+      // B. Tworzenie Tabeli (przypisanej do Rozgrywek)
+      {
+        id: 'standing-by-competition',
+        title: 'Tabela dla rozgrywek',
+        schemaType: 'standing',
+        parameters: [{ name: 'competitionId', type: 'string' }],
+        value: ({ competitionId }: { competitionId: string }) => ({
+          competition: { _type: 'reference', _ref: competitionId }
+        })
+      },
+
+      // C. Tworzenie Kolejki/Terminarza (przypisanej do Rozgrywek)
+      {
+        id: 'fixture-by-competition',
+        title: 'Kolejka dla rozgrywek',
+        schemaType: 'fixture',
+        parameters: [{ name: 'competitionId', type: 'string' }],
+        value: ({ competitionId }: { competitionId: string }) => ({
+          competition: { _type: 'reference', _ref: competitionId }
+        })
+      },
+
+      // --- 2. STARE, ALE NADAL POTRZEBNE SZABLONY ---
+
+      // Tworzenie zawodnika w konkretnej kadrze
       {
         id: 'player-by-squad',
-        title: 'Nowy Zawodnik w Kadrze',
-        description: 'Tworzy zawodnika przypisanego do wybranej kadry',
+        title: 'Nowy Zawodnik',
         schemaType: 'player',
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({
-          squad: { _type: 'reference', _ref: squadId },
-          // Nie ustawiamy pozycji, użytkownik wybierze (Bramkarz, Obrońca itp.)
+          squad: { _type: 'reference', _ref: squadId }
         }),
       },
-      // 2. Szablon dla SZTABU (przypisuje do drużyny ORAZ ustawia pozycję 'Sztab')
+
+      // Tworzenie członka sztabu w konkretnej kadrze
       {
         id: 'staff-by-squad',
         title: 'Nowy Członek Sztabu',
-        description: 'Tworzy trenera/członka sztabu w wybranej kadrze',
         schemaType: 'player',
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({
           squad: { _type: 'reference', _ref: squadId },
-          position: 'Sztab' // <--- To jest kluczowe!
+          position: 'Sztab'
         }),
       },
-      // 3. NOWOŚĆ: Szablon dla SPONSORA (przypisuje automatycznie rangę/tier)
+
+      // Tworzenie sponsora w konkretnej kategorii
       {
         id: 'sponsor-by-tier',
         title: 'Sponsor w tej kategorii',
-        description: 'Sponsor przypisany do wybranej rangi',
         schemaType: 'sponsor',
         parameters: [{ name: 'tierId', type: 'string' }],
         value: ({ tierId }: { tierId: string }) => ({
-          tier: { _type: 'reference', _ref: tierId },
+          tier: { _type: 'reference', _ref: tierId }
         }),
       },
     ],
   },
+
   plugins: [
     structureTool({ structure }),
     visionTool({ defaultApiVersion: apiVersion }),

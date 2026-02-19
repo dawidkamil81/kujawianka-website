@@ -2,9 +2,8 @@ import { defineField, defineType } from 'sanity'
 
 export const result = defineType({
     name: 'result',
-    title: 'Wyniki',
+    title: 'Wyniki Meczów',
     type: 'document',
-    // Dodajemy domyślne sortowanie (najpierw po kolejce, potem po dacie)
     orderings: [
         {
             title: 'Kolejka (Rosnąco)',
@@ -23,77 +22,128 @@ export const result = defineType({
         }
     ],
     fields: [
-        // Pola informacyjne
+        defineField({
+            name: 'source',
+            title: 'Źródło danych',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Manualne (Wybór z listy - Młodzież)', value: 'manual' },
+                    { title: 'Scraper (90minut - Seniorzy)', value: 'scraper' }
+                ],
+                layout: 'radio'
+            },
+            initialValue: 'manual',
+            validation: Rule => Rule.required()
+        }),
+
+        defineField({
+            name: 'squad',
+            title: 'Przypisana Kadra',
+            type: 'reference',
+            to: [{ type: 'squad' }],
+            validation: (rule) => rule.required()
+        }),
+
         defineField({
             name: 'round',
             title: 'Kolejka',
             type: 'number',
-            description: 'Numer kolejki ligowej (np. 12)',
             validation: (rule) => rule.required().integer().min(1)
         }),
+
         defineField({
             name: 'date',
-            title: 'Data i Godzina',
-            type: 'datetime',
-            description: 'Jeśli dokładna godzina nie jest znana, ustaw domyślną.'
+            title: 'Data i godzina',
+            type: 'datetime'
         }),
 
-        // Drużyny
-        defineField({ name: 'homeTeam', title: 'Gospodarz', type: 'string' }),
-        defineField({ name: 'awayTeam', title: 'Gość', type: 'string' }),
+        // --- SEKCJA GOSPODARZA ---
+        defineField({
+            name: 'homeTeamRef',
+            title: 'Gospodarz (Wybierz z listy)',
+            type: 'reference',
+            to: [{ type: 'team' }],
+            hidden: ({ document }) => document?.source === 'scraper',
+        }),
 
-        // Wynik
-        defineField({ name: 'homeScore', title: 'Gole Gospodarzy', type: 'number' }),
-        defineField({ name: 'awayScore', title: 'Gole Gości', type: 'number' }),
+        defineField({
+            name: 'homeTeam',
+            title: 'Gospodarz (Tekst - Scraper)',
+            type: 'string',
+            readOnly: true,
+            hidden: ({ document }) => document?.source === 'manual'
+        }),
 
-        // KLUCZOWE DLA SCRAPINGU
+        // --- SEKCJA GOŚCIA ---
+        defineField({
+            name: 'awayTeamRef',
+            title: 'Gość (Wybierz z listy)',
+            type: 'reference',
+            to: [{ type: 'team' }],
+            hidden: ({ document }) => document?.source === 'scraper',
+        }),
+
+        defineField({
+            name: 'awayTeam',
+            title: 'Gość (Tekst - Scraper)',
+            type: 'string',
+            readOnly: true,
+            hidden: ({ document }) => document?.source === 'manual'
+        }),
+
+        // --- WYNIKI ---
+        defineField({
+            name: 'homeScore',
+            title: 'Gole Gospodarzy',
+            type: 'number'
+        }),
+        defineField({
+            name: 'awayScore',
+            title: 'Gole Gości',
+            type: 'number'
+        }),
+
+        defineField({
+            name: 'season',
+            title: 'Sezon',
+            type: 'string',
+            initialValue: '2025/2026'
+        }),
+
         defineField({
             name: 'externalId',
-            title: 'ID Zewnętrzne (90minut)',
+            title: 'External ID (Tylko Scraper)',
             type: 'string',
-            description: 'Unikalny identyfikator meczu. Służy do aktualizacji wyników.',
-            readOnly: true,
-            hidden: true
-        }),
-        // Wklej to do player.ts, results.ts i table.ts
-        defineField({
-            name: 'category',
-            title: 'Kategoria Wiekowa',
-            type: 'string',
-            options: {
-                list: [
-                    { title: 'Seniorzy', value: 'senior' },
-                    { title: 'Juniorzy', value: 'junior' },
-                    { title: 'Trampkarze', value: 'trampkarz' }
-                ],
-                layout: 'radio'
-            },
-            initialValue: 'senior',
-            validation: (rule) => rule.required()
-        }),
+            hidden: true,
+            readOnly: true
+        })
     ],
     preview: {
         select: {
-            round: 'round',
-            home: 'homeTeam',
-            away: 'awayTeam',
+            source: 'source',
+            homeString: 'homeTeam',
+            awayString: 'awayTeam',
+            homeRef: 'homeTeamRef.name',
+            awayRef: 'awayTeamRef.name',
             hScore: 'homeScore',
             aScore: 'awayScore',
-            date: 'date'
+            round: 'round',
+            squadName: 'squad.name'
         },
-        prepare({ round, home, away, hScore, aScore, date }) {
-            const score = (hScore !== undefined && aScore !== undefined)
-                ? `${hScore}:${aScore}`
-                : 'vs';
+        prepare({ source, homeString, awayString, homeRef, awayRef, hScore, aScore, round, squadName }) {
+            const home = source === 'manual' ? homeRef : homeString
+            const away = source === 'manual' ? awayRef : awayString
 
-            // Formatujemy datę, jeśli istnieje
-            const dateStr = date
-                ? new Date(date).toLocaleDateString('pl-PL', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-                : '';
+            const score = (hScore !== null && hScore !== undefined && aScore !== null && aScore !== undefined)
+                ? `${hScore}:${aScore}`
+                : '-:-'
+
+            const sourceLabel = source === 'scraper' ? ' Auto' : 'Ręczny'
 
             return {
-                title: `${home} ${score} ${away}`,
-                subtitle: `Kolejka ${round} | ${dateStr}`
+                title: `${home || '?'} vs ${away || '?'}`,
+                subtitle: `Runda ${round} | Wynik: ${score} | ${squadName} | ${sourceLabel}`
             }
         }
     }
