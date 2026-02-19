@@ -170,7 +170,7 @@ export default function WynikiClient({ table, matches, competitionName, config }
                             {relPlayoffSpots > 0 && (
                                 <div className="flex items-center gap-2">
                                     <span className="w-2.5 h-2.5 rounded bg-orange-500 border border-orange-400/50"></span>
-                                    <span className="text-gray-400">Baraże o spadek</span>
+                                    <span className="text-gray-400">Baraże o utrzymanie</span>
                                 </div>
                             )}
                             {relSpots > 0 && (
