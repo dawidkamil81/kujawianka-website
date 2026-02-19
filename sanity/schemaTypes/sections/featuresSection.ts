@@ -3,7 +3,7 @@ import { LayoutGrid, Star } from 'lucide-react'
 
 export const featuresSection = defineType({
     name: 'featuresSection',
-    title: 'Siatka Cech (Grid)',
+    title: 'Siatka Cech',
     type: 'object',
     icon: LayoutGrid,
     fields: [
@@ -46,19 +46,19 @@ export const featuresSection = defineType({
                             options: {
                                 list: [
                                     // Lista dostępnych ikon - możesz dodać więcej
-                                    { title: 'Puchar (Trophy)', value: 'trophy' },
-                                    { title: 'Gwiazda (Star)', value: 'star' },
-                                    { title: 'Ludzie (Users)', value: 'users' },
-                                    { title: 'Tarcza (Shield)', value: 'shield' },
-                                    { title: 'Bilet (Ticket)', value: 'ticket' },
-                                    { title: 'Uścisk dłoni (Handshake)', value: 'handshake' },
-                                    { title: 'Megafon (Megaphone)', value: 'megaphone' },
-                                    { title: 'Teczka (Briefcase)', value: 'briefcase' },
-                                    { title: 'Serce (Heart)', value: 'heart' },
-                                    { title: 'Kalendarz (Calendar)', value: 'calendar' },
-                                    { title: 'Koszulka (Shirt)', value: 'shirt' },
-                                    { title: 'Cel (Target)', value: 'target' },
-                                    { title: 'Diament (Gem)', value: 'gem' },
+                                    { title: 'Puchar', value: 'trophy' },
+                                    { title: 'Gwiazda', value: 'star' },
+                                    { title: 'Ludzie', value: 'users' },
+                                    { title: 'Tarcza', value: 'shield' },
+                                    { title: 'Bilet', value: 'ticket' },
+                                    { title: 'Uścisk dłoni', value: 'handshake' },
+                                    { title: 'Megafon', value: 'megaphone' },
+                                    { title: 'Teczka', value: 'briefcase' },
+                                    { title: 'Serce', value: 'heart' },
+                                    { title: 'Kalendarz', value: 'calendar' },
+                                    { title: 'Koszulka', value: 'shirt' },
+                                    { title: 'Cel', value: 'target' },
+                                    { title: 'Diament', value: 'gem' },
                                 ]
                             },
                             initialValue: 'star'

@@ -71,47 +71,47 @@ export type SponsorsPageData = {
 
 // ... (Player, NewsItem, Sponsor, Match - upewnij się, że masz Match)
 
-export type Team = {
-    name: string;
-    logoUrl: string;
-};
+// export type Team = {
+//     name: string;
+//     logoUrl: string;
+// };
 
 // src/types/index.ts
 
 // ... (Team, NewsItem, Sponsor itd. bez zmian)
 
 // Typ dla wiersza tabeli
-export type TableRow = {
-    _key: string;
-    position: number;
-    teamName: string;
-    matches: number;
-    points: number;
-    won: number;
-    drawn: number;
-    lost: number;
-    goals: string;
-};
+// export type TableRow = {
+//     _key: string;
+//     position: number;
+//     teamName: string;
+//     matches: number;
+//     points: number;
+//     won: number;
+//     drawn: number;
+//     lost: number;
+//     goals: string;
+// };
 
-// Typ dla całej tabeli
-export type LeagueTable = {
-    _id: string;
-    season: string;
-    rows: TableRow[];
-};
+// // Typ dla całej tabeli
+// export type LeagueTable = {
+//     _id: string;
+//     season: string;
+//     rows: TableRow[];
+// };
 
-// ZAKTUALIZOWANY TYP MECZU
-// Musi pasować do tego, co zwraca zapytanie RESULTS_PAGE_QUERY
-export type Match = {
-    _id: string;
-    round: number;        // To pole jest teraz kluczowe dla terminarza!
-    date: string;         // Data meczu
-    homeTeam: string;
-    awayTeam: string;
-    homeScore?: number;   // Opcjonalne (może być null przed meczem)
-    awayScore?: number;
-    isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
-};
+// // ZAKTUALIZOWANY TYP MECZU
+// // Musi pasować do tego, co zwraca zapytanie RESULTS_PAGE_QUERY
+// export type Match = {
+//     _id: string;
+//     round: number;        // To pole jest teraz kluczowe dla terminarza!
+//     date: string;         // Data meczu
+//     homeTeam: string;
+//     awayTeam: string;
+//     homeScore?: number;   // Opcjonalne (może być null przed meczem)
+//     awayScore?: number;
+//     isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
+// };
 
 export type SocialLink = {
     url?: string;
@@ -188,4 +188,66 @@ export type Club100PageData = {
     aboutContent?: string; // <--- NOWE
     ctaTitle?: string;
     ctaDescription?: string;
+};
+
+
+export type Team = {
+    _id?: string;
+    name: string;
+    logoUrl?: string;
+};
+
+// Zaktualizowany wiersz tabeli
+export type TableRow = {
+    _key: string;
+    position: number;
+    teamName: string;
+    teamLogo?: string; // Nowe pole na logo z referencji
+    matches: number;
+    points: number;
+    won: number;
+    drawn: number;
+    lost: number;
+    goals: string;
+};
+
+export type LeagueTable = {
+    _id: string;
+    season: string;
+    rows: TableRow[];
+};
+
+// Nowy format Meczu (zagnieżdżony w kolejce)
+export type Match = {
+    _key: string;
+    dataSource: 'scraper' | 'manual';
+    date?: string;
+    homeTeam: Team;
+    awayTeam: Team;
+    homeScore?: number;
+    awayScore?: number;
+    isFinished: boolean;
+};
+
+// Typ Kolejki (Fixture)
+export type Fixture = {
+    roundNumber: number;
+    matches: Match[];
+};
+
+// Typ Korekty Punktowej
+export type PointCorrection = {
+    team: Team;
+    points: number;
+    reason?: string;
+};
+
+// NOWY GŁÓWNY TYP: Rozgrywki (Competition)
+export type CompetitionData = {
+    _id: string;
+    name: string;
+    season: string;
+    pointCorrections?: PointCorrection[];
+    standing?: LeagueTable; // Tabela ze scrapera (będzie istniała tylko dla seniorów)
+    fixtures?: Fixture[];   // Kolejki z meczami
 };

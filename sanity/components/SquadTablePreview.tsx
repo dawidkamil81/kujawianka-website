@@ -93,7 +93,7 @@ export function SquadTablePreview({ documentId }: { documentId: string }) {
         }
     }
 
-    if (loading) return <Card padding={4}><Stack align="center"><Spinner /></Stack></Card>
+    if (loading) return <Card padding={4}><Stack><Spinner /></Stack></Card>
 
     if (table.length === 0) {
         return (

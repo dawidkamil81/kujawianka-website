@@ -21,7 +21,8 @@ export const gallerySection = defineType({
         }),
         defineField({
             name: 'columns',
-            title: 'Liczba kolumn (Desktop)',
+            title: 'Liczba kolumn)',
+            description: 'Układ na komputerze',
             type: 'string',
             options: {
                 list: [

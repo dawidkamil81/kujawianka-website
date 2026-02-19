@@ -4,7 +4,7 @@ import { defineField, defineType } from 'sanity'
 const commonFields = [
     defineField({
         name: 'title',
-        title: 'Tytuł strony (H1)',
+        title: 'Tytuł strony',
         type: 'string',
         initialValue: 'Tytuł strony'
     }),
@@ -27,7 +27,7 @@ export const offerPage = defineType({
         // Pakiety Sponsorskie
         defineField({
             name: 'packages',
-            title: 'Karty Pakietów (Cooperation Types)',
+            title: 'Karty Pakietów Sponsorskich',
             type: 'array',
             of: [{
                 type: 'object',
@@ -40,11 +40,11 @@ export const offerPage = defineType({
                         type: 'string',
                         options: {
                             list: [
-                                { title: 'Diament (Gem)', value: 'gem' },
-                                { title: 'Cel (Target)', value: 'target' },
-                                { title: 'Koszulka (Shirt)', value: 'shirt' },
-                                { title: 'Korona (Crown)', value: 'crown' },
-                                { title: 'Uścisk dłoni (Handshake)', value: 'handshake' },
+                                { title: 'Diament', value: 'gem' },
+                                { title: 'Cel', value: 'target' },
+                                { title: 'Koszulka', value: 'shirt' },
+                                { title: 'Korona', value: 'crown' },
+                                { title: 'Uścisk dłoni', value: 'handshake' },
                             ],
                             layout: 'radio'
                         },
@@ -57,8 +57,8 @@ export const offerPage = defineType({
                         options: {
                             list: [
                                 { title: 'Szmaragdowy (Domyślny)', value: 'emerald' },
-                                { title: 'Biały (Dla Klub 100)', value: 'white' },
-                                { title: 'Niebieski (Dla Klubowicza)', value: 'blue' },
+                                { title: 'Biały', value: 'white' },
+                                { title: 'Niebieski', value: 'blue' },
                             ],
                             layout: 'radio'
                         },
@@ -112,8 +112,8 @@ export const offerPage = defineType({
             type: 'pageBuilder' // <--- To musi tu być
         }),
 
-        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
-        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
+        defineField({ name: 'ctaTitle', title: 'Nagłówek sekcji kontaktowej', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis sekcji kontaktowej', type: 'text' })
     ]
 })
 
@@ -149,12 +149,12 @@ export const sponsorsPage = defineType({
                         type: 'string',
                         options: {
                             list: [
-                                { title: 'Uścisk dłoni (Handshake)', value: 'handshake' },
-                                { title: 'Ludzie (Users)', value: 'users' },
-                                { title: 'Wykres (TrendingUp)', value: 'trending' },
-                                { title: 'Kalendarz (Calendar)', value: 'calendar' },
-                                { title: 'Puchar (Trophy)', value: 'trophy' },
-                                { title: 'Gwiazda (Star)', value: 'star' },
+                                { title: 'Uścisk dłoni', value: 'handshake' },
+                                { title: 'Ludzie', value: 'users' },
+                                { title: 'Wykres', value: 'trending' },
+                                { title: 'Kalendarz', value: 'calendar' },
+                                { title: 'Puchar', value: 'trophy' },
+                                { title: 'Gwiazda', value: 'star' },
                             ],
                             layout: 'radio'
                         },
@@ -174,7 +174,7 @@ export const sponsorsPage = defineType({
         // SEKCJA CTA (DOLNA)
         defineField({
             name: 'ctaTitle',
-            title: 'Tytuł sekcji kontaktowej (CTA)',
+            title: 'Tytuł sekcji kontaktowej',
             type: 'string',
             initialValue: 'Dołącz do Rodziny Kujawianki'
         }),
@@ -199,7 +199,7 @@ export const partnersPage = defineType({
         // Sekcja "Dlaczego warto?" (opcjonalna)
         defineField({
             name: 'benefitsTitle',
-            title: 'Tytuł sekcji korzyści (np. Dlaczego warto dołączyć?)',
+            title: 'Tytuł sekcji korzyści',
             type: 'string'
         }),
         defineField({
@@ -230,8 +230,8 @@ export const partnersPage = defineType({
         }),
 
         // CTA
-        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
-        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
+        defineField({ name: 'ctaTitle', title: 'Nagłówek sekcji kontaktowej', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis sekcji kontaktowej', type: 'text' })
     ]
 })
 
@@ -245,7 +245,7 @@ export const club100Page = defineType({
         // 1. Sekcja Korzyści (Górna)
         defineField({
             name: 'benefits',
-            title: 'Karty korzyści (Górna sekcja)',
+            title: 'Karty korzyści',
             type: 'array',
             of: [{
                 type: 'object',
@@ -258,11 +258,11 @@ export const club100Page = defineType({
                         type: 'string',
                         options: {
                             list: [
-                                { title: 'Korona (Crown)', value: 'crown' },
-                                { title: 'Tarcza (ShieldCheck)', value: 'shield' },
-                                { title: 'Ludzie (Users)', value: 'users' },
-                                { title: 'Gwiazda (Star)', value: 'star' },
-                                { title: 'Bilet (Ticket)', value: 'ticket' }
+                                { title: 'Korona', value: 'crown' },
+                                { title: 'Tarcza', value: 'shield' },
+                                { title: 'Ludzie', value: 'users' },
+                                { title: 'Gwiazda', value: 'star' },
+                                { title: 'Bilet', value: 'ticket' }
                             ]
                         },
                         initialValue: 'crown'
@@ -288,7 +288,7 @@ export const club100Page = defineType({
         }),
 
         // 3. CTA
-        defineField({ name: 'ctaTitle', title: 'Nagłówek CTA', type: 'string' }),
-        defineField({ name: 'ctaDescription', title: 'Opis CTA', type: 'text' })
+        defineField({ name: 'ctaTitle', title: 'Nagłówek sekcji kontaktowej', type: 'string' }),
+        defineField({ name: 'ctaDescription', title: 'Opis sekcji kontaktowej', type: 'text' })
     ]
 })

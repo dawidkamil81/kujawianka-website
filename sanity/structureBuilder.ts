@@ -1,5 +1,4 @@
 import { type StructureResolver } from 'sanity/structure'
-// Komponenty widoku (bez zmian)
 import { SquadStatsEditor } from './components/SquadStatsEditor'
 import { SquadTablePreview } from './components/SquadTablePreview'
 
@@ -35,7 +34,7 @@ const buildCompetitionView = (S: any, competitionId: string, competitionName: st
     .items([
       // 1. KONFIGURACJA
       S.listItem()
-        .title('Konfiguracja i Limity')
+        .title('Informacje o rozgrywkach')
         .icon(Settings)
         .child(
           S.document()
@@ -45,7 +44,7 @@ const buildCompetitionView = (S: any, competitionId: string, competitionName: st
 
       // 2. TABELA LIGOWA
       S.listItem()
-        .title('Tabela Ligowa')
+        .title('Tabela Ligowa)')
         .icon(ListOrdered)
         .child(
           S.documentList()
@@ -60,7 +59,7 @@ const buildCompetitionView = (S: any, competitionId: string, competitionName: st
 
       // 3. TERMINARZ
       S.listItem()
-        .title('Terminarz (Kolejki)')
+        .title('Terminarz')
         .icon(Calendar)
         .child(
           S.documentList()
@@ -84,7 +83,7 @@ export const structure: StructureResolver = async (S, context) => {
     .items([
       // --- SEKCJA 1: GLOBALNE ---
       S.listItem()
-        .title('Ustawienia Globalne')
+        .title('Ustawienia Strony')
         .icon(Settings)
         .child(
           S.list()
@@ -96,14 +95,14 @@ export const structure: StructureResolver = async (S, context) => {
 
       // --- SEKCJA 2: STRUKTURY DANYCH ---
       S.listItem()
-        .title('Edycja Struktur Danych')
+        .title('Baza Danych')
         .icon(Database)
         .child(
           S.list()
             .title('Bazy Danych')
             .items([
-              S.documentTypeListItem('squad').title('Drużyny i Grupy wiekowe').icon(Users),
-              S.documentTypeListItem('team').title('Baza Klubów (Przeciwnicy)').icon(Shield),
+              S.documentTypeListItem('squad').title('Grupy wiekowe').icon(Users),
+              S.documentTypeListItem('team').title('Kluby').icon(Shield),
               S.documentTypeListItem('staffRole').title('Role w Sztabie'),
               S.documentTypeListItem('sponsorTier').title('Kategorie sponsorów').icon(Tag)
             ])
@@ -115,7 +114,7 @@ export const structure: StructureResolver = async (S, context) => {
 
       // --- SEKCJA 3: ZARZĄDZANIE KADRAMI (Ludzie) ---
       S.listItem()
-        .title('Kadry Zawodnicze')
+        .title('Kadry i Zawodnicy')
         .icon(Users)
         .child(
           S.list()
@@ -124,7 +123,7 @@ export const structure: StructureResolver = async (S, context) => {
               S.listItem().title('Wszyscy zawodnicy').icon(Users).child(S.documentTypeList('player')),
               S.divider(),
               S.listItem()
-                .title('Zarządzaj wg Drużyny')
+                .title('Zarządzaj drużynami')
                 .icon(ListFilter)
                 .child(
                   S.documentTypeList('squad')
@@ -147,7 +146,7 @@ export const structure: StructureResolver = async (S, context) => {
                               .initialValueTemplates([S.initialValueTemplateItem('player-by-squad', { squadId })])
                           ),
                           // Masowa edycja
-                          S.listItem().title('Masowa Edycja Statystyk').icon(ClipboardList).child(
+                          S.listItem().title('Statystyki zawodników').icon(ClipboardList).child(
                             S.document().schemaType('squad').documentId(squadId)
                               .views([S.view.component(SquadStatsEditor).title('Edytor')])
                           ),
@@ -202,7 +201,7 @@ export const structure: StructureResolver = async (S, context) => {
             .title('Strefa Biznesowa')
             .items([
               S.listItem()
-                .title('Sponsorzy Biznesowi')
+                .title('Sponsorzy i partnerzy')
                 .icon(Gem)
                 .child(
                   S.documentTypeList('sponsorTier')

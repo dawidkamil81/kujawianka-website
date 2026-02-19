@@ -1,54 +1,58 @@
-// src/lib/tableCalculator.ts
+import { Match, PointCorrection, TableRow } from '../../types';
 
-// Typy wejściowe (to co dostaniemy z Sanity)
-export type MatchInput = {
-    homeTeamName: string;
-    awayTeamName: string;
-    homeScore: number | null;
-    awayScore: number | null;
-};
-
-// Typ wiersza tabeli (zgodny z Twoim frontendem)
-export type TableRow = {
-    _key: string;
-    position: number;
-    teamName: string;
-    matches: number;
-    points: number;
-    won: number;
-    drawn: number;
-    lost: number;
-    goals: string; // Format "strzelone-stracone"
-    // Pola pomocnicze do sortowania
+// Rozszerzony typ wiersza o wewnętrzne pola do liczenia
+type CalculatedRow = Omit<TableRow, 'position' | 'goals'> & {
     goalsScored: number;
     goalsLost: number;
     goalsDiff: number;
+    teamId: string;
 };
 
-export function calculateTableFromMatches(matches: MatchInput[]): TableRow[] {
-    const teamsMap = new Map<string, Omit<TableRow, 'position' | 'goals'>>();
+export function calculateTableFromMatches(
+    matches: Match[],
+    pointCorrections: PointCorrection[] = []
+): TableRow[] {
+    const teamsMap = new Map<string, CalculatedRow>();
 
-    const getTeam = (name: string) => {
-        if (!teamsMap.has(name)) {
-            teamsMap.set(name, {
-                _key: name, // tymczasowy klucz
-                teamName: name,
+    // Pomocnicza funkcja do pobierania/tworzenia wpisu drużyny
+    const getTeam = (teamId: string, teamName: string, teamLogo?: string) => {
+        if (!teamsMap.has(teamId)) {
+            teamsMap.set(teamId, {
+                _key: teamId,
+                teamId: teamId,
+                teamName: teamName,
+                teamLogo: teamLogo,
                 matches: 0, points: 0, won: 0, drawn: 0, lost: 0,
                 goalsScored: 0, goalsLost: 0, goalsDiff: 0
             });
         }
-        return teamsMap.get(name)!;
+        return teamsMap.get(teamId)!;
     };
 
+    // KROK 1: "Podwójny przebieg" - Rejestrujemy WSZYSTKIE drużyny, które są w terminarzu, 
+    // nawet jeśli jeszcze nie rozegrały meczu, aby zagwarantować ich obecność w tabeli.
     matches.forEach(match => {
-        // Jeśli mecz nie ma wyniku, pomijamy go w tabeli
-        if (match.homeScore === null || match.awayScore === null || match.homeScore === undefined) return;
+        if (match.homeTeam?._id) {
+            getTeam(match.homeTeam._id, match.homeTeam.name, match.homeTeam.logoUrl);
+        }
+        if (match.awayTeam?._id) {
+            getTeam(match.awayTeam._id, match.awayTeam.name, match.awayTeam.logoUrl);
+        }
+    });
 
-        // Zabezpieczenie przed brakiem nazwy
-        if (!match.homeTeamName || !match.awayTeamName) return;
+    // KROK 2: OBLICZANIE WYNIKÓW Z ROZEGRANYCH MECZÓW
+    matches.forEach(match => {
+        // Jeśli oba wyniki są wpisane (są liczbami), to po prostu liczymy ten mecz
+        if (typeof match.homeScore !== 'number' || typeof match.awayScore !== 'number') {
+            return;
+        }
 
-        const home = getTeam(match.homeTeamName);
-        const away = getTeam(match.awayTeamName);
+        if (!match.homeTeam?._id || !match.awayTeam?._id) {
+            return;
+        }
+
+        const home = getTeam(match.homeTeam._id, match.homeTeam.name, match.homeTeam.logoUrl);
+        const away = getTeam(match.awayTeam._id, match.awayTeam.name, match.awayTeam.logoUrl);
 
         home.matches++;
         away.matches++;
@@ -77,7 +81,17 @@ export function calculateTableFromMatches(matches: MatchInput[]): TableRow[] {
         }
     });
 
-    // Sortowanie tabeli
+    // KROK 3: APLIKOWANIE KOREKT PUNKTOWYCH Z SANITY
+    if (pointCorrections && pointCorrections.length > 0) {
+        pointCorrections.forEach(correction => {
+            if (correction.team?._id) {
+                const teamData = getTeam(correction.team._id, correction.team.name, correction.team.logoUrl);
+                teamData.points += correction.points;
+            }
+        });
+    }
+
+    // KROK 4: SORTOWANIE (Punkty -> Różnica bramek -> Bramki strzelone)
     return Array.from(teamsMap.values())
         .sort((a, b) => {
             if (b.points !== a.points) return b.points - a.points;
@@ -85,9 +99,15 @@ export function calculateTableFromMatches(matches: MatchInput[]): TableRow[] {
             return b.goalsScored - a.goalsScored;
         })
         .map((row, index) => ({
-            ...row,
+            _key: row._key,
             position: index + 1,
-            goals: `${row.goalsScored}-${row.goalsLost}`,
-            _key: `${row.teamName}-${index}`
+            teamName: row.teamName,
+            teamLogo: row.teamLogo,
+            matches: row.matches,
+            points: row.points,
+            won: row.won,
+            drawn: row.drawn,
+            lost: row.lost,
+            goals: `${row.goalsScored}-${row.goalsLost}`
         }));
 }

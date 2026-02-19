@@ -12,7 +12,7 @@ const match = defineField({
             type: 'string',
             options: {
                 list: [
-                    { title: 'Scraper (Łącznik)', value: 'scraper' },
+                    { title: 'Skrypt', value: 'scraper' },
                     { title: 'Manualnie', value: 'manual' }
                 ],
                 layout: 'radio'
@@ -23,11 +23,11 @@ const match = defineField({
         // --- ID ZEWNĘTRZNE (Widoczne tylko dla scrapera) ---
         defineField({
             name: 'externalId',
-            title: 'ID Meczu (Systemowe)',
+            title: 'ID Meczu ',
             type: 'string',
             hidden: ({ parent }) => parent?.dataSource !== 'scraper',
             readOnly: true,
-            description: 'Unikalny identyfikator meczu ze scrapera.'
+            description: 'Unikalny identyfikator meczu ze skryptu.'
         }),
 
         // --- DATA I GODZINA ---
@@ -115,7 +115,7 @@ const match = defineField({
 
 export const fixture = defineType({
     name: 'fixture',
-    title: 'Kolejka (Terminarz)',
+    title: 'Kolejka ',
     type: 'document',
     fields: [
         defineField({

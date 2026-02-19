@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card, Stack, Text, Button, Checkbox, TextInput, useToast, Spinner, Flex, Box, Label, Badge, Avatar } from '@sanity/ui'
 import { useClient } from 'sanity'
-import { Save, Shield, Trash2, User, Plus } from 'lucide-react'
+import { Save, Shield, Trash2 } from 'lucide-react'
 
 // Definicja pozycji (kolejność wyświetlania)
 const POSITIONS_ORDER = ['Bramkarz', 'Obrońca', 'Pomocnik', 'Napastnik'];
@@ -366,7 +366,7 @@ export function SquadStatsEditor(props: any) {
                         <Shield size={28} color="green" />
                         <Stack space={2}>
                             <Text size={2} weight="bold" style={{ color: 'green' }}>OBECNY MECZ (Dodaj Statystyki)</Text>
-                            <Text size={1} muted>Wpisz co wydarzyło się dzisiaj. Dane zostaną dodane do bazy.</Text>
+                            <Text size={1} muted>Wpisz co wydarzyło się w ostatnim spotkaniu. Dane zostaną dodane do bazy po klknięciu "ZATWIERDŹ ZMIANY".</Text>
                         </Stack>
                     </Flex>
 

@@ -12,6 +12,7 @@ type ResultsDataPacket = {
     table: LeagueTable;
     lastMatches: Match[];
     teams: Team[];
+    config: any;
 };
 
 type MatchCenterDataPacket = {
@@ -46,12 +47,14 @@ export default function Home({ players, news, sponsors, resultsData, matchCenter
                     lastMatches={matchCenterData.lastMatches}
                     teams={matchCenterData.teams}
                     clubLogo={matchCenterData.clubLogo}
+
                 />
 
                 <ResultsTable
                     table={resultsData.table}
                     matches={resultsData.lastMatches}
                     teams={resultsData.teams}
+                    config={resultsData.config}
                 />
 
                 <PlayersTeaser players={players} />

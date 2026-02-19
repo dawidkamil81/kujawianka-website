@@ -14,8 +14,20 @@ export const competition = defineType({
         defineField({
             name: 'season',
             title: 'Sezon',
-            type: 'string', // np. "2023/2024"
-            initialValue: '2024/2025'
+            type: 'string',
+            initialValue: () => {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth(); // Miesiące są indeksowane od 0 (0 = Styczeń, 6 = Lipiec)
+
+                // Jeśli jest przed lipcem (np. runda wiosenna), to sezon zaczął się w zeszłym roku
+                if (currentMonth < 6) {
+                    return `${currentYear - 1}/${currentYear}`;
+                }
+
+                // Jeśli jest lipiec lub później (np. runda jesienna), to nowy sezon
+                return `${currentYear}/${currentYear + 1}`;
+            }
         }),
         defineField({
             name: 'squad',
@@ -27,13 +39,13 @@ export const competition = defineType({
         }),
         defineField({
             name: 'url',
-            title: 'Link do zewnętrznych rozgrywek',
+            title: 'Link do 90minut.pl (Potrzebne tylko dla kadry seniorów)',
             type: 'url'
         }),
         // --- KONFIGURACJA ROZGRYWEK ---
         defineField({
             name: 'config',
-            title: 'Konfiguracja Ligi',
+            title: 'Zasady rozgrywek',
             type: 'object',
             options: { collapsible: false },
             fields: [
