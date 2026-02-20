@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { ImageIcon, AlignLeft, AlignRight } from 'lucide-react'
+import { ImageIcon } from 'lucide-react'
 
 export const imageTextSection = defineType({
   name: 'imageTextSection',

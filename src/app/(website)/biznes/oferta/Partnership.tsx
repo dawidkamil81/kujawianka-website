@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import {
   Gem,
   Trophy,
@@ -65,8 +64,6 @@ export default function Partnership({
   sponsorsCount,
   pageData,
 }: PartnershipProps) {
-  const router = useRouter()
-
   const scrollToContact = (
     e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>,
   ) => {

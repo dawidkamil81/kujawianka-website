@@ -1,71 +1,77 @@
 'use client'
 
 import { motion } from 'framer-motion'
+// 1. Dodajemy import typu PortableTextBlock
 import { PortableText } from 'next-sanity'
+import type { PortableTextBlock } from 'next-sanity'
+
+// 2. Aby było czysto, wyciągam typ wiersza tabeli do osobnego interfejsu
+interface TableRow {
+  _key: string
+  isHeader: boolean
+  cells: string[]
+}
 
 interface TableSectionProps {
   data: {
     heading?: string
     layout: 'full' | 'text-left' | 'text-right'
-    content?: any[]
-    tableRows?: {
-      _key: string
-      isHeader: boolean
-      cells: string[]
-    }[]
+    // 3. Zmieniamy any[] na PortableTextBlock[]
+    content?: PortableTextBlock[]
+    tableRows?: TableRow[]
   }
 }
+
+// 4. Wyciągamy TableComponent na zewnątrz i przekazujemy tableRows jako props
+const TableComponent = ({ tableRows }: { tableRows?: TableRow[] }) => (
+  <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl">
+    <div className="overflow-x-auto">
+      {' '}
+      {/* Scroll na mobile */}
+      <table className="w-full border-collapse text-left">
+        <tbody>
+          {tableRows?.map((row, rowIndex) => (
+            <tr
+              key={row._key || rowIndex}
+              className={`border-b border-white/5 transition-colors hover:bg-white/5 ${row.isHeader ? 'bg-club-green/10' : 'even:bg-white/[0.02]'} ${rowIndex === tableRows.length - 1 ? 'border-b-0' : ''} `}
+            >
+              {row.cells?.map((cell, cellIndex) => (
+                <td
+                  key={cellIndex}
+                  className={`p-4 text-sm md:p-5 md:text-base ${
+                    row.isHeader
+                      ? 'font-montserrat font-black tracking-wider text-emerald-400 uppercase'
+                      : 'font-medium text-gray-300'
+                  } `}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {(!tableRows || tableRows.length === 0) && (
+      <div className="p-8 text-center text-gray-500 italic">
+        Brak danych w tabeli
+      </div>
+    )}
+  </div>
+)
+
+// 5. Wyciągamy TextComponent na zewnątrz i przekazujemy content jako props
+const TextComponent = ({ content }: { content?: PortableTextBlock[] }) => (
+  <div className="flex flex-col gap-6">
+    <div className="prose prose-invert max-w-none text-base leading-relaxed text-gray-400 md:text-lg">
+      <PortableText value={content || []} />
+    </div>
+  </div>
+)
 
 export default function TableSection({ data }: TableSectionProps) {
   const isFullWidth = data.layout === 'full'
   const isTextRight = data.layout === 'text-right'
-
-  // Komponent samej tabeli (żeby nie powielać kodu)
-  const TableComponent = () => (
-    <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl">
-      <div className="overflow-x-auto">
-        {' '}
-        {/* Scroll na mobile */}
-        <table className="w-full border-collapse text-left">
-          <tbody>
-            {data.tableRows?.map((row, rowIndex) => (
-              <tr
-                key={row._key || rowIndex}
-                className={`border-b border-white/5 transition-colors hover:bg-white/5 ${row.isHeader ? 'bg-club-green/10' : 'even:bg-white/[0.02]'} ${rowIndex === data.tableRows!.length - 1 ? 'border-b-0' : ''} `}
-              >
-                {row.cells?.map((cell, cellIndex) => (
-                  <td
-                    key={cellIndex}
-                    className={`p-4 text-sm md:p-5 md:text-base ${
-                      row.isHeader
-                        ? 'font-montserrat font-black tracking-wider text-emerald-400 uppercase'
-                        : 'font-medium text-gray-300'
-                    } `}
-                  >
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {(!data.tableRows || data.tableRows.length === 0) && (
-        <div className="p-8 text-center text-gray-500 italic">
-          Brak danych w tabeli
-        </div>
-      )}
-    </div>
-  )
-
-  // Komponent tekstu
-  const TextComponent = () => (
-    <div className="flex flex-col gap-6">
-      <div className="prose prose-invert max-w-none text-base leading-relaxed text-gray-400 md:text-lg">
-        <PortableText value={data.content || []} />
-      </div>
-    </div>
-  )
 
   return (
     <section className="relative z-10 container mx-auto px-4 py-20">
@@ -87,7 +93,8 @@ export default function TableSection({ data }: TableSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <TableComponent />
+          {/* 6. Używamy zewnetrznego komponentu */}
+          <TableComponent tableRows={data.tableRows} />
         </motion.div>
       ) : (
         // Wariant 2 i 3: Siatka z tekstem
@@ -100,7 +107,7 @@ export default function TableSection({ data }: TableSectionProps) {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <TableComponent />
+            <TableComponent tableRows={data.tableRows} />
           </motion.div>
 
           <motion.div
@@ -109,7 +116,7 @@ export default function TableSection({ data }: TableSectionProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <TextComponent />
+            <TextComponent content={data.content} />
           </motion.div>
         </div>
       )}

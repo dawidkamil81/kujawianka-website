@@ -1,3 +1,5 @@
+import { SanityImageSource } from '@sanity/image-url/lib/types/types'
+
 export type Player = {
   _id: string
   name: string
@@ -116,7 +118,7 @@ export type SocialLink = {
 
 export interface SiteSettings {
   title: string
-  logo?: any // Sanity Image Object
+  logo?: SanityImageSource // Sanity Image Object
 
   // Teraz każdy serwis ma typ SocialLink zamiast string
   socialLinks?: {
@@ -134,7 +136,7 @@ export interface SiteSettings {
   }
   seo?: {
     description?: string
-    ogImage?: any
+    ogImage?: SanityImageSource
   }
 }
 

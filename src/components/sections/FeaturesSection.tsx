@@ -45,9 +45,25 @@ const gridColsMap: Record<string, string> = {
   '5': 'md:grid-cols-3 lg:grid-cols-5',
 }
 
-export default function FeaturesSection({ data }: { data: any }) {
+// 3. Tworzymy interfejsy zamiast "any"
+interface FeatureItem {
+  _key?: string
+  iconName: string
+  title: string
+  description?: string
+}
+
+interface FeaturesSectionProps {
+  data: {
+    columns?: string
+    heading?: string
+    items?: FeatureItem[]
+  }
+}
+
+export default function FeaturesSection({ data }: FeaturesSectionProps) {
   // Domyślnie 3 kolumny, jeśli nic nie wybrano
-  const gridClass = gridColsMap[data.columns] || gridColsMap['3']
+  const gridClass = gridColsMap[data.columns || '3'] || gridColsMap['3']
   const items = data.items || []
 
   return (
@@ -64,7 +80,7 @@ export default function FeaturesSection({ data }: { data: any }) {
 
       {/* --- GRID --- */}
       <div className={`grid grid-cols-1 gap-6 ${gridClass}`}>
-        {items.map((item: any, index: number) => {
+        {items.map((item: FeatureItem, index: number) => {
           const IconComponent = iconMap[item.iconName] || iconMap.default
 
           return (

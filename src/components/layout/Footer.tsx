@@ -14,7 +14,6 @@ import {
   Download,
 } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
-import type { SiteSettings } from '@/types'
 
 // 1. TikTok
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -48,12 +47,48 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+// --- INTERFEJSY TYPÓW (Zamiast "any") ---
+
+interface SocialLink {
+  url?: string
+  isVisible?: boolean
+}
+
+interface FooterDownload {
+  fileUrl?: string
+  title?: string
+}
+
+interface FooterCertificate {
+  url?: string
+  imageUrl?: string
+  alt?: string
+}
+
+interface FooterSettings {
+  logo?: unknown
+  contact?: {
+    address?: string
+    phone?: string
+    email?: string
+  }
+  socialLinks?: {
+    facebook?: SocialLink
+    instagram?: SocialLink
+    youtube?: SocialLink
+    tiktok?: SocialLink
+    twitter?: SocialLink
+  }
+  footerCertificate?: FooterCertificate
+  footerDownloads?: FooterDownload[]
+}
+
 interface FooterProps {
-  settings?: any
+  settings?: FooterSettings
 }
 
 export default function Footer({ settings }: FooterProps) {
-  // ZMIANA: footerCertificate (pojedyncza liczba) zamiast footerCertificates
+  // Rozpakowanie ustawień
   const { contact, socialLinks, footerCertificate, footerDownloads } =
     settings || {}
 
@@ -133,34 +168,39 @@ export default function Footer({ settings }: FooterProps) {
                 src={logoSrc}
                 alt="Herb Kujawianka Izbica Kujawska"
                 fill
+                sizes="96px"
                 className="object-contain drop-shadow-2xl"
               />
             </Link>
 
-            {/* ZMIANA: Obsługa pojedynczego certyfikatu */}
-            {footerCertificate && (
+            {/* Obsługa pojedynczego certyfikatu */}
+            {footerCertificate && footerCertificate.imageUrl && (
               <div className="relative h-24 w-24 opacity-80 transition-all duration-300 hover:opacity-100">
                 {footerCertificate.url ? (
                   <a
                     href={footerCertificate.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-full w-full"
+                    className="relative block h-full w-full"
                   >
-                    <img
-                      // Zakładam, że imageUrl przychodzi z zapytania (podobnie jak wcześniej dla listy)
-                      // Jeśli nie, może być potrzebne: urlFor(footerCertificate).url()
+                    <Image
                       src={footerCertificate.imageUrl}
                       alt={footerCertificate.alt || 'Certyfikat'}
-                      className="h-full w-full object-contain"
+                      fill
+                      sizes="96px"
+                      className="object-contain"
                     />
                   </a>
                 ) : (
-                  <img
-                    src={footerCertificate.imageUrl}
-                    alt={footerCertificate.alt || 'Certyfikat'}
-                    className="h-full w-full object-contain"
-                  />
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={footerCertificate.imageUrl}
+                      alt={footerCertificate.alt || 'Certyfikat'}
+                      fill
+                      sizes="96px"
+                      className="object-contain"
+                    />
+                  </div>
                 )}
               </div>
             )}
@@ -275,7 +315,7 @@ export default function Footer({ settings }: FooterProps) {
 
             {footerDownloads && footerDownloads.length > 0 ? (
               <div className="flex w-full flex-col gap-4">
-                {footerDownloads.map((file: any, idx: number) => (
+                {footerDownloads.map((file: FooterDownload, idx: number) => (
                   <a
                     key={idx}
                     href={`${file.fileUrl}?dl=`}

@@ -13,7 +13,6 @@ import {
   Gem,
   Handshake,
   Crown,
-  Medal,
   Heart,
   ListFilter,
   Edit,
@@ -80,7 +79,7 @@ const buildCompetitionView = (
     ])
 }
 
-export const structure: StructureResolver = async (S, context) => {
+export const structure: StructureResolver = async (S) => {
   // Nie potrzebujemy już pobierać ID seniorów, bo lista jest uniwersalna
 
   return S.list()

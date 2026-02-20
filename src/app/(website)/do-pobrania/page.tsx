@@ -1,12 +1,10 @@
 export const revalidate = 60
 
-import { client } from '@/sanity/lib/client'
 import { sanityFetch } from '@/sanity/lib/live'
 import { DOWNLOADS_QUERY } from '@/sanity/lib/queries'
 import { FileText, Download, HardDrive, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { pl } from 'date-fns/locale'
 
 // Helper do formatowania rozmiaru
 const formatBytes = (bytes: number, decimals = 2) => {

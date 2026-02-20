@@ -39,7 +39,7 @@ const Stepper = ({
 )
 
 export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
-  const { value = [], onChange, schemaType } = props
+  const { value = [], onChange } = props
 
   // Funkcja do aktualizacji konkretnego pola w konkretnym wierszu
   const handleUpdate = useCallback(

@@ -1,21 +1,34 @@
 import TextSection from './TextSection'
 import ImageTextSection from './ImageTextSection'
-// Importujemy Twój gotowy komponent (upewnij się, że ścieżka jest poprawna)
 import ContactSection from '@/components/sections/ContactSection'
-import FeaturesSection from './FeaturesSection' // <--- Import
+import FeaturesSection from './FeaturesSection'
 import TableSection from './TableSection'
 import GallerySection from './GallerySection'
 
+// Deklarujemy typ dla przychodzących z Sanity sekcji
+interface SanitySection {
+  _type: string
+  _key: string
+  title?: string
+  description?: string
+  [key: string]: unknown
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sectionMap: Record<string, React.ComponentType<any>> = {
   textSection: TextSection,
   imageTextSection: ImageTextSection,
   featuresSection: FeaturesSection,
   contactSection: ContactSection,
-  tableSection: TableSection, // <--- Mapowanie
+  tableSection: TableSection,
   gallerySection: GallerySection,
 }
 
-export default function SectionsRenderer({ sections }: { sections: any[] }) {
+interface SectionsRendererProps {
+  sections: SanitySection[]
+}
+
+export default function SectionsRenderer({ sections }: SectionsRendererProps) {
   if (!sections || sections.length === 0) return null
 
   return (
@@ -23,11 +36,6 @@ export default function SectionsRenderer({ sections }: { sections: any[] }) {
       {sections.map((section) => {
         const Component = sectionMap[section._type]
         if (!Component) return null
-
-        // Przekazujemy 'data' do komponentu.
-        // Twój ContactSection oczekuje propsów 'title' i 'description' bezpośrednio,
-        // a z CMS przychodzi obiekt 'data' z polami title i description.
-        // Musimy to lekko dopasować.
 
         if (section._type === 'contactSection') {
           return (

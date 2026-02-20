@@ -18,6 +18,53 @@ type SortField =
   | 'cleanSheets'
   | 'yellowCards'
 
+// 1. Dodajemy interfejs dla propsów komponentu Th
+interface ThProps {
+  field: SortField
+  label: string
+  mobileHidden?: boolean
+  alignRight?: boolean
+  sortField: SortField
+  sortDirection: 'asc' | 'desc'
+  onSort: (field: SortField) => void
+}
+
+// 2. Wyciągamy komponent Th na zewnątrz głównego komponentu
+const Th = ({
+  field,
+  label,
+  mobileHidden,
+  alignRight,
+  sortField,
+  sortDirection,
+  onSort,
+}: ThProps) => {
+  // Logika wyboru ikony
+  const isActive = sortField === field
+  const Icon = isActive
+    ? sortDirection === 'asc'
+      ? ArrowUp
+      : ArrowDown
+    : ArrowUpDown
+
+  return (
+    <th
+      className={`group cursor-pointer px-4 py-4 text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors hover:text-white ${mobileHidden ? 'hidden md:table-cell' : ''} ${alignRight ? 'text-right' : 'text-left'} ${isActive ? 'text-white' : ''} `}
+      onClick={() => onSort(field)}
+    >
+      <div
+        className={`flex items-center gap-2 ${alignRight ? 'justify-end' : 'justify-start'}`}
+      >
+        {label}
+        <Icon
+          size={12}
+          className={`transition-all duration-300 ${isActive ? 'text-club-green opacity-100' : 'opacity-20 group-hover:opacity-60'}`}
+        />
+      </div>
+    </th>
+  )
+}
+
 export default function SquadStatsTable({ players }: SquadStatsTableProps) {
   const [sortField, setSortField] = useState<SortField>('goals')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
@@ -49,12 +96,17 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
       yellowCards: 0,
     }
 
-    let valA: any = statsA[sortField as keyof typeof statsA]
-    let valB: any = statsB[sortField as keyof typeof statsB]
+    // Deklarujemy jawnie, że wartości mogą być tekstem (nazwisko) lub liczbą (statystyki)
+    let valA: string | number
+    let valB: string | number
 
     if (sortField === 'name') {
-      valA = a.surname
-      valB = b.surname
+      valA = a.surname || ''
+      valB = b.surname || ''
+    } else {
+      // Rzutujemy na bezpieczny typ dla właściwości liczbowych ze statystyk
+      valA = (statsA as Record<string, number>)[sortField] || 0
+      valB = (statsB as Record<string, number>)[sortField] || 0
     }
 
     if (valA < valB) return sortDirection === 'asc' ? -1 : 1
@@ -69,42 +121,11 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
     return 'text-gray-600 font-medium'
   }
 
-  // Komponent pomocniczy nagłówka
-  const Th = ({
-    field,
-    label,
-    mobileHidden,
-    alignRight,
-  }: {
-    field: SortField
-    label: string
-    mobileHidden?: boolean
-    alignRight?: boolean
-  }) => {
-    // Logika wyboru ikony
-    const isActive = sortField === field
-    const Icon = isActive
-      ? sortDirection === 'asc'
-        ? ArrowUp
-        : ArrowDown
-      : ArrowUpDown
-
-    return (
-      <th
-        className={`group cursor-pointer px-4 py-4 text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors hover:text-white ${mobileHidden ? 'hidden md:table-cell' : ''} ${alignRight ? 'text-right' : 'text-left'} ${isActive ? 'text-white' : ''} `}
-        onClick={() => handleSort(field)}
-      >
-        <div
-          className={`flex items-center gap-2 ${alignRight ? 'justify-end' : 'justify-start'}`}
-        >
-          {label}
-          <Icon
-            size={12}
-            className={`transition-all duration-300 ${isActive ? 'text-club-green opacity-100' : 'opacity-20 group-hover:opacity-60'}`}
-          />
-        </div>
-      </th>
-    )
+  // 3. Wrzucamy wspólne propsy do zmiennej dla czytelności (opcjonalne, ale wygodne)
+  const commonThProps = {
+    sortField,
+    sortDirection,
+    onSort: handleSort,
   }
 
   return (
@@ -125,21 +146,39 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                 <th className="w-16 px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase">
                   Poz.
                 </th>
-                <Th field="name" label="Zawodnik" />
-                <Th field="matches" label="Mecze" alignRight />
-                <Th field="goals" label="Bramki" alignRight />
-                <Th field="assists" label="Asysty" alignRight />
+                {/* 4. Przekazujemy dodatkowe propsy sortowania do każdego Th */}
+                <Th field="name" label="Zawodnik" {...commonThProps} />
+                <Th
+                  field="matches"
+                  label="Mecze"
+                  alignRight
+                  {...commonThProps}
+                />
+                <Th
+                  field="goals"
+                  label="Bramki"
+                  alignRight
+                  {...commonThProps}
+                />
+                <Th
+                  field="assists"
+                  label="Asysty"
+                  alignRight
+                  {...commonThProps}
+                />
                 <Th
                   field="cleanSheets"
                   label="Czyste konta"
                   mobileHidden
                   alignRight
+                  {...commonThProps}
                 />
                 <Th
                   field="yellowCards"
                   label="Kartki"
                   mobileHidden
                   alignRight
+                  {...commonThProps}
                 />
               </tr>
             </thead>

@@ -1,13 +1,13 @@
 'use client'
 
-import { PortableText } from 'next-sanity'
+import { PortableText, PortableTextBlock } from 'next-sanity'
 import { motion } from 'framer-motion'
 
 interface TextSectionProps {
   data: {
     eyebrow?: string
     heading?: string
-    content?: any[]
+    content?: PortableTextBlock[]
     isCentered?: boolean
     design?: 'standard' | 'card'
   }

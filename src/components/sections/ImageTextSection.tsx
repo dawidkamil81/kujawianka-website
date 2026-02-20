@@ -3,9 +3,30 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { PortableText } from 'next-sanity'
+import type { PortableTextBlock } from 'next-sanity'
 import { urlFor } from '@/sanity/lib/image'
 
-export default function ImageTextSection({ data }: { data: any }) {
+// 1. Zdefiniowanie poprawnego typu dla obrazka z Sanity
+interface SanityImage {
+  _type?: string
+  asset?: {
+    _ref: string
+    _type?: string
+  }
+  [key: string]: unknown
+}
+
+interface ImageTextSectionProps {
+  data: {
+    layout?: 'left' | 'right'
+    heading?: string
+    content?: PortableTextBlock[]
+    // 2. Zamiana "unknown" na precyzyjny "SanityImage"
+    image?: SanityImage
+  }
+}
+
+export default function ImageTextSection({ data }: ImageTextSectionProps) {
   // Sprawdzamy układ wybrany w CMS (lewo/prawo)
   const isImageRight = data.layout === 'right'
 
@@ -18,7 +39,6 @@ export default function ImageTextSection({ data }: { data: any }) {
       viewport={{ once: true }}
     >
       {/* --- KOLUMNA Z TEKSTEM --- */}
-      {/* items-center centruje elementy w pionie (stack), ale tekst wewnątrz formatujemy osobno */}
       <div
         className={`flex flex-col items-center gap-6 ${isImageRight ? 'lg:order-1' : 'lg:order-2'}`}
       >
@@ -31,7 +51,7 @@ export default function ImageTextSection({ data }: { data: any }) {
 
         {/* Treść - wyjustowana (text-justify) */}
         <div className="prose prose-invert max-w-none text-justify text-base leading-relaxed hyphens-auto text-gray-400 md:text-lg">
-          <PortableText value={data.content} />
+          <PortableText value={data.content || []} />
         </div>
       </div>
 
@@ -44,7 +64,8 @@ export default function ImageTextSection({ data }: { data: any }) {
 
         {/* Kontener zdjęcia */}
         <div className="relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl lg:aspect-[4/3]">
-          {data.image && (
+          {/* 3. Używamy warunku ? <Image /> : null zamiast && */}
+          {data.image ? (
             <Image
               src={urlFor(data.image).url()}
               alt={data.heading || 'Zdjęcie sekcji'}
@@ -53,7 +74,7 @@ export default function ImageTextSection({ data }: { data: any }) {
               quality={95}
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
-          )}
+          ) : null}
 
           {/* Ciemny gradient na dole zdjęcia */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
