@@ -16,7 +16,7 @@ export const playerStatsRow = defineType({
         filter: ({ document }) => {
           // 'document' to aktualny dokument Raportu Meczowego
           // Sprawdzamy, czy raport ma przypisaną drużynę
-          // @ts-ignore
+          // @ts-expect-error
           const squadId = document?.squad?._ref
 
           if (!squadId) {

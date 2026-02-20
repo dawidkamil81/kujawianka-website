@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react' // Usunięto import useEffect
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { Sponsor, SponsorsPageData } from '@/types/index'
@@ -63,13 +63,11 @@ export default function SponsorsPage({
   const strategicGroup = sortedGroups.find((g) => g.rank === 2)
   const otherGroups = sortedGroups.filter((g) => g.rank > 2)
 
-  const [activeSponsor, setActiveSponsor] = useState<Sponsor | null>(null)
-
-  useEffect(() => {
-    if (mainGroup && mainGroup.sponsors.length > 0 && !activeSponsor) {
-      setActiveSponsor(mainGroup.sponsors[0])
-    }
-  }, [mainGroup, activeSponsor])
+  // ZMIANA: Zastąpienie useEffect logiką derive state
+  // Przechowujemy tylko tego sponsora, na którego kliknął użytkownik.
+  // Jeśli na nic nie kliknął (null) i istnieje mainGroup - użyj pierwszego elementu.
+  const [selectedSponsor, setSelectedSponsor] = useState<Sponsor | null>(null)
+  const activeSponsor = selectedSponsor || (mainGroup?.sponsors?.[0] ?? null)
 
   // 2. PRZELICZANIE STATYSTYK (Obsługa "AUTO")
   const calculatedStats =
@@ -154,7 +152,7 @@ export default function SponsorsPage({
               {mainGroup.sponsors.map((sponsor) => (
                 <motion.div
                   key={sponsor._id}
-                  onClick={() => setActiveSponsor(sponsor)}
+                  onClick={() => setSelectedSponsor(sponsor)} // Podmieniono na nową f. stanu
                   className={`relative flex aspect-video cursor-pointer items-center justify-center rounded-xl border p-4 transition-all duration-300 ${
                     activeSponsor?._id === sponsor._id
                       ? 'border-emerald-500/50 bg-white/10 shadow-[0_0_20px_rgba(16,185,129,0.15)]'

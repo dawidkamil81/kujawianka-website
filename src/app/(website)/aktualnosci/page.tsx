@@ -104,7 +104,9 @@ export default async function NewsPage(props: PageProps) {
                 slug={
                   typeof item.slug === 'string'
                     ? item.slug
-                    : (item.slug as any)?.current || ''
+                    : // ZMIANA: Zamiast "any" używamy bezpiecznego "unknown", a potem oczekiwanego kształtu
+                      (item.slug as unknown as { current?: string })?.current ||
+                      ''
                 }
                 imageUrl={item.imageUrl || ''}
                 date={formatDate(item.publishedAt)}

@@ -7,32 +7,32 @@ import { SQUAD_PAGE_QUERY } from '@/sanity/lib/queries'
 import { PortableText } from '@portabletext/react'
 import SquadTabsView from '@/components/squad/SquadTabsView'
 
-// Konfiguracja stylów dla tekstu z Sanity (bez zmian)
+// Konfiguracja stylów dla tekstu z Sanity (bez błędów 'any')
 const portableTextComponents = {
   block: {
-    h3: ({ children }: any) => (
+    h3: ({ children }: { children?: React.ReactNode }) => (
       <h3 className="font-montserrat mt-4 mb-2 text-lg font-bold text-white uppercase">
         {children}
       </h3>
     ),
-    h4: ({ children }: any) => (
+    h4: ({ children }: { children?: React.ReactNode }) => (
       <h4 className="mt-3 mb-1 text-base font-bold text-emerald-400">
         {children}
       </h4>
     ),
-    normal: ({ children }: any) => (
+    normal: ({ children }: { children?: React.ReactNode }) => (
       <p className="mb-2 text-sm leading-relaxed text-gray-400 md:text-base">
         {children}
       </p>
     ),
   },
   list: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: { children?: React.ReactNode }) => (
       <ul className="mb-3 list-disc space-y-1 pl-5 text-gray-400 marker:text-emerald-500">
         {children}
       </ul>
     ),
-    number: ({ children }: any) => (
+    number: ({ children }: { children?: React.ReactNode }) => (
       <ol className="mb-3 list-decimal space-y-1 pl-5 text-gray-400 marker:text-emerald-500">
         {children}
       </ol>

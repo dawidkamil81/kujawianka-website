@@ -6,6 +6,19 @@ import { FileText, Download, HardDrive, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 
+// 1. ZMIANA: Tworzymy interfejs opisujący strukturę pliku z Sanity
+interface DownloadFile {
+  _id: string
+  title: string
+  description?: string
+  category?: string
+  fileUrl: string
+  fileName: string
+  extension?: string
+  size: number
+  publishedAt?: string
+}
+
 // Helper do formatowania rozmiaru
 const formatBytes = (bytes: number, decimals = 2) => {
   if (!bytes) return '0 B'
@@ -22,19 +35,19 @@ export const metadata = {
 }
 
 export default async function DownloadsPage() {
-  // const files = await client.fetch(DOWNLOADS_QUERY);
   const { data: files } = await sanityFetch({ query: DOWNLOADS_QUERY })
 
-  // Grupowanie
+  // 2. ZMIANA: Zastępujemy `any` stworzonym typem `DownloadFile`
   const categories = {
     club: files.filter(
-      (f: any) => f.category === 'club' || f.category === 'docs',
+      (f: DownloadFile) => f.category === 'club' || f.category === 'docs',
     ),
     players: files.filter(
-      (f: any) => f.category === 'players' || f.category === 'parents',
+      (f: DownloadFile) => f.category === 'players' || f.category === 'parents',
     ),
     other: files.filter(
-      (f: any) => !['club', 'docs', 'players', 'parents'].includes(f.category),
+      (f: DownloadFile) =>
+        !['club', 'docs', 'players', 'parents'].includes(f.category || ''),
     ),
   }
 
@@ -47,8 +60,6 @@ export default async function DownloadsPage() {
       <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
         {/* === NAGŁÓWEK STRONY === */}
         <div className="mb-20 flex flex-col items-center justify-center space-y-5 text-center">
-          {/* ZMIANA: Użycie klas 'club-green' zamiast 'emerald' zgodnie z plikiem page.tsx */}
-
           <span className="bg-club-green/10 border-club-green/20 text-club-green-light inline-block rounded-full border px-4 py-1.5 text-xs font-bold tracking-widest uppercase backdrop-blur-md">
             Strefa Klubowa
           </span>
@@ -97,7 +108,14 @@ export default async function DownloadsPage() {
 }
 
 // === KOMPONENT POMOCNICZY: SEKCJA PLIKÓW ===
-function FileSection({ title, files }: { title: string; files: any[] }) {
+// 3. ZMIANA: Zastępujemy `any[]` typem `DownloadFile[]`
+function FileSection({
+  title,
+  files,
+}: {
+  title: string
+  files: DownloadFile[]
+}) {
   return (
     <section>
       <div className="mb-10 flex items-center gap-4">

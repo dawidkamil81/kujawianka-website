@@ -17,6 +17,42 @@ import {
 // IMPORTUJEMY RENDERER SEKCJI
 import SectionsRenderer from '@/components/sections/SectionsRenderer'
 
+// 1. ZMIANA: Zastępujemy `any` precyzyjnymi typami
+interface ThemeStyles {
+  iconColor: string
+  borderColor: string
+  shadowColor: string
+  bgColor: string
+  textColor: string
+}
+
+interface PackageData {
+  iconName?: string
+  colorTheme?: string
+  title?: string
+  description?: string
+  link?: string
+}
+
+interface StatData {
+  iconName?: string
+  value?: string
+  label?: string
+}
+
+interface OfferPageData {
+  title?: string
+  description?: string
+  packages?: PackageData[]
+  stats?: StatData[]
+  contentBuilder?: Record<string, unknown>[]
+}
+
+interface PartnershipProps {
+  sponsorsCount: number
+  pageData?: OfferPageData
+}
+
 // 1. Mapowanie ikon
 const iconMap: Record<string, React.ElementType> = {
   gem: Gem,
@@ -30,8 +66,8 @@ const iconMap: Record<string, React.ElementType> = {
   trophy: Trophy,
 }
 
-// 2. Mapowanie Twoich klas stylów (Theme)
-const colorThemes: Record<string, any> = {
+// 2. Mapowanie Twoich klas stylów (Theme) - bez 'any'
+const colorThemes: Record<string, ThemeStyles> = {
   emerald: {
     iconColor: 'text-emerald-400',
     borderColor: 'hover:border-emerald-400/50',
@@ -53,11 +89,6 @@ const colorThemes: Record<string, any> = {
     bgColor: 'bg-blue-400/10',
     textColor: 'group-hover:text-blue-400',
   },
-}
-
-interface PartnershipProps {
-  sponsorsCount: number
-  pageData?: any // Tymczasowo any lub zaktualizowany OfferPageData zawierający contentBuilder
 }
 
 export default function Partnership({
@@ -88,8 +119,9 @@ export default function Partnership({
 
   const packages = pageData?.packages || []
 
+  // 3. ZMIANA: Zastąpione `any` na zdefiniowany wyżej typ StatData
   const stats =
-    pageData?.stats?.map((stat: any) => ({
+    pageData?.stats?.map((stat: StatData) => ({
       ...stat,
       value:
         stat.value?.toUpperCase() === 'AUTO' ? `${sponsorsCount}` : stat.value,
@@ -123,9 +155,11 @@ export default function Partnership({
 
         {/* === PAKIETY SPONSORSKIE === */}
         <div className="mb-32 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {packages.map((pkg: any, index: number) => {
-            const theme = colorThemes[pkg.colorTheme] || colorThemes.emerald
-            const IconComponent = iconMap[pkg.iconName] || Gem
+          {/* 4. ZMIANA: pkg otypowane jako PackageData zamiast 'any' */}
+          {packages.map((pkg: PackageData, index: number) => {
+            const theme =
+              colorThemes[pkg.colorTheme || 'emerald'] || colorThemes.emerald
+            const IconComponent = iconMap[pkg.iconName || 'gem'] || Gem
 
             return (
               <div
@@ -180,8 +214,10 @@ export default function Partnership({
 
         {/* === STATYSTYKI === */}
         <section className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          {stats.map((stat: any, index: number) => {
-            const IconComponent = iconMap[stat.iconName] || Handshake
+          {/* 5. ZMIANA: stat otypowane jako StatData zamiast 'any' */}
+          {stats.map((stat: StatData, index: number) => {
+            const IconComponent =
+              iconMap[stat.iconName || 'handshake'] || Handshake
             return (
               <div
                 key={index}
@@ -205,7 +241,9 @@ export default function Partnership({
         {/* Wstawiamy je tutaj, aby były wewnątrz kontenera i na tym samym tle */}
         {pageData?.contentBuilder && pageData.contentBuilder.length > 0 && (
           <div className="mt-24 md:mt-32">
-            <SectionsRenderer sections={pageData.contentBuilder} />
+            {/* Przesłonięcie na cele renderera sekcji - wycisza TS w kwestii surowego zapytania z Sanity */}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <SectionsRenderer sections={pageData.contentBuilder as any[]} />
           </div>
         )}
       </div>

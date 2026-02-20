@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   MapPin,
@@ -14,9 +16,11 @@ import {
   FileText,
 } from 'lucide-react'
 import { PortableText } from 'next-sanity'
+import type { PortableTextBlock } from 'next-sanity'
 
 // --- KONFIGURACJA ---
-const ICON_MAP: Record<string, any> = {
+// Zamiana "any" na precyzyjny typ dla komponentów ikon
+const ICON_MAP: Record<string, React.ElementType> = {
   star: Star,
   medal: Medal,
   trophy: Trophy,
@@ -35,7 +39,8 @@ interface ClubPageProps {
     heroHeading: string
     heroDescription: string
     historyTitle: string
-    historyContent: any[]
+    // Zamiana "any[]" na "PortableTextBlock[]"
+    historyContent: PortableTextBlock[]
     historyImageUrl?: string
     achievements: Array<{
       title: string
@@ -67,7 +72,8 @@ const SplitColorTitle = ({ text }: { text: string }) => {
   )
 }
 
-const processHistoryContent = (content: any[]) => {
+// Zamiana "any[]" na "PortableTextBlock[]"
+const processHistoryContent = (content: PortableTextBlock[]) => {
   if (!content || content.length === 0) return content
   const newContent = JSON.parse(JSON.stringify(content))
   const firstBlock = newContent[0]
@@ -104,12 +110,13 @@ const processHistoryContent = (content: any[]) => {
   return newContent
 }
 
+// Zamiana "any" na "React.ReactNode"
 const portableTextComponents = {
   marks: {
-    strong: ({ children }: any) => (
+    strong: ({ children }: { children: React.ReactNode }) => (
       <strong className="font-bold text-white">{children}</strong>
     ),
-    'white-text': ({ children }: any) => (
+    'white-text': ({ children }: { children: React.ReactNode }) => (
       <span className="text-white">{children}</span>
     ),
   },
@@ -186,10 +193,12 @@ export default function ClubPageContent({ data }: ClubPageProps) {
             <div className="from-club-green/20 absolute inset-0 rounded-3xl bg-gradient-to-tr to-transparent opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-60" />
             <div className="relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl lg:aspect-[4/3]">
               {data.historyImageUrl && (
-                <img
+                <Image
                   src={data.historyImageUrl}
                   alt="Historia Kujawianki"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent opacity-60" />
@@ -251,10 +260,12 @@ export default function ClubPageContent({ data }: ClubPageProps) {
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-bl from-[#8d1010]/20 to-transparent opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-60" />
             <div className="relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl lg:aspect-[4/3]">
               {data.stadiumImageUrl && (
-                <img
+                <Image
                   src={data.stadiumImageUrl}
                   alt="Stadion Miejski"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent opacity-60" />

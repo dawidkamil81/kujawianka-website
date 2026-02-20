@@ -79,7 +79,7 @@ export const standing = defineType({
         Rule.custom(async (rows, context) => {
           // WALIDACJA LIMITU ZESPOŁÓW
           const client = context.getClient({ apiVersion: '2024-01-01' })
-          // @ts-ignore
+          // @ts-expect-error
           const competitionId = context.document?.competition?._ref
 
           if (!competitionId) return true

@@ -11,6 +11,7 @@ export default tseslint.config(
     ignores: [
       '.next/',
       'node_modules/',
+      'scraper/venv/',
       'dist/',
       'out/',
       'public/',

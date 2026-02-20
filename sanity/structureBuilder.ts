@@ -1,4 +1,5 @@
-import { type StructureResolver } from 'sanity/structure'
+// ZMIANA: Dodajemy import StructureBuilder
+import { type StructureResolver, type StructureBuilder } from 'sanity/structure'
 import { SquadStatsEditor } from './components/SquadStatsEditor'
 
 import {
@@ -27,7 +28,7 @@ import {
 
 // --- POMOCNICZA FUNKCJA WIDOKU ROZGRYWEK (BEZ ZMIAN) ---
 const buildCompetitionView = (
-  S: any,
+  S: StructureBuilder, // ZMIANA: 'any' zamienione na 'StructureBuilder'
   competitionId: string,
   competitionName: string,
 ) => {

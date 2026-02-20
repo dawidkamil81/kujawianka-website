@@ -5,7 +5,8 @@ import { sanityFetch } from '@/sanity/lib/live'
 import { COMPETITION_BY_SQUAD_QUERY } from '@/sanity/lib/queries'
 import WynikiClient from '@/app/(website)/wyniki/[slug]/Results'
 import { calculateTableFromMatches } from '@/lib/tableCalculator'
-import { Match } from '@/types'
+// 1. ZMIANA: Importujemy i Match i Fixture
+import { Match, Fixture } from '@/types/index'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -23,24 +24,24 @@ export default async function DynamicResultsPage({ params }: PageProps) {
     return notFound()
   }
 
+  // 2. ZMIANA: Usuwamy "any" korzystając z zdefiniowanych w systemie typów
   const allMatches: (Match & { round: number })[] = (
     competition.fixtures || []
-  ).flatMap((fixture: any) =>
-    fixture.matches.map((match: any) => ({
+  ).flatMap((fixture: Fixture) =>
+    fixture.matches.map((match: Match) => ({
       ...match,
       round: fixture.roundNumber,
     })),
   )
 
-  let tableRows = []
-  if (competition.standing?.rows && competition.standing.rows.length > 0) {
-    tableRows = competition.standing.rows
-  } else {
-    tableRows = calculateTableFromMatches(
-      allMatches,
-      competition.pointCorrections || [],
-    )
-  }
+  // 3. ZMIANA: Usuwamy bezcelową deklarację let tableRows = [] która natychmiast była nadpisywana
+  const tableRows =
+    competition.standing?.rows && competition.standing.rows.length > 0
+      ? competition.standing.rows
+      : calculateTableFromMatches(
+          allMatches,
+          competition.pointCorrections || [],
+        )
 
   const table = { rows: tableRows }
 

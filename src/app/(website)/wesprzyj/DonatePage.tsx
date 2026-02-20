@@ -254,7 +254,7 @@ export default function DonateContent({ data }: DonateContentProps) {
 
             <div className="absolute bottom-0 left-0 p-8 md:p-10">
               <blockquote className="mb-4 border-l-4 border-[#8d1010] pl-4 text-lg font-medium text-white/90 italic md:text-xl">
-                "{data.socialProof?.quote}"
+                &quot;{data.socialProof?.quote}&quot;
               </blockquote>
               <p className="font-bold text-white">{data.socialProof?.author}</p>
             </div>

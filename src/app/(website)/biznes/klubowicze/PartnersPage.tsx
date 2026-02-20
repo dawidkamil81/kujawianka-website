@@ -1,5 +1,7 @@
 'use client'
 
+// 1. ZMIANA: Dodajemy import Image z Next.js
+import Image from 'next/image'
 import {
   Ticket,
   Handshake,
@@ -91,7 +93,6 @@ export default function PartnersPage({ members, pageData }: PartnersPageProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {benefits.map((benefit, index) => {
-            // Pobieramy ikonę z mapy, fallback na Briefcase
             const IconComponent = iconMap[benefit.iconName] || Briefcase
 
             return (
@@ -134,17 +135,18 @@ export default function PartnersPage({ members, pageData }: PartnersPageProps) {
                 transition={{ delay: i * 0.05 }}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/40"
               >
-                {/* Decorative gradient */}
                 <div className="absolute top-0 right-0 h-32 w-32 translate-x-1/2 -translate-y-1/2 bg-emerald-500/10 blur-[50px] transition-colors group-hover:bg-emerald-500/20" />
 
                 <div className="relative z-10 flex items-start gap-4">
                   <div className="rounded-xl border border-white/5 bg-white/5 p-3 text-emerald-500 transition-transform duration-300 group-hover:scale-110">
-                    {/* Wyświetlamy logo jeśli jest, w przeciwnym razie ikonę */}
+                    {/* 2. ZMIANA: Zastąpienie img komponentem Next Image */}
                     {member.logoUrl ? (
-                      <img
+                      <Image
                         src={member.logoUrl}
                         alt={member.name}
-                        className="h-6 w-6 object-contain" // Rozmiar dopasowany do Briefcase (24px)
+                        width={24}
+                        height={24}
+                        className="object-contain"
                       />
                     ) : (
                       <Briefcase size={24} />
