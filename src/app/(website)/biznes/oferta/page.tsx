@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { sanityFetch } from "@/sanity/lib/live";
 import { OFFER_PAGE_QUERY, ALL_SUPPORTERS_COUNT_QUERY } from "@/sanity/lib/queries";
 import Partnership from "./Partnership";

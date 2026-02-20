@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { client } from "@/sanity/lib/client";
 import { NewsItem } from "@/types";
 import NewsCard from "@/components/common/NewsCard";

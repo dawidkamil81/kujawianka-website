@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { sanityFetch } from "@/sanity/lib/live";
 import { CLUB100_PAGE_QUERY } from "@/sanity/lib/queries";
 import Club100List from "./Club100List";

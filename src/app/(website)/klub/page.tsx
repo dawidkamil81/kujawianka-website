@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { sanityFetch } from "@/sanity/lib/live";
 import { CLUB_PAGE_QUERY } from "@/sanity/lib/queries";
 import ClubPageContent from "./ClubPage"; // Zakładam, że tam jest Twój komponent, jeśli nie - dostosuj ścieżkę

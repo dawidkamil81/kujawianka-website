@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/lib/live";
 import { COMPETITION_BY_SQUAD_QUERY } from "@/sanity/lib/queries";

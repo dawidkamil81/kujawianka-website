@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { notFound } from "next/navigation";
 import { Phone, Mail, User, CalendarRange } from "lucide-react";
 import { sanityFetch } from "@/sanity/lib/live";

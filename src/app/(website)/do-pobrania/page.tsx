@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { DOWNLOADS_QUERY } from "@/sanity/lib/queries";

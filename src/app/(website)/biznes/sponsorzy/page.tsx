@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { sanityFetch } from "@/sanity/lib/live";
 import { SPONSORS_PAGE_QUERY } from "@/sanity/lib/queries";
 import SponsorsPage from "./SponsorsPage";

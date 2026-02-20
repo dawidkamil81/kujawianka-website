@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { sanityFetch } from "@/sanity/lib/live";
 import { SINGLE_NEWS_QUERY } from "@/sanity/lib/queries";
 import { notFound } from "next/navigation";
