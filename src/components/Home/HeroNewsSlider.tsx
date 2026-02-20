@@ -16,15 +16,18 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  if (!news || news.length === 0) return null
-
+  // Hooki muszą być zdefiniowane na samej górze (przed jakimkolwiek 'return')
   useEffect(() => {
-    if (isPaused) return
+    // Sprawdzamy, czy news istnieje oraz nie jest pusty wewnątrz hooka
+    if (isPaused || !news || news.length === 0) return
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % news.length)
     }, 6000)
     return () => clearInterval(interval)
-  }, [news.length, isPaused])
+  }, [news, isPaused]) // <--- POPRAWKA: Przekazujemy 'news' zamiast 'news?.length'
+
+  // Dopiero PO definicji wszystkich hooków możemy zastosować wczesne wyjście
+  if (!news || news.length === 0) return null
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % news.length)
@@ -122,15 +125,13 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
           </motion.div>
         </AnimatePresence>
 
-        {/* Pasek postępu - ZIELONY Z CZERWONĄ POŚWIATĄ (zgodnie z życzeniem) */}
+        {/* Pasek postępu */}
         {!isPaused && (
           <motion.div
             key={currentIndex}
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{ duration: 6, ease: 'linear' }}
-            // ZMIANA: Zastąpiłem 'bg-club-green' kolorem 'bg-[#22c55e]' (żywy zielony)
-            // Cień 'shadow-[0_0_15px_#da1818]' odpowiada za czerwoną poświatę
             className="absolute bottom-0 left-0 z-20 h-2 bg-[#174135] shadow-[0_0_15px_#da1818]"
           />
         )}

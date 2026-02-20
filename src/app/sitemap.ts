@@ -5,6 +5,12 @@ import { defineQuery } from 'next-sanity'
 // ZMIEŃ TO na swój prawdziwy adres domeny po wykupieniu
 const BASE_URL = 'https://kujawianka-izbica.pl'
 
+// Dodajemy prosty interfejs dla elementów zwracanych z zapytania Sanity
+interface SitemapNewsPost {
+  slug: string
+  publishedAt?: string
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 1. Pobieramy wszystkie slug-i aktualności z Sanity
   const NEWS_QUERY = defineQuery(`
@@ -15,13 +21,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   `)
   const news = await client.fetch(NEWS_QUERY)
 
-  // 2. Generujemy wpisy dla newsów
-  const newsEntries: MetadataRoute.Sitemap = news.map((post: any) => ({
-    url: `${BASE_URL}/aktualnosci/${post.slug}`,
-    lastModified: new Date(post.publishedAt || new Date()),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }))
+  // 2. Generujemy wpisy dla newsów używając naszego interfejsu zamiast 'any'
+  const newsEntries: MetadataRoute.Sitemap = news.map(
+    (post: SitemapNewsPost) => ({
+      url: `${BASE_URL}/aktualnosci/${post.slug}`,
+      lastModified: new Date(post.publishedAt || new Date()),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }),
+  )
 
   // 3. Statyczne podstrony
   const staticRoutes: MetadataRoute.Sitemap = [

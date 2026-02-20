@@ -29,16 +29,6 @@ export interface NewsItem {
   isHighlighted?: boolean // <--- Dodaj to pole (opcjonalne, bo stare artykuły mogą go nie mieć)
 }
 
-// export type Sponsor = {
-//     _id: string;
-//     name: string;
-//     tier: "main" | "strategic" | "technical" | "partner" | "club100";
-//     logoUrl: string;
-//     website?: string;
-//     description?: string; // Tylko dla głównych
-//     backgroundImageUrl?: string; // Tylko dla głównych
-// };
-
 export type Sponsor = {
   _id: string
   name: string
@@ -64,52 +54,6 @@ export type SponsorsPageData = {
   ctaTitle?: string
   ctaDescription?: string
 }
-
-// src/types/index.ts
-
-// ... (Player, NewsItem, Sponsor, Match - upewnij się, że masz Match)
-
-// export type Team = {
-//     name: string;
-//     logoUrl: string;
-// };
-
-// src/types/index.ts
-
-// ... (Team, NewsItem, Sponsor itd. bez zmian)
-
-// Typ dla wiersza tabeli
-// export type TableRow = {
-//     _key: string;
-//     position: number;
-//     teamName: string;
-//     matches: number;
-//     points: number;
-//     won: number;
-//     drawn: number;
-//     lost: number;
-//     goals: string;
-// };
-
-// // Typ dla całej tabeli
-// export type LeagueTable = {
-//     _id: string;
-//     season: string;
-//     rows: TableRow[];
-// };
-
-// // ZAKTUALIZOWANY TYP MECZU
-// // Musi pasować do tego, co zwraca zapytanie RESULTS_PAGE_QUERY
-// export type Match = {
-//     _id: string;
-//     round: number;        // To pole jest teraz kluczowe dla terminarza!
-//     date: string;         // Data meczu
-//     homeTeam: string;
-//     awayTeam: string;
-//     homeScore?: number;   // Opcjonalne (może być null przed meczem)
-//     awayScore?: number;
-//     isFinished: boolean;  // To pole obliczamy w GROQ, więc tutaj musi być
-// };
 
 export type SocialLink = {
   url?: string
@@ -247,4 +191,11 @@ export type CompetitionData = {
   pointCorrections?: PointCorrection[]
   standing?: LeagueTable // Tabela ze scrapera (będzie istniała tylko dla seniorów)
   fixtures?: Fixture[] // Kolejki z meczami
+}
+
+export type LeagueConfig = {
+  promotionSpots?: number
+  promotionPlayoffSpots?: number
+  relegationPlayoffSpots?: number
+  relegationSpots?: number
 }

@@ -22,6 +22,30 @@ interface MatchCenterProps {
 // Stała nazwa naszej drużyny do wykrywania lokalizacji
 const CLUB_NAME_PART = 'Kujawianka Izbica'
 
+// --- WYCIĄGNIĘTE KOMPONENTY / FUNKCJE DLA TIMERA ---
+const formatTimeValue = (value: number) => String(value).padStart(2, '0')
+
+const TimeBox = ({
+  value,
+  label,
+}: {
+  value: number | string
+  label: string
+}) => (
+  <div className="flex flex-col items-center gap-1">
+    <div className="group relative">
+      <div className="group-hover:border-club-green/50 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(23,65,53,0.3)] sm:h-14 sm:w-14 md:h-16 md:w-16">
+        <span className="font-montserrat text-lg font-black tracking-tighter text-white sm:text-2xl md:text-3xl">
+          {value}
+        </span>
+      </div>
+    </div>
+    <span className="text-[8px] font-bold tracking-widest text-gray-500 uppercase sm:text-[10px]">
+      {label}
+    </span>
+  </div>
+)
+
 // --- 1. KOMPONENT TIMERA ---
 const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
   const calculateTimeLeft = () => {
@@ -48,29 +72,6 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
     return () => clearTimeout(timer)
   })
 
-  const format = (value: number) => String(value).padStart(2, '0')
-
-  const TimeBox = ({
-    value,
-    label,
-  }: {
-    value: number | string
-    label: string
-  }) => (
-    <div className="flex flex-col items-center gap-1">
-      <div className="group relative">
-        <div className="group-hover:border-club-green/50 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(23,65,53,0.3)] sm:h-14 sm:w-14 md:h-16 md:w-16">
-          <span className="font-montserrat text-lg font-black tracking-tighter text-white sm:text-2xl md:text-3xl">
-            {value}
-          </span>
-        </div>
-      </div>
-      <span className="text-[8px] font-bold tracking-widest text-gray-500 uppercase sm:text-[10px]">
-        {label}
-      </span>
-    </div>
-  )
-
   if (!timeLeft) {
     return (
       <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
@@ -89,19 +90,19 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
 
   return (
     <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
-      <TimeBox value={format(timeLeft.dni)} label="Dni" />
+      <TimeBox value={formatTimeValue(timeLeft.dni)} label="Dni" />
       <div className="mt-2 text-xl font-bold text-white/20 sm:mt-3 sm:text-2xl">
         :
       </div>
-      <TimeBox value={format(timeLeft.godziny)} label="Godz" />
+      <TimeBox value={formatTimeValue(timeLeft.godziny)} label="Godz" />
       <div className="mt-2 text-xl font-bold text-white/20 sm:mt-3 sm:text-2xl">
         :
       </div>
-      <TimeBox value={format(timeLeft.minuty)} label="Min" />
+      <TimeBox value={formatTimeValue(timeLeft.minuty)} label="Min" />
       <div className="mt-2 text-xl font-bold text-white/20 sm:mt-3 sm:text-2xl">
         :
       </div>
-      <TimeBox value={format(timeLeft.sekundy)} label="Sek" />
+      <TimeBox value={formatTimeValue(timeLeft.sekundy)} label="Sek" />
     </div>
   )
 }

@@ -3,26 +3,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Trophy, Table2 } from 'lucide-react'
-import { LeagueTable, Match, Team } from '@/types/index'
+// ZMIANA 1: Dodany import LeagueConfig z globalnych typów
+import { LeagueTable, Match, Team, LeagueConfig } from '@/types/index'
 import { cn } from '@/lib/utils'
 
 type ExtendedMatch = Match & {
   _id?: string
 }
 
-// Nowy typ konfiguracji
-type LeagueConfig = {
-  promotionSpots?: number
-  promotionPlayoffSpots?: number
-  relegationPlayoffSpots?: number
-  relegationSpots?: number
-}
+// ZMIANA 2: Usunięto lokalną definicję "type LeagueConfig = { ... }"
 
 type ResultsTableProps = {
   table: LeagueTable
   matches: ExtendedMatch[]
   teams: Team[]
-  config?: LeagueConfig // Odbieramy konfigurację
+  config?: LeagueConfig // Teraz korzysta z zaimportowanego, poprawnego typu
 }
 
 export default function ResultsTable({
@@ -64,7 +59,7 @@ export default function ResultsTable({
   const teaserTable = rows.slice(adjustedStart, adjustedEnd)
   const recentMatches = matches || []
 
-  // Logika stref wyciągnięta z propsów
+  // ZMIANA 3: Dopasowanie do poprawnej struktury (config.promotionRelegation)
   const promoSpots = config?.promotionSpots || 0
   const promoPlayoffSpots = config?.promotionPlayoffSpots || 0
   const relPlayoffSpots = config?.relegationPlayoffSpots || 0

@@ -13,13 +13,15 @@ import {
   LeagueTable,
   Match,
   Team,
+  LeagueConfig, // <--- 1. Importujemy poprawny typ z types/index
 } from '@/types/index'
 
 type ResultsDataPacket = {
   table: LeagueTable
   lastMatches: Match[]
   teams: Team[]
-  config: any
+  // 2. Używamy precyzyjnego typu zamiast Record
+  config?: LeagueConfig | null
 }
 
 type MatchCenterDataPacket = {
@@ -32,7 +34,7 @@ type MatchCenterDataPacket = {
 interface HomeProps {
   players: Player[]
   news: NewsItem[]
-  sponsors: Sponsor[] // <--- ZMIANA: Wracamy do tablicy Sponsor[]
+  sponsors: Sponsor[]
   resultsData: ResultsDataPacket
   matchCenterData: MatchCenterDataPacket
 }
@@ -62,12 +64,12 @@ export default function Home({
           table={resultsData.table}
           matches={resultsData.lastMatches}
           teams={resultsData.teams}
-          config={resultsData.config}
+          // 3. Konwertujemy ewentualny 'null' na 'undefined', co zadowoli interfejs ResultsTableProps
+          config={resultsData.config || undefined}
         />
 
         <PlayersTeaser players={players} />
 
-        {/* Przekazujemy tablicę sponsorów */}
         <SponsorsTeaser sponsors={sponsors} />
       </div>
     </main>
