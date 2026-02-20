@@ -1,0 +1,21 @@
+# Foldery systemowe i budowania
+.next/
+node_modules/
+dist/
+build/
+out/
+
+# Publiczne zasoby
+public/
+
+# Pliki blokady i logi
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+*.log
+
+# Dane Sanity (jeśli masz lokalnie dane/cache)
+.sanity/
+
+# Konfiguracje, których nie chcesz zmieniać
+.env*

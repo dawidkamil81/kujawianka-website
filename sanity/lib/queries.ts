@@ -1,6 +1,4 @@
-import { defineQuery } from "next-sanity";
-
-
+import { defineQuery } from 'next-sanity'
 
 const PAGE_BUILDER_FIELDS = `
   contentBuilder[] {
@@ -59,7 +57,7 @@ const PAGE_BUILDER_FIELDS = `
         description
     }
   }
-`;
+`
 
 export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
   // Filtrujemy graczy, którzy należą do kadry o slugu "seniorzy"
@@ -74,8 +72,7 @@ export const HOMEPAGE_PLAYERS_QUERY = defineQuery(`
     "imageUrl": image.asset->url,
     "slug": slug.current
   }
-`);
-
+`)
 
 export const ALL_PLAYERS_QUERY = defineQuery(`
   *[_type == "player"] | order(number asc) {
@@ -86,9 +83,7 @@ export const ALL_PLAYERS_QUERY = defineQuery(`
     position,
     "imageUrl": image.asset->url
   }
-`);
-
-
+`)
 
 export const HOMEPAGE_NEWS_QUERY = defineQuery(`
   *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
@@ -100,7 +95,7 @@ export const HOMEPAGE_NEWS_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url,
     isHighlighted
   }
-`);
+`)
 
 // 4. WSZYSTKIE NEWSY (Dla strony /aktualnosci)
 export const ALL_NEWS_QUERY = defineQuery(`
@@ -113,13 +108,9 @@ export const ALL_NEWS_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url,
     isHighlighted
   }
-`);
+`)
 
 // ... (poprzednie zapytania)
-
-
-
-
 
 export const ALL_SPONSORS_QUERY = defineQuery(`
   *[_type in ["sponsor", "partner", "club100"]] {
@@ -135,13 +126,11 @@ export const ALL_SPONSORS_QUERY = defineQuery(`
       "tier": { "name": "Klub 100", "rank": 100 }
     }
   } | order(tier.rank asc, name asc)
-`);
-
-
+`)
 
 export const ALL_SUPPORTERS_COUNT_QUERY = defineQuery(`
   count(*[_type in ["sponsor", "partner", "club100"]])
-`);
+`)
 
 export const SPONSORS_PAGE_QUERY = defineQuery(`
   {
@@ -157,7 +146,7 @@ export const SPONSORS_PAGE_QUERY = defineQuery(`
       tier->{ name, rank }
     }
   }
-`);
+`)
 
 export const HOMEPAGE_SPONSORS_QUERY = defineQuery(`
   *[_type == "sponsor"] | order(tier->rank asc, name asc) {
@@ -170,7 +159,7 @@ export const HOMEPAGE_SPONSORS_QUERY = defineQuery(`
       rank
     }
   }
-`);
+`)
 
 export const CLUB100_PAGE_QUERY = defineQuery(`
   {
@@ -195,7 +184,7 @@ export const CLUB100_PAGE_QUERY = defineQuery(`
       description
     }
   }
-`);
+`)
 
 export const PARTNERS_PAGE_QUERY = defineQuery(`
   {
@@ -211,7 +200,7 @@ export const PARTNERS_PAGE_QUERY = defineQuery(`
       "tier": { "name": "Klubowicz", "rank": 99 }
     }
   }
-`);
+`)
 
 // ... inne zapytania
 
@@ -247,8 +236,7 @@ export const RESULTS_PAGE_QUERY = defineQuery(`
       "logoUrl": logo.asset->url
     }
   }
-`);
-
+`)
 
 export const DOWNLOADS_QUERY = defineQuery(`
   *[_type == "download"] | order(publishedAt desc) {
@@ -262,7 +250,7 @@ export const DOWNLOADS_QUERY = defineQuery(`
     "size": file.asset->size,
     publishedAt
   }
-`);
+`)
 
 export const SINGLE_NEWS_QUERY = defineQuery(`
   *[_type == "news" && slug.current == $slug && publishedAt < now()][0] {
@@ -274,7 +262,7 @@ export const SINGLE_NEWS_QUERY = defineQuery(`
     content,
     "slug": slug.current
   }
-`);
+`)
 
 export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0] {
@@ -305,7 +293,7 @@ export const SETTINGS_QUERY = defineQuery(`
       title
     }
   }
-`);
+`)
 
 export const CLUB_PAGE_QUERY = defineQuery(`
   *[_id == "clubPage"][0] {
@@ -332,7 +320,7 @@ export const CLUB_PAGE_QUERY = defineQuery(`
       isVisible
     }
   }
-`);
+`)
 
 export const NEWS_PAGE_QUERY = defineQuery(`
   *[_type == "news" && publishedAt < now()] | order(publishedAt desc) {
@@ -344,7 +332,7 @@ export const NEWS_PAGE_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url,
     isHighlighted
   }
-`);
+`)
 
 // sanity/lib/queries.ts
 
@@ -364,7 +352,7 @@ export const DONATE_PAGE_QUERY = defineQuery(`
         author
     }
   }
-`);
+`)
 
 export const SQUADS_NAVIGATION_QUERY = defineQuery(`
   *[_type == "squad"] | order(order asc) {
@@ -373,7 +361,7 @@ export const SQUADS_NAVIGATION_QUERY = defineQuery(`
     // Sprawdzamy, czy istnieje tabela przypisana do tej kadry
     "hasTable": count(*[_type == "table" && squad._ref == ^._id]) > 0
   }
-`);
+`)
 
 // 2. Do strony dynamicznej kadry (np. /druzyny/seniorzy)
 export const SQUAD_PAGE_QUERY = defineQuery(`
@@ -405,8 +393,7 @@ export const SQUAD_PAGE_QUERY = defineQuery(`
        }
     }
   }
-`);
-
+`)
 
 export const OFFER_PAGE_QUERY = defineQuery(`
   *[_id == "offerPage"][0] {
@@ -428,8 +415,7 @@ export const OFFER_PAGE_QUERY = defineQuery(`
     ctaDescription,
     ${PAGE_BUILDER_FIELDS}
   }
-`);
-
+`)
 
 export const NEWS_SLIDER_QUERY = defineQuery(`
   *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
@@ -441,7 +427,7 @@ export const NEWS_SLIDER_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url,
     isHighlighted
   }
-`);
+`)
 
 // 2. Grid z paginacją (wyklucza newsy ze slidera, żeby się nie powtarzały)
 export const NEWS_PAGINATED_QUERY = defineQuery(`
@@ -454,13 +440,12 @@ export const NEWS_PAGINATED_QUERY = defineQuery(`
     "imageUrl": mainImage.asset->url,
     isHighlighted
   }
-`);
+`)
 
 // 3. Licznik newsów (do obliczenia liczby stron)
 export const NEWS_COUNT_QUERY = defineQuery(`
   count(*[_type == "news" && !(_id in $excludeIds) && publishedAt < now()])
-`);
-
+`)
 
 export const YOUTH_SQUADS_LIST_QUERY = defineQuery(`
   *[_type == "squad" && slug.current != "seniorzy"] | order(order asc) {
@@ -471,7 +456,7 @@ export const YOUTH_SQUADS_LIST_QUERY = defineQuery(`
     // Możemy pobrać np. zdjęcie trenera lub pierwsze zdjęcie z galerii jako tło
     coachName
   }
-`);
+`)
 
 // 2. Pobiera tabelę i mecze dla KONKRETNEJ kadry (na podstawie sluga)
 export const SQUAD_RESULTS_QUERY = defineQuery(`
@@ -513,7 +498,7 @@ export const SQUAD_RESULTS_QUERY = defineQuery(`
         coachName
     }
   }
-`);
+`)
 
 export const COMPETITION_BY_SQUAD_QUERY = defineQuery(`
   *[_type == "competition" && squad->slug.current == $slug][0] {
@@ -558,7 +543,7 @@ export const COMPETITION_BY_SQUAD_QUERY = defineQuery(`
       }
     }
   }
-`);
+`)
 
 // 8. DANE DO SEKCJI WYNIKÓW NA STRONIE GŁÓWNEJ
 export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
@@ -592,7 +577,7 @@ export const HOMEPAGE_RESULTS_QUERY = defineQuery(`
       "logoUrl": logo.asset->url
     }
   }
-`);
+`)
 
 export const MATCH_CENTER_QUERY = defineQuery(`
   {
@@ -623,6 +608,4 @@ export const MATCH_CENTER_QUERY = defineQuery(`
     },
     "clubLogo": *[_type == "siteSettings"][0].logo.asset->url
   }
-`);
-
-
+`)

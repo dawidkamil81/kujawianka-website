@@ -27,8 +27,8 @@ export default defineConfig({
         schemaType: 'competition',
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({
-          squad: { _type: 'reference', _ref: squadId }
-        })
+          squad: { _type: 'reference', _ref: squadId },
+        }),
       },
 
       // B. Tworzenie Tabeli (przypisanej do Rozgrywek)
@@ -38,8 +38,8 @@ export default defineConfig({
         schemaType: 'standing',
         parameters: [{ name: 'competitionId', type: 'string' }],
         value: ({ competitionId }: { competitionId: string }) => ({
-          competition: { _type: 'reference', _ref: competitionId }
-        })
+          competition: { _type: 'reference', _ref: competitionId },
+        }),
       },
 
       // C. Tworzenie Kolejki/Terminarza (przypisanej do Rozgrywek)
@@ -49,8 +49,8 @@ export default defineConfig({
         schemaType: 'fixture',
         parameters: [{ name: 'competitionId', type: 'string' }],
         value: ({ competitionId }: { competitionId: string }) => ({
-          competition: { _type: 'reference', _ref: competitionId }
-        })
+          competition: { _type: 'reference', _ref: competitionId },
+        }),
       },
 
       // --- 2. STARE, ALE NADAL POTRZEBNE SZABLONY ---
@@ -62,7 +62,7 @@ export default defineConfig({
         schemaType: 'player',
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({
-          squad: { _type: 'reference', _ref: squadId }
+          squad: { _type: 'reference', _ref: squadId },
         }),
       },
 
@@ -74,7 +74,7 @@ export default defineConfig({
         parameters: [{ name: 'squadId', type: 'string' }],
         value: ({ squadId }: { squadId: string }) => ({
           squad: { _type: 'reference', _ref: squadId },
-          position: 'Sztab'
+          position: 'Sztab',
         }),
       },
 
@@ -85,7 +85,7 @@ export default defineConfig({
         schemaType: 'sponsor',
         parameters: [{ name: 'tierId', type: 'string' }],
         value: ({ tierId }: { tierId: string }) => ({
-          tier: { _type: 'reference', _ref: tierId }
+          tier: { _type: 'reference', _ref: tierId },
         }),
       },
     ],

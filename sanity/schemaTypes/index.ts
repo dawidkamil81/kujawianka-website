@@ -9,9 +9,14 @@ import { siteSettings } from './siteSettings'
 import { clubPage } from './clubPage'
 import { donatePage } from './donatePage'
 import { squad } from './squad'
-import { staffRole } from "./staffRole";
+import { staffRole } from './staffRole'
 import { sponsorTier } from './sponsorTier'
-import { offerPage, sponsorsPage, partnersPage, club100Page } from './businessPages'
+import {
+  offerPage,
+  sponsorsPage,
+  partnersPage,
+  club100Page,
+} from './businessPages'
 import { sponsor, partner, club100 } from './sponsors'
 import { textSection } from './sections/textSection'
 import { imageTextSection } from './sections/imageTextSection'
@@ -28,15 +33,38 @@ import { standing } from './standing'
 import { fixture } from './fixture'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types:
-    [
-      siteSettings, news, player, sponsor, partner, club100, download,
-      table, result, clubPage, donatePage, squad, staffRole,
-      sponsorTier, offerPage, sponsorsPage, partnersPage, club100Page,
-      textSection, imageTextSection, contactSection, featuresSection,
-      tableSection, gallerySection, pageBuilder, matchReport, playerStatsRow,
-      leagueConfig, competition,
-      standing,
-      fixture, team,
-    ],
+  types: [
+    siteSettings,
+    news,
+    player,
+    sponsor,
+    partner,
+    club100,
+    download,
+    table,
+    result,
+    clubPage,
+    donatePage,
+    squad,
+    staffRole,
+    sponsorTier,
+    offerPage,
+    sponsorsPage,
+    partnersPage,
+    club100Page,
+    textSection,
+    imageTextSection,
+    contactSection,
+    featuresSection,
+    tableSection,
+    gallerySection,
+    pageBuilder,
+    matchReport,
+    playerStatsRow,
+    leagueConfig,
+    competition,
+    standing,
+    fixture,
+    team,
+  ],
 }
