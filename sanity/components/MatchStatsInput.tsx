@@ -38,12 +38,22 @@ const Stepper = ({
   </Flex>
 )
 
+interface PlayerStatsRow {
+  _key: string
+  minutes?: number
+  goals?: number
+  assists?: number
+  yellowCards?: number
+  redCard?: boolean
+  cleanSheet?: boolean
+}
+
 export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
   const { value = [], onChange } = props
 
   // Funkcja do aktualizacji konkretnego pola w konkretnym wierszu
   const handleUpdate = useCallback(
-    (index: number, field: string, newValue: any) => {
+    (index: number, field: string, newValue: string | number | boolean) => {
       // Ścieżka do elementu w tablicy
       const itemPath = [index]
 
@@ -95,22 +105,13 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
       </Card>
 
       {/* Wiersze z zawodnikami */}
-      {value.map((item: any, index: number) => {
-        // Pobieramy nazwisko z referencji (to wymagałoby zapytania o dane,
-        // ale Sanity w inpucie Array nie daje łatwego dostępu do rozwiniętych refów wewnątrz value.
-        // DLa uproszczenia wyświetlimy tutaj Key lub musielibyśmy użyć hooka useClient.
-        // W wersji podstawowej: użytkownik widzi, kogo edytuje dzięki standardowemu 'item' renderowaniu,
-        // ale my tu robimy Custom UI.
-        // Hack UX: Nazwę zawodnika wyświetlamy "po staremu" renderując standardowy Preview albo po prostu placeholder,
-        // W idealnym świecie użylibyśmy tu hooka useFormValue by pobrać nazwiska.
+      {value.map((item: unknown, index: number) => {
+        const row = item as PlayerStatsRow
 
         return (
-          <Card key={item._key} border padding={2}>
+          <Card key={row._key} border padding={2}>
             <Grid columns={[7]} gap={2} style={{ alignItems: 'center' }}>
-              {/* 1. Kolumna - Informacja (Tutaj uzytkownik widzi 'Reference') */}
               <Box>
-                {/* Tutaj normalnie byłoby nazwisko, w custom input jest to trudniejsze bez pobierania danych. 
-                     Dlatego poniżej proponuję hybrydę: Selektor nad tabelą, a tu same wartości */}
                 <Text size={1} weight="semibold">
                   Zawodnik #{index + 1}
                 </Text>
@@ -120,7 +121,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               <Flex justify="center">
                 <input
                   type="number"
-                  value={item.minutes ?? 90}
+                  value={row.minutes ?? 90}
                   onChange={(e) =>
                     handleUpdate(index, 'minutes', parseInt(e.target.value))
                   }
@@ -137,7 +138,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               {/* 3. Gole */}
               <Flex justify="center">
                 <Stepper
-                  value={item.goals}
+                  value={row.goals ?? 0}
                   onChange={(val) => handleUpdate(index, 'goals', val)}
                 />
               </Flex>
@@ -145,7 +146,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               {/* 4. Asysty */}
               <Flex justify="center">
                 <Stepper
-                  value={item.assists}
+                  value={row.assists ?? 0}
                   onChange={(val) => handleUpdate(index, 'assists', val)}
                 />
               </Flex>
@@ -153,7 +154,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               {/* 5. Żółte kartki (Licznik, bo mogą być 2) */}
               <Flex justify="center">
                 <Stepper
-                  value={item.yellowCards}
+                  value={row.yellowCards ?? 0}
                   onChange={(val) => handleUpdate(index, 'yellowCards', val)}
                 />
               </Flex>
@@ -161,7 +162,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               {/* 6. Czerwona (Switch) */}
               <Flex justify="center">
                 <Switch
-                  checked={item.redCard}
+                  checked={row.redCard ?? false}
                   onChange={(e) =>
                     handleUpdate(
                       index,
@@ -175,7 +176,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
               {/* 7. Czyste konto (Switch + opcja usunięcia wiersza) */}
               <Flex justify="center" gap={3} align="center">
                 <Switch
-                  checked={item.cleanSheet}
+                  checked={row.cleanSheet ?? false}
                   onChange={(e) =>
                     handleUpdate(
                       index,
@@ -201,7 +202,7 @@ export function MatchStatsInput(props: ArrayOfObjectsInputProps) {
         text="Dodaj zawodnika do raportu"
         icon={AddIcon}
         mode="ghost"
-        onClick={() => props.onItemAppend({ _type: 'playerStatsRow' } as any)}
+        onClick={() => props.onItemAppend({ _type: 'playerStatsRow' } as never)}
       />
     </Stack>
   )

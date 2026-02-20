@@ -8,8 +8,9 @@ export function EmptySchedule() {
         <Stack space={4}>
           <Heading size={2}>Brak harmonogramu</Heading>
           <Text size={2} muted>
-            Przejdź do zakładki <strong>"Informacje o rozgrywkach"</strong> i
-            ustaw liczbę kolejek w lidze, aby wygenerować terminarz.
+            Przejdź do zakładki{' '}
+            <strong>&quot;Informacje o rozgrywkach&quot;</strong> i ustaw liczbę
+            kolejek w lidze, aby wygenerować terminarz.
           </Text>
         </Stack>
       </Card>

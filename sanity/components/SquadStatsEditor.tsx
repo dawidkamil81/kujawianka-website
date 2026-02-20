@@ -16,6 +16,34 @@ import {
 import { useClient } from 'sanity'
 import { Save, Shield, Trash2 } from 'lucide-react'
 
+// --- INTERFEJSY ---
+interface PlayerStat {
+  matches?: number
+  goals?: number
+  assists?: number
+  yellowCards?: number
+  redCards?: number
+  cleanSheets?: number
+}
+
+interface PlayerData {
+  _id: string
+  name: string
+  surname: string
+  position: string
+  number?: number
+  stats?: PlayerStat
+}
+
+interface MatchStatItem {
+  played: boolean
+  goals: number
+  assists: number
+  yellow: number
+  red: boolean
+  clean: boolean
+}
+
 // Definicja pozycji (kolejność wyświetlania)
 const POSITIONS_ORDER = ['Bramkarz', 'Obrońca', 'Pomocnik', 'Napastnik']
 
@@ -44,8 +72,18 @@ const MatchPlayerCard = ({
   matchStats,
   toggleSquadMember,
   updateMatchStat,
-}: any) => {
-  const p = allPlayers.find((pl: any) => pl._id === id)
+}: {
+  id: string
+  allPlayers: PlayerData[]
+  matchStats: Record<string, MatchStatItem>
+  toggleSquadMember: (id: string) => void
+  updateMatchStat: (
+    id: string,
+    field: keyof MatchStatItem,
+    value: number | boolean,
+  ) => void
+}) => {
+  const p = allPlayers.find((pl) => pl._id === id)
   const stats = matchStats[id] || {}
   if (!p) return null
   const isGK = p.position === 'Bramkarz'
@@ -202,7 +240,13 @@ const EditPlayerRow = ({
   toggleSquadMember,
   getStatValue,
   updateManualEdit,
-}: any) => {
+}: {
+  p: PlayerData
+  squadIds: string[]
+  toggleSquadMember: (id: string) => void
+  getStatValue: (id: string, field: keyof PlayerStat) => number
+  updateManualEdit: (id: string, field: string, value: number) => void
+}) => {
   const isSelected = squadIds.includes(p._id)
   const isGK = p.position === 'Bramkarz'
 
@@ -364,16 +408,20 @@ const EditPlayerRow = ({
 }
 
 // --- GŁÓWNY KOMPONENT ---
-export function SquadStatsEditor(props: any) {
+export function SquadStatsEditor(props: { documentId: string }) {
   const squadId = props.documentId
   const client = useClient({ apiVersion: '2024-01-01' })
   const toast = useToast()
 
   // Stan
-  const [allPlayers, setAllPlayers] = useState<any[]>([])
+  const [allPlayers, setAllPlayers] = useState<PlayerData[]>([])
   const [squadIds, setSquadIds] = useState<string[]>([])
-  const [matchStats, setMatchStats] = useState<Record<string, any>>({})
-  const [manualEdits, setManualEdits] = useState<Record<string, any>>({})
+  const [matchStats, setMatchStats] = useState<Record<string, MatchStatItem>>(
+    {},
+  )
+  const [manualEdits, setManualEdits] = useState<
+    Record<string, Record<string, number>>
+  >({})
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -400,10 +448,11 @@ export function SquadStatsEditor(props: any) {
 
       setAllPlayers(data.teamPlayers || [])
       const loadedSquadIds =
-        data.squadData?.lastLineup?.map((ref: any) => ref._ref) || []
+        data.squadData?.lastLineup?.map((ref: { _ref: string }) => ref._ref) ||
+        []
       setSquadIds(loadedSquadIds)
 
-      const initMatchStats: Record<string, any> = {}
+      const initMatchStats: Record<string, MatchStatItem> = {}
       loadedSquadIds.forEach((id: string) => {
         initMatchStats[id] = {
           played: true,
@@ -460,7 +509,7 @@ export function SquadStatsEditor(props: any) {
   }, [])
 
   const updateMatchStat = useCallback(
-    (id: string, field: string, value: any) => {
+    (id: string, field: keyof MatchStatItem, value: number | boolean) => {
       setMatchStats((prev) => ({
         ...prev,
         [id]: { ...prev[id], [field]: value },
@@ -480,9 +529,9 @@ export function SquadStatsEditor(props: any) {
   )
 
   const getStatValue = useCallback(
-    (id: string, field: string) => {
+    (id: string, field: keyof PlayerStat) => {
       if (manualEdits[id] && manualEdits[id][field] !== undefined)
-        return manualEdits[id][field]
+        return manualEdits[id][field] as number
       const player = allPlayers.find((p) => p._id === id)
       return player?.stats?.[field] || 0
     },
@@ -512,7 +561,7 @@ export function SquadStatsEditor(props: any) {
     Object.keys(matchStats).forEach((id) => {
       if (squadIds.includes(id)) {
         const stats = matchStats[id]
-        const inc: any = {}
+        const inc: Record<string, number> = {}
         if (stats.played) inc.matches = 1
         if (stats.goals > 0) inc.goals = stats.goals
         if (stats.assists > 0) inc.assists = stats.assists
@@ -521,7 +570,7 @@ export function SquadStatsEditor(props: any) {
         if (stats.clean) inc.cleanSheets = 1
 
         if (Object.keys(inc).length > 0) {
-          const initialValues: any = {}
+          const initialValues: Record<string, number> = {}
           Object.keys(inc).forEach((key) => {
             initialValues[key] = 0
           })
@@ -535,7 +584,7 @@ export function SquadStatsEditor(props: any) {
       toast.push({ status: 'success', title: 'Zapisano zmiany!' })
 
       // Resetujemy formularz meczu po zapisie, żeby nie nabić ich 2 razy z rzędu
-      const resetMatchStats: Record<string, any> = {}
+      const resetMatchStats: Record<string, MatchStatItem> = {}
       squadIds.forEach((id) => {
         resetMatchStats[id] = {
           played: true,
@@ -548,12 +597,12 @@ export function SquadStatsEditor(props: any) {
       })
       setMatchStats(resetMatchStats)
       fetchData() // Odświeża dolną tabelę
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Save Error:', err)
       toast.push({
         status: 'error',
         title: 'Błąd zapisu',
-        description: err.message,
+        description: err instanceof Error ? err.message : String(err),
       })
     } finally {
       setIsSubmitting(false)
@@ -608,7 +657,7 @@ export function SquadStatsEditor(props: any) {
               </Text>
               <Text size={1} muted>
                 Wpisz co wydarzyło się w ostatnim spotkaniu. Dane zostaną dodane
-                do bazy po klknięciu "ZATWIERDŹ ZMIANY".
+                do bazy po klknięciu &quot;ZATWIERDŹ ZMIANY&quot;.
               </Text>
             </Stack>
           </Flex>

@@ -106,7 +106,6 @@ export const player = defineType({
       hidden: ({ document }) => document?.position !== 'Sztab',
       validation: (rule) =>
         rule.custom((value, context) => {
-          // @ts-ignore
           if (context.document?.position === 'Sztab' && !value) {
             return 'Musisz wybrać rolę dla członka sztabu'
           }
