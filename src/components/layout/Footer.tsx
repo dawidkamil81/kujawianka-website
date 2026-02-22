@@ -319,7 +319,8 @@ export default function Footer({ settings }: FooterProps) {
                   <a
                     key={idx}
                     href={`${file.fileUrl}?dl=`}
-                    className="group flex w-full items-center gap-4 lg:w-auto"
+                    // POPRAWKA W TEJ LINIJCE: DODANO justify-center ORAZ lg:justify-start
+                    className="group flex w-full items-center justify-center gap-4 lg:w-auto lg:justify-start"
                   >
                     {/* Ikona */}
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#2ea07b] backdrop-blur-sm transition-colors duration-300 group-hover:border-[#da1818]/50 group-hover:bg-[#da1818]/10 group-hover:text-[#da1818]">

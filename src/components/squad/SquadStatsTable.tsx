@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { Player } from '@/types/index'
-// Importujemy konkretne strzałki
 import { ArrowUp, ArrowDown, ArrowUpDown, User } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface SquadStatsTableProps {
   players: Player[]
@@ -18,7 +18,6 @@ type SortField =
   | 'cleanSheets'
   | 'yellowCards'
 
-// 1. Dodajemy interfejs dla propsów komponentu Th
 interface ThProps {
   field: SortField
   label: string
@@ -29,7 +28,6 @@ interface ThProps {
   onSort: (field: SortField) => void
 }
 
-// 2. Wyciągamy komponent Th na zewnątrz głównego komponentu
 const Th = ({
   field,
   label,
@@ -39,7 +37,6 @@ const Th = ({
   sortDirection,
   onSort,
 }: ThProps) => {
-  // Logika wyboru ikony
   const isActive = sortField === field
   const Icon = isActive
     ? sortDirection === 'asc'
@@ -80,6 +77,15 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
     }
   }
 
+  const handleMobileSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const [field, direction] = e.target.value.split('-') as [
+      SortField,
+      'asc' | 'desc',
+    ]
+    setSortField(field)
+    setSortDirection(direction)
+  }
+
   const sortedPlayers = [...activePlayers].sort((a, b) => {
     const statsA = a.stats || {
       matches: 0,
@@ -96,7 +102,6 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
       yellowCards: 0,
     }
 
-    // Deklarujemy jawnie, że wartości mogą być tekstem (nazwisko) lub liczbą (statystyki)
     let valA: string | number
     let valB: string | number
 
@@ -104,7 +109,6 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
       valA = a.surname || ''
       valB = b.surname || ''
     } else {
-      // Rzutujemy na bezpieczny typ dla właściwości liczbowych ze statystyk
       valA = (statsA as Record<string, number>)[sortField] || 0
       valB = (statsB as Record<string, number>)[sortField] || 0
     }
@@ -121,7 +125,6 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
     return 'text-gray-600 font-medium'
   }
 
-  // 3. Wrzucamy wspólne propsy do zmiennej dla czytelności (opcjonalne, ale wygodne)
   const commonThProps = {
     sortField,
     sortDirection,
@@ -129,16 +132,143 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
   }
 
   return (
-    <div className="mt-24 mb-12 w-full">
-      <div className="mb-8 flex flex-col justify-between gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end">
+    // ZMIANA: Margines górny zmniejszony do mt-2 aby przysunąć sekcję do przycisków
+    <div className="mt-2 mb-12 w-full">
+      {/* ZMIANA: Zmniejszono margines dolny z mb-8 na mb-6 */}
+      <div className="mb-6 flex flex-col justify-between gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end">
         <div className="flex items-center gap-3">
           <h3 className="font-montserrat text-2xl font-black tracking-tight text-white uppercase md:text-3xl">
             Statystyki <span className="text-emerald-500">Drużyny</span>
           </h3>
         </div>
+
+        <div className="md:hidden">
+          <select
+            value={`${sortField}-${sortDirection}`}
+            onChange={handleMobileSortChange}
+            className="w-full rounded-lg border border-white/10 bg-[#121212] p-3 text-sm font-bold tracking-widest text-white uppercase focus:border-emerald-500 focus:outline-none"
+          >
+            <option value="goals-desc">Najwięcej bramek</option>
+            <option value="assists-desc">Najwięcej asyst</option>
+            <option value="matches-desc">Najwięcej meczów</option>
+            {/* ZMIANA: Usunięto tekst "(Bramkarze)" */}
+            <option value="cleanSheets-desc">Czyste konta</option>
+            <option value="yellowCards-desc">Najwięcej kartek</option>
+            {/* ZMIANA: Usunięto sortowanie alfabetyczne */}
+          </select>
+        </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-white/5 bg-[#121212] shadow-lg">
+      {/* === 1. WIDOK MOBILNY (KARTY) === */}
+      <div className="flex flex-col gap-4 md:hidden">
+        {sortedPlayers.map((player, index) => {
+          const stats = player.stats || {
+            matches: 0,
+            goals: 0,
+            assists: 0,
+            cleanSheets: 0,
+            yellowCards: 0,
+            redCards: 0,
+          }
+
+          return (
+            <div
+              key={player._id}
+              className="flex flex-col rounded-xl border border-white/5 bg-[#121212] p-4 shadow-lg"
+            >
+              <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-neutral-900">
+                    {player.imageUrl ? (
+                      <Image
+                        src={player.imageUrl}
+                        alt={player.surname}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <User className="h-6 w-6 text-gray-600" />
+                    )}
+                  </div>
+                  <div>
+                    <span className="block font-bold text-white">
+                      {player.surname} {player.name}
+                    </span>
+                    <span className="text-[10px] font-bold tracking-widest text-gray-500 uppercase">
+                      {player.position}
+                    </span>
+                  </div>
+                </div>
+                <div className={`font-mono text-xl ${getRankStyle(index)}`}>
+                  #{index + 1}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2">
+                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                    Mecze
+                  </span>
+                  <span className="font-mono text-base font-bold text-white">
+                    {stats.matches}
+                  </span>
+                </div>
+                {/* Zostawiono w 100% zielone wyróżnienie dla goli na mobile zgodnie z prośbą */}
+                <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-900/10 py-2">
+                  <span className="mb-1 text-[9px] font-bold tracking-widest text-emerald-500 uppercase">
+                    Bramki
+                  </span>
+                  <span className="font-mono text-base font-bold text-emerald-400">
+                    {stats.goals}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                    Asysty
+                  </span>
+                  <span className="font-mono text-base font-bold text-white">
+                    {stats.assists > 0 ? stats.assists : '-'}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                    Kartki
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {stats.yellowCards === 0 && stats.redCards === 0 ? (
+                      <span className="font-mono text-base font-bold text-gray-600">
+                        -
+                      </span>
+                    ) : (
+                      <>
+                        {stats.yellowCards > 0 && (
+                          <div className="flex items-center gap-0.5">
+                            <span className="font-mono text-xs font-bold text-yellow-500">
+                              {stats.yellowCards}
+                            </span>
+                            <div className="h-3 w-2 rounded-[2px] bg-yellow-500" />
+                          </div>
+                        )}
+                        {stats.redCards > 0 && (
+                          <div className="ml-1 flex items-center gap-0.5">
+                            <span className="font-mono text-xs font-bold text-red-500">
+                              {stats.redCards}
+                            </span>
+                            <div className="h-3 w-2 rounded-[2px] bg-red-500" />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* === 2. WIDOK DESKTOPOWY (TABELA) === */}
+      <div className="hidden overflow-hidden rounded-xl border border-white/5 bg-[#121212] shadow-lg md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] border-collapse">
             <thead className="border-b border-white/5 bg-white/[0.02]">
@@ -146,7 +276,6 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                 <th className="w-16 px-4 py-4 text-center text-xs font-bold text-gray-500 uppercase">
                   Poz.
                 </th>
-                {/* 4. Przekazujemy dodatkowe propsy sortowania do każdego Th */}
                 <Th field="name" label="Zawodnik" {...commonThProps} />
                 <Th
                   field="matches"
@@ -235,6 +364,7 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                     </td>
 
                     <td className="px-4 py-3 text-right">
+                      {/* ZMIANA: Bramki w tabeli powróciły do text-club-green */}
                       <span
                         className={`font-mono text-sm font-bold ${stats.goals > 0 ? 'text-club-green' : 'text-gray-600'}`}
                       >
@@ -248,7 +378,8 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
 
                     <td className="hidden px-4 py-3 text-right font-mono text-sm text-gray-400 md:table-cell">
                       {player.position === 'Bramkarz' && stats.cleanSheets ? (
-                        <span className="text-blue-400">
+                        /* ZMIANA: Czyste konta otrzymały wyróżniający text-emerald-500 */
+                        <span className="font-bold text-emerald-500">
                           {stats.cleanSheets}
                         </span>
                       ) : (

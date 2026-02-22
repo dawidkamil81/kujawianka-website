@@ -24,6 +24,10 @@ function groupPlayersByPosition(players: Player[]) {
 export default function SquadTabsView({ players }: SquadTabsViewProps) {
   const [activeTab, setActiveTab] = useState<'squad' | 'stats'>('squad')
 
+  // ZMIANA: Sprawdzamy czy są zawodnicy. Jeśli nie ma - nic nie renderujemy (zwracamy null).
+  const hasAnyMembers = players && players.length > 0
+  if (!hasAnyMembers) return null
+
   const squadGroups = groupPlayersByPosition(players)
   const sectionsOrder = [
     'Bramkarze',
@@ -33,7 +37,7 @@ export default function SquadTabsView({ players }: SquadTabsViewProps) {
     'Sztab',
   ]
 
-  // Zmieniony styl przycisków (mniejsze, oddzielne)
+  // Zmieniony styl przycisków
   const getTabButtonClass = (tabName: 'squad' | 'stats') => `
          flex items-center gap-2 px-5 py-2 rounded-full font-bold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 border
         ${
@@ -46,7 +50,6 @@ export default function SquadTabsView({ players }: SquadTabsViewProps) {
   return (
     <div className="w-full">
       {/* --- PRZEŁĄCZNIK ZAKŁADEK (TABS) --- */}
-      {/* Usunięto wrapper z tłem, dodano gap-4 */}
       <div className="mb-12 flex justify-center gap-4">
         <button
           onClick={() => setActiveTab('squad')}

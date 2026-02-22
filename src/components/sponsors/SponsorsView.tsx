@@ -47,6 +47,7 @@ export default function SponsorsView({
   return (
     <div className="flex flex-col gap-24">
       <PageHero
+        animated
         badgeText="Wsparcie i Rozwój"
         title={pageData.title || 'Nasi Sponsorzy'}
         description={pageData.description}

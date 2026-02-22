@@ -8,7 +8,7 @@ interface DownloadsViewProps {
 }
 
 export default function DownloadsView({ files }: DownloadsViewProps) {
-  // Przenosimy logikę kategoryzacji plików z Twojego page.tsx
+  // Przenosimy logikę kategoryzacji plików
   const categories = {
     club: files.filter((f) => f.category === 'club' || f.category === 'docs'),
     players: files.filter(
@@ -20,18 +20,20 @@ export default function DownloadsView({ files }: DownloadsViewProps) {
   }
 
   return (
-    <main className="flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
+    // ZMIANA 1: Dodano klasę 'relative' do kontenera <main>
+    <main className="relative flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
       {/* Ozdobny particle */}
-      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
+      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]" />
 
       <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
         <PageHero
+          animated
           badgeText="Strefa Klubowa"
           title="Do Pobrania"
           description="Znajdziesz tutaj wszystkie niezbędne dokumenty, regulaminy oraz materiały dla rodziców i zawodników Kujawianki."
         />
 
-        {/* Kontener na sekcje (zgadza się z Twoim oryginalnym gap-24) */}
+        {/* Kontener na sekcje */}
         <div className="flex flex-col gap-24">
           <DownloadsSection title="Dokumenty Klubowe" files={categories.club} />
 

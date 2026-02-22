@@ -36,6 +36,7 @@ export default function NewsView({
       <div className="relative z-10 container mx-auto px-4 py-20">
         {/* ZUNIFIKOWANY NAGŁÓWEK (Zastępuje sztywny HTML) */}
         <PageHero
+          animated
           badgeText="Co słychać w klubie?"
           title="Aktualności Klubowe"
           className="mb-12" // Nadpisujemy defaultowe mb-20, aby pasowało do Twojego oryginału

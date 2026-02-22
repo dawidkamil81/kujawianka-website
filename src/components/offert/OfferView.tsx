@@ -26,6 +26,7 @@ export default function OfferView({ sponsorsCount, pageData }: OfferViewProps) {
 
       <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
         <PageHero
+          animated
           badgeText="Współpraca Biznesowa"
           title={pageData?.title || 'Oferta Sponsorska'}
           description={pageData?.description || 'Dołącz do grona partnerów...'}

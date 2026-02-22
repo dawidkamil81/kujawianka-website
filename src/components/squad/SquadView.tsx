@@ -17,6 +17,7 @@ export default function SquadView({ squadData }: SquadViewProps) {
       <div className="relative z-10 container mx-auto px-4 py-16">
         {/* --- ZUNIFIKOWANY NAGŁÓWEK STRONY --- */}
         <PageHero
+          animated
           badgeText="Sezon 2025/2026"
           title={`Kadra ${squadData.name}`}
           className="mb-16" // Zachowujemy Twój oryginalny margines
