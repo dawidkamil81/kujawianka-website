@@ -1,18 +1,22 @@
-import { sanityFetch } from "@/sanity/lib/live";
-import { CLUB_PAGE_QUERY } from "@/sanity/lib/queries";
-import ClubPageContent from "./ClubPage"; // Zakładam, że tam jest Twój komponent, jeśli nie - dostosuj ścieżkę
+import { sanityFetch } from '@/sanity/lib/live'
+import { CLUB_PAGE_QUERY } from '@/sanity/lib/queries'
+import ClubView from '@/components/club/ClubView'
+
+export const metadata = {
+  title: 'O Klubie | Kujawianka Izbica Kujawska',
+  description: 'Historia, tradycja i władze Kujawianki Izbica Kujawska.',
+}
 
 export default async function ClubPage() {
-    const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY });
+  const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY })
 
-    // Jeśli nie ma danych (np. admin jeszcze nie wypełnił), można zwrócić null lub loading
-    if (!data) {
-        return (
-            <div className="min-h-screen flex items-center justify-center text-white bg-[#0e0e0e]">
-                Błąd ładowania strony klubu
-            </div>
-        );
-    }
+  if (!data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-white">
+        Brak danych o klubie.
+      </div>
+    )
+  }
 
-    return <ClubPageContent data={data} />;
+  return <ClubView data={data} />
 }

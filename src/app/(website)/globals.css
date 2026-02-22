@@ -1,13 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 /* === USTAWIENIA BAZOWE === */
 @layer base {
-
-
   html {
     height: 100%;
     /* HTML zajmuje pełną wysokość okna */
@@ -183,7 +181,6 @@ img {
 }
 
 @layer utilities {
-
   /* Nowa klasa dla customowego scrollbara */
   .scrollbar-custom {
     /* Firefox */
