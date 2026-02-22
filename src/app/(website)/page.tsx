@@ -9,7 +9,7 @@ import {
   HOMEPAGE_RESULTS_QUERY,
   MATCH_CENTER_QUERY,
 } from '@/sanity/lib/queries'
-import Home from '@/components/Home/HomePage'
+import Home from '@/components/home/HomePage'
 
 export default async function Page() {
   const [players, news, sponsors, resultsData, matchCenterData] =

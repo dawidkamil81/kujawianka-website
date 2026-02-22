@@ -1,13 +1,19 @@
 import { sanityFetch } from '@/sanity/lib/live'
 import { DONATE_PAGE_QUERY } from '@/sanity/lib/queries'
-import DonateContent from './/DonatePage' // Importuj komponent stworzony wyżej
+import DonateView from '@/components/donate/DonateView'
+import { Metadata } from 'next'
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: 'Wesprzyj Nas | Kujawianka Izbica Kujawska',
+  description: 'Przekaż 1,5% podatku lub wesprzyj klub w inny sposób.',
+}
 
 export default async function DonatePage() {
   const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
 
   if (!data) return null
 
-  return <DonateContent data={data} />
+  return <DonateView data={data} />
 }

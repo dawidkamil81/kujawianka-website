@@ -5,7 +5,7 @@ import {
   OFFER_PAGE_QUERY,
   ALL_SUPPORTERS_COUNT_QUERY,
 } from '@/sanity/lib/queries'
-import Partnership from './Partnership'
+import OfferView from '@/components/offert/OfferView'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -23,5 +23,5 @@ export default async function OfferPage() {
   // 2. Pobieramy dane strony (w tym contentBuilder)
   const { data: pageData } = await sanityFetch({ query: OFFER_PAGE_QUERY })
 
-  return <Partnership sponsorsCount={count || 0} pageData={pageData} />
+  return <OfferView sponsorsCount={count || 0} pageData={pageData} />
 }

@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { MatchStatsInput } from '../components/MatchStatsInput'
+import { MatchStatsInput } from '@/sanity/components/MatchStatsInput'
 
 export const matchReport = defineType({
   name: 'matchReport',

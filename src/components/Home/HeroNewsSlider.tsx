@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Calendar, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -16,26 +16,12 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  // Hooki muszą być zdefiniowane na samej górze (przed jakimkolwiek 'return')
-  useEffect(() => {
-    // Sprawdzamy, czy news istnieje oraz nie jest pusty wewnątrz hooka
-    if (isPaused || !news || news.length === 0) return
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % news.length)
-    }, 6000)
-    return () => clearInterval(interval)
-  }, [news, isPaused]) // <--- POPRAWKA: Przekazujemy 'news' zamiast 'news?.length'
-
-  // Dopiero PO definicji wszystkich hooków możemy zastosować wczesne wyjście
   if (!news || news.length === 0) return null
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % news.length)
-  }
-
-  const prevSlide = () => {
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % news.length)
+  const prevSlide = () =>
     setCurrentIndex((prev) => (prev - 1 + news.length) % news.length)
-  }
+  const goToSlide = (idx: number) => setCurrentIndex(idx)
 
   const currentNews = news[currentIndex]
 
@@ -54,123 +40,150 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* --- GÓRA: TYLKO NAGŁÓWEK (BEZ KROPKI) --- */}
       <div className="mb-1 flex items-center gap-3 px-1">
         <h3 className="font-montserrat text-xs font-bold tracking-widest text-white uppercase opacity-80">
           WYRÓŻNIONE ARTYKUŁY
         </h3>
       </div>
 
-      {/* --- ŚRODEK: KARTA NEWSA --- */}
-      <div className="group relative h-[380px] w-full cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl">
-        <AnimatePresence mode="wait">
+      {/* Główny kontener slajdera - dodano klasę 'group' */}
+      <div className="group relative h-[380px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={currentNews._id}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
+            // 1. GŁÓWNA ANIMACJA KONTENERA (Tylko płynne przenikanie Alpha)
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
             className="absolute inset-0 h-full w-full"
           >
-            {/* Zdjęcie */}
+            {/* --- NOWOŚĆ: LINK ROZCIĄGNIĘTY NA CAŁY SLAJD --- */}
+            {/* Ten link jest niewidoczny, ale przykrywa wszystko (z-30) i łapie kliknięcia */}
+            <Link
+              href={`/aktualnosci/${currentNews.slug}`}
+              className="absolute inset-0 z-30"
+              aria-label={`Czytaj więcej: ${currentNews.title}`}
+            />
+
+            {/* 2. EFEKT KENA BURNSA DLA ZDJĘCIA */}
             <div className="absolute inset-0 overflow-hidden">
               {currentNews.imageUrl ? (
-                <Image
-                  src={currentNews.imageUrl}
-                  alt={currentNews.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <motion.div
+                  initial={{ scale: 1 }}
+                  animate={{ scale: 1.05 }}
+                  transition={{ duration: 7, ease: 'linear' }}
+                  className="relative h-full w-full"
+                >
+                  <Image
+                    src={currentNews.imageUrl}
+                    alt={currentNews.title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-neutral-900 text-white/20">
                   Brak zdjęcia
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/60 to-transparent opacity-90" />
+              {/* Gradient zaciemniający pod teksty */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/70 to-transparent opacity-90" />
             </div>
 
-            {/* Treść */}
-            <div className="absolute inset-0 z-10 flex flex-col items-start justify-end p-6">
-              {/* Data */}
-              <div className="text-club-green-light mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase backdrop-blur-md">
+            {/* 3. ANIMACJA TREŚCI (Wjazd od dołu z opóźnieniem) */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: 0.2,
+                ease: [0.25, 1, 0.5, 1],
+              }}
+              // Zmniejszono z-index do 20, żeby link (z-30) był nad nim
+              className="absolute inset-0 z-20 flex flex-col items-start justify-end p-6 md:p-8"
+            >
+              <div className="text-club-green-light mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase backdrop-blur-md">
                 <Calendar size={12} className="text-club-green" />
                 <span>{formattedDate}</span>
               </div>
 
-              {/* Tytuł */}
-              <h2 className="font-montserrat group-hover:text-club-green mb-3 line-clamp-2 text-xl leading-tight font-black text-white drop-shadow-lg transition-colors duration-300 md:text-2xl">
-                <Link href={`/aktualnosci/${currentNews.slug}`}>
-                  {currentNews.title}
-                </Link>
+              {/* Usunięto wewnętrzny <Link> z tytułu */}
+              <h2 className="font-montserrat group-hover:text-club-green mb-4 line-clamp-2 text-2xl leading-tight font-black text-white drop-shadow-xl transition-colors duration-300 md:text-3xl">
+                {currentNews.title}
               </h2>
 
-              {/* Kontener: Opis -> Przycisk */}
-              <div className="relative min-h-[60px] w-full">
-                {/* Opis */}
-                <p className="absolute top-0 left-0 line-clamp-2 w-full text-sm leading-relaxed text-gray-300 transition-all duration-300 group-hover:-translate-y-2 group-hover:opacity-0">
-                  {currentNews.excerpt}
-                </p>
+              <p className="line-clamp-2 max-w-3xl text-sm leading-relaxed text-gray-300 md:text-base">
+                {currentNews.excerpt}
+              </p>
 
-                {/* Przycisk */}
-                <div className="absolute top-0 left-0 translate-y-4 pt-0.5 opacity-0 transition-all delay-75 duration-400 ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                  <Link
-                    href={`/aktualnosci/${currentNews.slug}`}
-                    className="bg-club-green hover:bg-club-green-light inline-flex cursor-pointer items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(218,24,24,0.6)] active:scale-95 md:text-sm"
-                  >
-                    Czytaj więcej <ArrowRight size={16} />
-                  </Link>
-                </div>
+              {/* Przycisk "Czytaj więcej" - teraz to tylko element wizualny, bo cały kafel jest linkiem */}
+              <div className="mt-6 flex items-center text-xs font-bold tracking-widest text-emerald-500 uppercase transition-colors group-hover:text-emerald-400">
+                Czytaj więcej{' '}
+                <ArrowRight
+                  size={16}
+                  className="ml-2 transition-transform group-hover:translate-x-1"
+                />
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Pasek postępu */}
+        {/* 4. PASEK POSTĘPU Z GRADIENTEM */}
         {!isPaused && (
           <motion.div
-            key={currentIndex}
+            key={`progress-${currentIndex}`}
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{ duration: 6, ease: 'linear' }}
-            className="absolute bottom-0 left-0 z-20 h-2 bg-[#174135] shadow-[0_0_15px_#da1818]"
+            onAnimationComplete={nextSlide}
+            // --- NOWOŚĆ: ZMIANA KOLORU NA GRADIENT ---
+            // Używamy gradientu od ciemniejszego szmaragdu do jaśniejszego i z powrotem,
+            // co daje efekt "świecącego środka".
+            className="absolute bottom-0 left-0 z-40 h-1.5 bg-gradient-to-r from-[#0e3a2b] via-[#10b981] to-[#0e3a2b] shadow-[0_0_15px_rgba(16,185,129,0.5)]"
           />
         )}
       </div>
 
-      {/* --- DÓŁ: NAWIGACJA (STRZAŁKI + KROPKI) --- */}
-      <div className="mt-1 flex items-center justify-between px-1">
-        {/* Kropki (po lewej) */}
-        <div className="flex items-center gap-3">
+      {/* Nawigacja dolna */}
+      <div className="mt-2 flex items-center justify-between px-1">
+        <div className="flex items-center gap-2.5">
           {news.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setCurrentIndex(idx)}
+              onClick={() => goToSlide(idx)}
               className={cn(
-                'h-3 cursor-pointer rounded-full transition-all duration-500 ease-out',
+                'h-2.5 cursor-pointer rounded-full transition-all duration-500 ease-out',
                 idx === currentIndex
-                  ? 'bg-club-green w-12 shadow-[0_0_12px_#da1818]' // Zielona z czerwoną poświatą
-                  : 'w-3 bg-white/40 hover:scale-125 hover:bg-white/60',
+                  ? 'w-10 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]'
+                  : 'w-2.5 bg-white/30 hover:scale-110 hover:bg-white/60',
               )}
               aria-label={`Przejdź do newsa ${idx + 1}`}
             />
           ))}
         </div>
 
-        {/* Strzałki (po prawej) */}
         <div className="flex gap-2">
           <button
             onClick={prevSlide}
-            className="group hover:bg-club-green cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 text-gray-300 transition-all duration-300 hover:-translate-x-0.5 hover:text-white hover:shadow-[0_0_10px_#da1818]"
+            className="group cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 text-gray-400 transition-all duration-300 hover:bg-emerald-500 hover:text-white hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
             aria-label="Poprzedni"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft
+              size={20}
+              className="transition-transform group-hover:-translate-x-0.5"
+            />
           </button>
           <button
             onClick={nextSlide}
-            className="group hover:bg-club-green cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 text-gray-300 transition-all duration-300 hover:translate-x-0.5 hover:text-white hover:shadow-[0_0_10px_#da1818]"
+            className="group cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 text-gray-400 transition-all duration-300 hover:bg-emerald-500 hover:text-white hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
             aria-label="Następny"
           >
-            <ChevronRight size={18} />
+            <ChevronRight
+              size={20}
+              className="transition-transform group-hover:translate-x-0.5"
+            />
           </button>
         </div>
       </div>
