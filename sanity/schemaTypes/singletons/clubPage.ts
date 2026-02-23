@@ -8,6 +8,13 @@ export const clubPage = defineType({
   type: 'document',
   icon: Shield,
   fields: [
+    defineField({
+      name: 'isPageVisible',
+      title: 'Widoczność strony',
+      description: 'Zaznacz, aby ta strona była widoczna w nawigacji.',
+      type: 'boolean',
+      initialValue: true,
+    }),
     // === SEKCJA HERO ===
     defineField({
       name: 'heroHeading',

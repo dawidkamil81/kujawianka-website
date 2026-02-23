@@ -6,8 +6,18 @@ import { Player } from '@/types/index'
 import { ArrowUp, ArrowDown, ArrowUpDown, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// NOWOŚĆ: Definiujemy interfejs dla konfiguracji z bazy
+export interface StatsConfig {
+  showMatches?: boolean
+  showGoals?: boolean
+  showAssists?: boolean
+  showCleanSheets?: boolean
+  showCards?: boolean
+}
+
 interface SquadStatsTableProps {
   players: Player[]
+  statsConfig?: StatsConfig
 }
 
 type SortField =
@@ -62,8 +72,29 @@ const Th = ({
   )
 }
 
-export default function SquadStatsTable({ players }: SquadStatsTableProps) {
-  const [sortField, setSortField] = useState<SortField>('goals')
+export default function SquadStatsTable({
+  players,
+  statsConfig,
+}: SquadStatsTableProps) {
+  // BEZPIECZNA KONFIGURACJA (jeśli z bazy nic nie przyjdzie, zakładamy że widoczne)
+  const config = {
+    showMatches: statsConfig?.showMatches !== false,
+    showGoals: statsConfig?.showGoals !== false,
+    showAssists: statsConfig?.showAssists !== false,
+    showCleanSheets: statsConfig?.showCleanSheets !== false,
+    showCards: statsConfig?.showCards !== false,
+  }
+
+  // INTELIGENTNE DOMYŚLNE SORTOWANIE (jeśli wyłączymy gole, domyślnie sortujemy po czymś innym)
+  const defaultSortField: SortField = config.showGoals
+    ? 'goals'
+    : config.showMatches
+      ? 'matches'
+      : config.showAssists
+        ? 'assists'
+        : 'name'
+
+  const [sortField, setSortField] = useState<SortField>(defaultSortField)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
   const activePlayers = players.filter((p) => p.position !== 'Sztab')
@@ -131,10 +162,25 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
     onSort: handleSort,
   }
 
+  // DYNAMICZNA KLASA DLA GRIDA W MOBILE
+  const activeMobileStatsCount = [
+    config.showMatches,
+    config.showGoals,
+    config.showAssists,
+    config.showCards,
+  ].filter(Boolean).length
+
+  const gridClass =
+    activeMobileStatsCount === 4
+      ? 'grid-cols-4'
+      : activeMobileStatsCount === 3
+        ? 'grid-cols-3'
+        : activeMobileStatsCount === 2
+          ? 'grid-cols-2'
+          : 'grid-cols-1'
+
   return (
-    // ZMIANA: Margines górny zmniejszony do mt-2 aby przysunąć sekcję do przycisków
     <div className="mt-2 mb-12 w-full">
-      {/* ZMIANA: Zmniejszono margines dolny z mb-8 na mb-6 */}
       <div className="mb-6 flex flex-col justify-between gap-4 border-b border-white/10 pb-4 md:flex-row md:items-end">
         <div className="flex items-center gap-3">
           <h3 className="font-montserrat text-2xl font-black tracking-tight text-white uppercase md:text-3xl">
@@ -148,13 +194,21 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
             onChange={handleMobileSortChange}
             className="w-full rounded-lg border border-white/10 bg-[#121212] p-3 text-sm font-bold tracking-widest text-white uppercase focus:border-emerald-500 focus:outline-none"
           >
-            <option value="goals-desc">Najwięcej bramek</option>
-            <option value="assists-desc">Najwięcej asyst</option>
-            <option value="matches-desc">Najwięcej meczów</option>
-            {/* ZMIANA: Usunięto tekst "(Bramkarze)" */}
-            <option value="cleanSheets-desc">Czyste konta</option>
-            <option value="yellowCards-desc">Najwięcej kartek</option>
-            {/* ZMIANA: Usunięto sortowanie alfabetyczne */}
+            {config.showGoals && (
+              <option value="goals-desc">Najwięcej bramek</option>
+            )}
+            {config.showAssists && (
+              <option value="assists-desc">Najwięcej asyst</option>
+            )}
+            {config.showMatches && (
+              <option value="matches-desc">Najwięcej meczów</option>
+            )}
+            {config.showCleanSheets && (
+              <option value="cleanSheets-desc">Czyste konta</option>
+            )}
+            {config.showCards && (
+              <option value="yellowCards-desc">Najwięcej kartek</option>
+            )}
           </select>
         </div>
       </div>
@@ -204,63 +258,71 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
-                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
-                    Mecze
-                  </span>
-                  <span className="font-mono text-base font-bold text-white">
-                    {stats.matches}
-                  </span>
-                </div>
-                {/* Zostawiono w 100% zielone wyróżnienie dla goli na mobile zgodnie z prośbą */}
-                <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-900/10 py-2">
-                  <span className="mb-1 text-[9px] font-bold tracking-widest text-emerald-500 uppercase">
-                    Bramki
-                  </span>
-                  <span className="font-mono text-base font-bold text-emerald-400">
-                    {stats.goals}
-                  </span>
-                </div>
-                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
-                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
-                    Asysty
-                  </span>
-                  <span className="font-mono text-base font-bold text-white">
-                    {stats.assists > 0 ? stats.assists : '-'}
-                  </span>
-                </div>
-                <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
-                  <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
-                    Kartki
-                  </span>
-                  <div className="flex items-center gap-1">
-                    {stats.yellowCards === 0 && stats.redCards === 0 ? (
-                      <span className="font-mono text-base font-bold text-gray-600">
-                        -
-                      </span>
-                    ) : (
-                      <>
-                        {stats.yellowCards > 0 && (
-                          <div className="flex items-center gap-0.5">
-                            <span className="font-mono text-xs font-bold text-yellow-500">
-                              {stats.yellowCards}
-                            </span>
-                            <div className="h-3 w-2 rounded-[2px] bg-yellow-500" />
-                          </div>
-                        )}
-                        {stats.redCards > 0 && (
-                          <div className="ml-1 flex items-center gap-0.5">
-                            <span className="font-mono text-xs font-bold text-red-500">
-                              {stats.redCards}
-                            </span>
-                            <div className="h-3 w-2 rounded-[2px] bg-red-500" />
-                          </div>
-                        )}
-                      </>
-                    )}
+              {/* Siatka na mobile automatycznie dostosowująca ilość kolumn */}
+              <div className={`grid ${gridClass} gap-2`}>
+                {config.showMatches && (
+                  <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                    <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                      Mecze
+                    </span>
+                    <span className="font-mono text-base font-bold text-white">
+                      {stats.matches}
+                    </span>
                   </div>
-                </div>
+                )}
+                {config.showGoals && (
+                  <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-900/10 py-2">
+                    <span className="mb-1 text-[9px] font-bold tracking-widest text-emerald-500 uppercase">
+                      Bramki
+                    </span>
+                    <span className="font-mono text-base font-bold text-emerald-400">
+                      {stats.goals}
+                    </span>
+                  </div>
+                )}
+                {config.showAssists && (
+                  <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                    <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                      Asysty
+                    </span>
+                    <span className="font-mono text-base font-bold text-white">
+                      {stats.assists > 0 ? stats.assists : '-'}
+                    </span>
+                  </div>
+                )}
+                {config.showCards && (
+                  <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
+                    <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
+                      Kartki
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {stats.yellowCards === 0 && stats.redCards === 0 ? (
+                        <span className="font-mono text-base font-bold text-gray-600">
+                          -
+                        </span>
+                      ) : (
+                        <>
+                          {stats.yellowCards > 0 && (
+                            <div className="flex items-center gap-0.5">
+                              <span className="font-mono text-xs font-bold text-yellow-500">
+                                {stats.yellowCards}
+                              </span>
+                              <div className="h-3 w-2 rounded-[2px] bg-yellow-500" />
+                            </div>
+                          )}
+                          {stats.redCards > 0 && (
+                            <div className="ml-1 flex items-center gap-0.5">
+                              <span className="font-mono text-xs font-bold text-red-500">
+                                {stats.redCards}
+                              </span>
+                              <div className="h-3 w-2 rounded-[2px] bg-red-500" />
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )
@@ -277,38 +339,49 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                   Poz.
                 </th>
                 <Th field="name" label="Zawodnik" {...commonThProps} />
-                <Th
-                  field="matches"
-                  label="Mecze"
-                  alignRight
-                  {...commonThProps}
-                />
-                <Th
-                  field="goals"
-                  label="Bramki"
-                  alignRight
-                  {...commonThProps}
-                />
-                <Th
-                  field="assists"
-                  label="Asysty"
-                  alignRight
-                  {...commonThProps}
-                />
-                <Th
-                  field="cleanSheets"
-                  label="Czyste konta"
-                  mobileHidden
-                  alignRight
-                  {...commonThProps}
-                />
-                <Th
-                  field="yellowCards"
-                  label="Kartki"
-                  mobileHidden
-                  alignRight
-                  {...commonThProps}
-                />
+
+                {config.showMatches && (
+                  <Th
+                    field="matches"
+                    label="Mecze"
+                    alignRight
+                    {...commonThProps}
+                  />
+                )}
+                {config.showGoals && (
+                  <Th
+                    field="goals"
+                    label="Bramki"
+                    alignRight
+                    {...commonThProps}
+                  />
+                )}
+                {config.showAssists && (
+                  <Th
+                    field="assists"
+                    label="Asysty"
+                    alignRight
+                    {...commonThProps}
+                  />
+                )}
+                {config.showCleanSheets && (
+                  <Th
+                    field="cleanSheets"
+                    label="Czyste konta"
+                    mobileHidden
+                    alignRight
+                    {...commonThProps}
+                  />
+                )}
+                {config.showCards && (
+                  <Th
+                    field="yellowCards"
+                    label="Kartki"
+                    mobileHidden
+                    alignRight
+                    {...commonThProps}
+                  />
+                )}
               </tr>
             </thead>
 
@@ -359,57 +432,65 @@ export default function SquadStatsTable({ players }: SquadStatsTableProps) {
                       </div>
                     </td>
 
-                    <td className="px-4 py-3 text-right font-mono text-sm text-gray-400">
-                      {stats.matches}
-                    </td>
+                    {config.showMatches && (
+                      <td className="px-4 py-3 text-right font-mono text-sm text-gray-400">
+                        {stats.matches}
+                      </td>
+                    )}
 
-                    <td className="px-4 py-3 text-right">
-                      {/* ZMIANA: Bramki w tabeli powróciły do text-club-green */}
-                      <span
-                        className={`font-mono text-sm font-bold ${stats.goals > 0 ? 'text-club-green' : 'text-gray-600'}`}
-                      >
-                        {stats.goals}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-3 text-right font-mono text-sm text-gray-400">
-                      {stats.assists > 0 ? stats.assists : '-'}
-                    </td>
-
-                    <td className="hidden px-4 py-3 text-right font-mono text-sm text-gray-400 md:table-cell">
-                      {player.position === 'Bramkarz' && stats.cleanSheets ? (
-                        /* ZMIANA: Czyste konta otrzymały wyróżniający text-emerald-500 */
-                        <span className="font-bold text-emerald-500">
-                          {stats.cleanSheets}
+                    {config.showGoals && (
+                      <td className="px-4 py-3 text-right">
+                        <span
+                          className={`font-mono text-sm font-bold ${stats.goals > 0 ? 'text-club-green' : 'text-gray-600'}`}
+                        >
+                          {stats.goals}
                         </span>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
+                      </td>
+                    )}
 
-                    <td className="hidden px-4 py-3 text-right font-mono text-sm md:table-cell">
-                      <div className="flex items-center justify-end gap-2">
-                        {stats.yellowCards > 0 && (
-                          <div className="flex items-center gap-1">
-                            <span className="font-bold text-yellow-500">
-                              {stats.yellowCards}
-                            </span>
-                            <div className="h-3 w-2 rounded-[1px] bg-yellow-500" />
-                          </div>
+                    {config.showAssists && (
+                      <td className="px-4 py-3 text-right font-mono text-sm text-gray-400">
+                        {stats.assists > 0 ? stats.assists : '-'}
+                      </td>
+                    )}
+
+                    {config.showCleanSheets && (
+                      <td className="hidden px-4 py-3 text-right font-mono text-sm text-gray-400 md:table-cell">
+                        {player.position === 'Bramkarz' && stats.cleanSheets ? (
+                          <span className="font-bold text-emerald-500">
+                            {stats.cleanSheets}
+                          </span>
+                        ) : (
+                          '-'
                         )}
-                        {stats.redCards > 0 && (
-                          <div className="ml-1 flex items-center gap-1">
-                            <span className="font-bold text-red-500">
-                              {stats.redCards}
-                            </span>
-                            <div className="h-3 w-2 rounded-[1px] bg-red-500" />
-                          </div>
-                        )}
-                        {stats.yellowCards === 0 && stats.redCards === 0 && (
-                          <span className="text-gray-700">-</span>
-                        )}
-                      </div>
-                    </td>
+                      </td>
+                    )}
+
+                    {config.showCards && (
+                      <td className="hidden px-4 py-3 text-right font-mono text-sm md:table-cell">
+                        <div className="flex items-center justify-end gap-2">
+                          {stats.yellowCards > 0 && (
+                            <div className="flex items-center gap-1">
+                              <span className="font-bold text-yellow-500">
+                                {stats.yellowCards}
+                              </span>
+                              <div className="h-3 w-2 rounded-[1px] bg-yellow-500" />
+                            </div>
+                          )}
+                          {stats.redCards > 0 && (
+                            <div className="ml-1 flex items-center gap-1">
+                              <span className="font-bold text-red-500">
+                                {stats.redCards}
+                              </span>
+                              <div className="h-3 w-2 rounded-[1px] bg-red-500" />
+                            </div>
+                          )}
+                          {stats.yellowCards === 0 && stats.redCards === 0 && (
+                            <span className="text-gray-700">-</span>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 )
               })}

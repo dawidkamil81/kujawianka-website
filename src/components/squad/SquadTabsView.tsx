@@ -3,11 +3,16 @@
 import { useState } from 'react'
 import { Player } from '@/types'
 import PlayerCard from '@/components/common/PlayerCard'
-import SquadStatsTable from '@/components/squad/SquadStatsTable'
+// ZMIANA 1: Importujemy interfejs StatsConfig z tabeli
+import SquadStatsTable, {
+  StatsConfig,
+} from '@/components/squad/SquadStatsTable'
 import { Users, BarChart3 } from 'lucide-react'
 
 interface SquadTabsViewProps {
   players: Player[]
+  // ZMIANA 2: Dodajemy opcjonalny prop z konfiguracją
+  statsConfig?: StatsConfig
 }
 
 // Helper do grupowania (bez zmian)
@@ -21,10 +26,14 @@ function groupPlayersByPosition(players: Player[]) {
   }
 }
 
-export default function SquadTabsView({ players }: SquadTabsViewProps) {
+// ZMIANA 3: Odbieramy statsConfig w argumencie komponentu
+export default function SquadTabsView({
+  players,
+  statsConfig,
+}: SquadTabsViewProps) {
   const [activeTab, setActiveTab] = useState<'squad' | 'stats'>('squad')
 
-  // ZMIANA: Sprawdzamy czy są zawodnicy. Jeśli nie ma - nic nie renderujemy (zwracamy null).
+  // Sprawdzamy czy są zawodnicy. Jeśli nie ma - nic nie renderujemy (zwracamy null).
   const hasAnyMembers = players && players.length > 0
   if (!hasAnyMembers) return null
 
@@ -103,7 +112,8 @@ export default function SquadTabsView({ players }: SquadTabsViewProps) {
         {activeTab === 'stats' && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             {players.some((p) => p.position !== 'Sztab') ? (
-              <SquadStatsTable players={players} />
+              // ZMIANA 4: Przekazujemy statsConfig do samej tabeli ze statystykami
+              <SquadStatsTable players={players} statsConfig={statsConfig} />
             ) : (
               <div className="rounded-xl border border-white/5 bg-[#121212] py-20 text-center text-gray-500">
                 Brak danych statystycznych dla tej grupy.

@@ -71,3 +71,12 @@ export const DOWNLOADS_QUERY = defineQuery(`
     publishedAt
   }
 `)
+
+export const PAGE_VISIBILITY_QUERY = `*[_type == "siteSettings"][0]{
+  "klub": coalesce(*[_type == "clubPage"][0].isPageVisible, true),
+  "oferta": coalesce(*[_type == "offerPage"][0].isPageVisible, true),
+  "sponsorzy": coalesce(*[_type == "sponsorsPage"][0].isPageVisible, true),
+  "klubowicze": coalesce(*[_type == "clubMembersPage"][0].isPageVisible, true),
+  "klub100": coalesce(*[_type == "club100Page"][0].isPageVisible, true),
+  "wesprzyj": coalesce(*[_type == "donatePage"][0].isPageVisible, true)
+}`
