@@ -5,7 +5,7 @@ import { SanityLive, sanityFetch } from '@/sanity/lib/live'
 import {
   SQUADS_NAVIGATION_QUERY,
   SETTINGS_QUERY,
-  PAGE_VISIBILITY_QUERY, // <--- 1. Importujemy nowe zapytanie
+  PAGE_VISIBILITY_QUERY,
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 
@@ -23,9 +23,22 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${title}`,
     },
     description: description,
+
+    // --- POPRAWIONY OPEN GRAPH ---
     openGraph: {
-      images: settings?.seo?.ogImage ? [settings.seo.ogImage] : [],
+      title: title,
+      description: description,
+      // Używamy nowej zmiennej ogImageUrl i odpowiedniego formatu Next.js
+      images: settings?.ogImageUrl ? [{ url: settings.ogImageUrl }] : [],
     },
+
+    icons: settings?.faviconUrl
+      ? {
+          icon: settings.faviconUrl,
+          shortcut: settings.faviconUrl,
+          apple: settings.faviconUrl,
+        }
+      : undefined,
   }
 }
 

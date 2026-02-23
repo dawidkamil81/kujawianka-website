@@ -37,6 +37,8 @@ export const PAGE_BUILDER_FIELDS = defineQuery(`
 export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0] {
     title, logo, contact, seo,
+    "faviconUrl": favicon.asset->url,
+    "ogImageUrl": seo.ogImage.asset->url, 
     socialLinks {
       facebook { url, isVisible }, instagram { url, isVisible },
       youtube { url, isVisible }, tiktok { url, isVisible }, twitter { url, isVisible }
