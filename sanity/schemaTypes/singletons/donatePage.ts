@@ -8,6 +8,13 @@ export const donatePage = defineType({
   type: 'document',
   icon: Heart,
   fields: [
+    defineField({
+      name: 'isPageVisible',
+      title: 'Widoczność strony',
+      description: 'Zaznacz, aby ta strona była widoczna w nawigacji.',
+      type: 'boolean',
+      initialValue: true,
+    }),
     // === 1. HERO SECTION ===
     defineField({
       name: 'heroHeading',

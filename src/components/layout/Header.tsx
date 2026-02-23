@@ -2,31 +2,39 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
 import type { SiteSettings } from '@/types'
+
+// NOWOŚĆ: Typ dla naszych flag widoczności stron
+export interface PageVisibility {
+  klub?: boolean
+  oferta?: boolean
+  sponsorzy?: boolean
+  klubowicze?: boolean
+  klub100?: boolean
+  wesprzyj?: boolean
+}
 
 interface HeaderProps {
   settings?: SiteSettings | null
   // Dodajemy opcjonalne pole 'hasTable' do typu propsów
   squads?: { name: string; slug: string; hasTable?: boolean }[]
+  pageVisibility?: PageVisibility // NOWOŚĆ: przekazujemy flagi do headera
 }
 
-export default function Header({ settings, squads }: HeaderProps) {
+export default function Header({
+  settings,
+  squads,
+  pageVisibility = {},
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
-  const router = useRouter()
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      router.refresh()
-    }, 60000)
-
-    return () => clearInterval(interval)
-  }, [router])
+  // USUNIĘTO: setInterval z router.refresh(), by uniknąć migotania i obciążania strony.
 
   const logoSrc = settings?.logo ? urlFor(settings.logo).url() : '/logo.png'
   const siteTitle = settings?.title || 'Kujawianka Izbica Kujawska'
@@ -82,6 +90,19 @@ export default function Header({ settings, squads }: HeaderProps) {
   // Filtrujemy drużyny, które mają przypisaną tabelę
   const squadsWithTable = squads?.filter((s) => s.hasTable) || []
 
+  // --- LOGIKA WIDOCZNOŚCI ---
+  // Domyślnie na true, jeżeli w CMS ktoś zapomni odznaczyć
+  const showKlub = pageVisibility.klub !== false
+  const showOferta = pageVisibility.oferta !== false
+  const showSponsorzy = pageVisibility.sponsorzy !== false
+  const showKlubowicze = pageVisibility.klubowicze !== false
+  const showKlub100 = pageVisibility.klub100 !== false
+  const showWesprzyj = pageVisibility.wesprzyj !== false
+
+  // Menu biznesowe pokazuje się, jeśli JAKAŚ jego podstrona jest widoczna
+  const showBiznes =
+    showOferta || showSponsorzy || showKlubowicze || showKlub100
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] text-white shadow-lg backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
@@ -127,33 +148,33 @@ export default function Header({ settings, squads }: HeaderProps) {
           </Link>
 
           {/* --- DROPDOWN: DRUŻYNY (Wszystkie) --- */}
-          <div
-            className="group relative w-full text-center lg:w-auto"
-            onMouseEnter={() =>
-              window.innerWidth >= 1024 && setOpenDropdown('teams')
-            }
-            onMouseLeave={() =>
-              window.innerWidth >= 1024 && setOpenDropdown(null)
-            }
-          >
-            <button
-              className={getVisualClasses('/druzyny')}
-              onClick={() => toggleDropdown('teams')}
-            >
-              Drużyny
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-200 ${openDropdown === 'teams' ? 'rotate-180' : ''}`}
-              />
-            </button>
-
+          {squads && squads.length > 0 && (
             <div
-              className={getDropdownWrapperClasses(openDropdown === 'teams')}
+              className="group relative w-full text-center lg:w-auto"
+              onMouseEnter={() =>
+                window.innerWidth >= 1024 && setOpenDropdown('teams')
+              }
+              onMouseLeave={() =>
+                window.innerWidth >= 1024 && setOpenDropdown(null)
+              }
             >
-              <div className="overflow-hidden">
-                <div className="scrollbar-custom max-h-80 overflow-y-auto py-2">
-                  {squads && squads.length > 0 ? (
-                    squads.map((squad) => (
+              <button
+                className={getVisualClasses('/druzyny')}
+                onClick={() => toggleDropdown('teams')}
+              >
+                Drużyny
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${openDropdown === 'teams' ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              <div
+                className={getDropdownWrapperClasses(openDropdown === 'teams')}
+              >
+                <div className="overflow-hidden">
+                  <div className="scrollbar-custom max-h-80 overflow-y-auto py-2">
+                    {squads.map((squad) => (
                       <Link
                         key={squad.slug}
                         href={`/druzyny/${squad.slug}`}
@@ -162,133 +183,139 @@ export default function Header({ settings, squads }: HeaderProps) {
                       >
                         {squad.name}
                       </Link>
-                    ))
-                  ) : (
-                    <span className="block px-4 py-3 text-xs text-white/30">
-                      Brak drużyn
-                    </span>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* --- DROPDOWN: WYNIKI (Tylko z hasTable: true) --- */}
-          <div
-            className="group relative w-full text-center lg:w-auto"
-            onMouseEnter={() =>
-              window.innerWidth >= 1024 && setOpenDropdown('results')
-            }
-            onMouseLeave={() =>
-              window.innerWidth >= 1024 && setOpenDropdown(null)
-            }
-          >
-            <button
-              className={getVisualClasses('/wyniki')}
-              onClick={() => toggleDropdown('results')}
-            >
-              Wyniki
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-200 ${openDropdown === 'results' ? 'rotate-180' : ''}`}
-              />
-            </button>
-
+          {squadsWithTable.length > 0 && (
             <div
-              className={getDropdownWrapperClasses(openDropdown === 'results')}
+              className="group relative w-full text-center lg:w-auto"
+              onMouseEnter={() =>
+                window.innerWidth >= 1024 && setOpenDropdown('results')
+              }
+              onMouseLeave={() =>
+                window.innerWidth >= 1024 && setOpenDropdown(null)
+              }
             >
-              <div className="overflow-hidden">
-                <div className="scrollbar-custom max-h-80 overflow-y-auto py-2">
-                  {squadsWithTable.length > 0 ? (
-                    squadsWithTable.map((squad) => (
+              <button
+                className={getVisualClasses('/wyniki')}
+                onClick={() => toggleDropdown('results')}
+              >
+                Wyniki
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${openDropdown === 'results' ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              <div
+                className={getDropdownWrapperClasses(
+                  openDropdown === 'results',
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="scrollbar-custom max-h-80 overflow-y-auto py-2">
+                    {squadsWithTable.map((squad) => (
                       <Link
                         key={squad.slug}
-                        // Tutaj używamy już dynamicznej ścieżki dla wszystkich
                         href={`/wyniki/${squad.slug}`}
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
                         {squad.name}
                       </Link>
-                    ))
-                  ) : (
-                    <span className="block px-4 py-3 text-xs text-white/30">
-                      Brak wyników
-                    </span>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <Link
-            href="/klub"
-            className={getVisualClasses('/klub')}
-            onClick={closeMenu}
-          >
-            Klub
-          </Link>
+          {/* O KLUBIE */}
+          {showKlub && (
+            <Link
+              href="/klub"
+              className={getVisualClasses('/klub')}
+              onClick={closeMenu}
+            >
+              Klub
+            </Link>
+          )}
 
           {/* Dropdown: Biznes */}
-          <div
-            className="group relative w-full text-center lg:w-auto"
-            onMouseEnter={() =>
-              window.innerWidth >= 1024 && setOpenDropdown('biznes')
-            }
-            onMouseLeave={() =>
-              window.innerWidth >= 1024 && setOpenDropdown(null)
-            }
-          >
-            <button
-              className={getVisualClasses('/biznes')}
-              onClick={() => toggleDropdown('biznes')}
-            >
-              Biznes
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-200 ${openDropdown === 'biznes' ? 'rotate-180' : ''}`}
-              />
-            </button>
+          {showBiznes && (
             <div
-              className={getDropdownWrapperClasses(
-                openDropdown === 'biznes',
-                'right',
-              )}
+              className="group relative w-full text-center lg:w-auto"
+              onMouseEnter={() =>
+                window.innerWidth >= 1024 && setOpenDropdown('biznes')
+              }
+              onMouseLeave={() =>
+                window.innerWidth >= 1024 && setOpenDropdown(null)
+              }
             >
-              <div className="overflow-hidden">
-                <div className="scrollbar-custom max-h-60 overflow-y-auto py-2">
-                  <Link
-                    href="/biznes/oferta"
-                    className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={closeMenu}
-                  >
-                    Współpraca
-                  </Link>
-                  <Link
-                    href="/biznes/sponsorzy"
-                    className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={closeMenu}
-                  >
-                    Sponsorzy
-                  </Link>
-                  <Link
-                    href="/biznes/klubowicze"
-                    className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={closeMenu}
-                  >
-                    Klubowicze
-                  </Link>
-                  <Link
-                    href="/biznes/klub-100"
-                    className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={closeMenu}
-                  >
-                    Klub 100
-                  </Link>
+              <button
+                className={getVisualClasses('/biznes')}
+                onClick={() => toggleDropdown('biznes')}
+              >
+                Biznes
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${openDropdown === 'biznes' ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={getDropdownWrapperClasses(
+                  openDropdown === 'biznes',
+                  'right',
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="scrollbar-custom max-h-60 overflow-y-auto py-2">
+                    {showOferta && (
+                      <Link
+                        href="/biznes/oferta"
+                        className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        onClick={closeMenu}
+                      >
+                        Współpraca
+                      </Link>
+                    )}
+                    {showSponsorzy && (
+                      <Link
+                        href="/biznes/sponsorzy"
+                        className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        onClick={closeMenu}
+                      >
+                        Sponsorzy
+                      </Link>
+                    )}
+                    {showKlubowicze && (
+                      <Link
+                        href="/biznes/klubowicze"
+                        className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        onClick={closeMenu}
+                      >
+                        Klubowicze
+                      </Link>
+                    )}
+                    {showKlub100 && (
+                      <Link
+                        href="/biznes/klub-100"
+                        className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        onClick={closeMenu}
+                      >
+                        Klub 100
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           <Link
             href="/do-pobrania"
@@ -297,13 +324,16 @@ export default function Header({ settings, squads }: HeaderProps) {
           >
             Do pobrania
           </Link>
-          <Link
-            href="/wesprzyj"
-            className={getVisualClasses('/wesprzyj')}
-            onClick={closeMenu}
-          >
-            Przekaż 1.5%
-          </Link>
+
+          {showWesprzyj && (
+            <Link
+              href="/wesprzyj"
+              className={getVisualClasses('/wesprzyj')}
+              onClick={closeMenu}
+            >
+              Przekaż 1.5%
+            </Link>
+          )}
         </nav>
       </div>
     </header>

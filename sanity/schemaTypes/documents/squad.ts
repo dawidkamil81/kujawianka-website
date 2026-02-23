@@ -15,6 +15,14 @@ export const squad = defineType({
         'Wypełnij te pola, jeśli chcesz wyświetlić sekcję kontaktową i informacje o treningach na stronie tej drużyny. (wymagane obie sekcje)',
       options: { collapsible: true, collapsed: false },
     },
+    // --- NOWA GRUPA: KONFIGURACJA ---
+    {
+      name: 'configSection',
+      title: 'Ustawienia Widoczności',
+      description:
+        'Zarządzaj tym, co ma być widoczne na stronie tej konkretnej drużyny.',
+      options: { collapsible: true, collapsed: false }, // Możesz zmienić na true, jeśli wolisz domyślnie zwinięte
+    },
   ],
   fields: [
     // --- PODSTAWOWE DANE ---
@@ -71,6 +79,50 @@ export const squad = defineType({
         'Tutaj wpisz godziny treningów, informacje o naborze, wymagane dokumenty itp.',
       icon: CalendarRange,
     }),
+
+    // --- NOWOŚĆ: KONFIGURACJA STATYSTYK ---
+    defineField({
+      name: 'statsConfig',
+      title: 'Widoczność Statystyk Zawodników',
+      description:
+        'Odznacz statystyki, których nie chcesz pokazywać w tabeli dla tej drużyny (np. wyłącz kartki dla roczników dziecięcych).',
+      type: 'object',
+      fieldset: 'configSection',
+      fields: [
+        defineField({
+          name: 'showMatches',
+          title: 'Pokazuj Mecze',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'showGoals',
+          title: 'Pokazuj Bramki',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'showAssists',
+          title: 'Pokazuj Asysty',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'showCleanSheets',
+          title: 'Pokazuj Czyste Konta (Bramkarze)',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'showCards',
+          title: 'Pokazuj Kartki',
+          type: 'boolean',
+          initialValue: true,
+        }),
+      ],
+    }),
+
+    // --- UKRYTE DANE SYSTEMOWE ---
     defineField({
       name: 'lastLineup',
       title: 'Ostatni Skład (Pamięć Systemowa)',

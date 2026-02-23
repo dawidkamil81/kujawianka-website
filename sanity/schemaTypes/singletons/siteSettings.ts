@@ -43,6 +43,13 @@ export const siteSettings = defineType({
       options: { hotspot: true },
       description: 'Główne logo wyświetlane w nagłówku i stopce.',
     }),
+    defineField({
+      name: 'favicon',
+      title: 'Logo w przeglądarce',
+      type: 'image',
+      description:
+        'Mała ikonka widoczna na karcie w przeglądarce. Zalecany kwadratowy obrazek (np. 512x512px) w formacie PNG.',
+    }),
 
     // --- SOCIAL MEDIA (ZMODYFIKOWANE) ---
     defineField({
@@ -129,6 +136,7 @@ export const siteSettings = defineType({
           validation: (rule) =>
             rule.max(160).warning('Opis powinien mieć max 160 znaków.'),
         }),
+
         defineField({
           name: 'ogImage',
           title: 'Obrazek udostępniania (Social Share)',

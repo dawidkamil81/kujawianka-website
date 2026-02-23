@@ -25,7 +25,19 @@ export const SQUADS_NAVIGATION_QUERY = defineQuery(`
 
 export const SQUAD_PAGE_QUERY = defineQuery(`
   *[_type == "squad" && slug.current == $slug][0] {
-    name, "slug": slug.current, coachName, coachPhone, coachEmail, description,
+    name, 
+    "slug": slug.current, 
+    coachName, 
+    coachPhone, 
+    coachEmail, 
+    description,
+    "statsConfig": coalesce(statsConfig, {
+      "showMatches": true,
+      "showGoals": true,
+      "showAssists": true,
+      "showCleanSheets": true,
+      "showCards": true
+    }),
     "players": *[_type == "player" && references(^._id)] | order(number asc) {
        _id, name, surname, number, position, "staffRole": staffRole-> name, "imageUrl": image.asset->url,
        "stats": {

@@ -27,9 +27,10 @@ export default function DonateView({ data }: DonateViewProps) {
   const steps = data?.steps || []
 
   return (
-    <main className="flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
-      {/* TŁO DEKORACYJNE */}
-      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
+    // ZMIANA 1: Dodano klasę 'relative' do znacznika <main>
+    <main className="relative flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
+      {/* Ozdobny particle */}
+      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.03),transparent_30%)]" />
 
       {/* ZACHOWANY TWÓJ ORYGINALNY KONTENER */}
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-20 px-4 py-12 md:py-20">
@@ -37,6 +38,7 @@ export default function DonateView({ data }: DonateViewProps) {
         <section className="space-y-12">
           {/* Zunifikowany nagłówek. Zastosowano mb-16 aby idealnie oddać Twój design */}
           <PageHero
+            animated
             badgeText="Wesprzyj Nasz Klub"
             title={data?.heroHeading || 'Gramy Razem'}
             className="mb-16"

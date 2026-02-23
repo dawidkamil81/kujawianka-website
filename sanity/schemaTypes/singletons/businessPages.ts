@@ -3,6 +3,13 @@ import { defineField, defineType } from 'sanity'
 // Wspólne pola (nagłówek, opis)
 const commonFields = [
   defineField({
+    name: 'isPageVisible',
+    title: 'Widoczność strony',
+    description: 'Zaznacz, aby ta strona była widoczna w nawigacji.',
+    type: 'boolean',
+    initialValue: true,
+  }),
+  defineField({
     name: 'title',
     title: 'Tytuł strony',
     type: 'string',
