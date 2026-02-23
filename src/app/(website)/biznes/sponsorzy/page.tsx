@@ -1,5 +1,8 @@
 import { sanityFetch } from '@/sanity/lib/live'
-import { SPONSORS_PAGE_QUERY } from '@/sanity/lib/queries'
+import {
+  SPONSORS_PAGE_QUERY,
+  ALL_SUPPORTERS_COUNT_QUERY, // <--- DODANY IMPORT
+} from '@/sanity/lib/queries'
 import SponsorsView from '@/components/sponsors/SponsorsView'
 
 export const metadata = {
@@ -8,6 +11,12 @@ export const metadata = {
 }
 
 export default async function SponsorsPage() {
+  // 1. Pobieramy łączną liczbę wszystkich wspierających z CMS
+  const { data: count } = await sanityFetch({
+    query: ALL_SUPPORTERS_COUNT_QUERY,
+  })
+
+  // 2. Pobieramy dane strony Sponsorów
   const { data } = await sanityFetch({ query: SPONSORS_PAGE_QUERY })
 
   if (!data) {
@@ -23,7 +32,11 @@ export default async function SponsorsPage() {
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
 
       <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
-        <SponsorsView sponsors={data.sponsors} pageData={data.pageData} />
+        <SponsorsView
+          sponsors={data.sponsors || []} // Zależnie od tego jak zwraca to Twoje zapytanie
+          pageData={data.pageData || data}
+          totalSupportersCount={count || 0} // <--- PRZEKAZUJEMY NOWĄ ZMIENNĄ
+        />
       </div>
     </main>
   )

@@ -28,8 +28,10 @@ export const PAGE_BUILDER_FIELDS = defineQuery(`
         heading, description, columns,
         images[] { _key, asset->, alt }
     },
-    _type == "contactSection" => {
-        title, description
+    _type == "contactSection" => { 
+        title, 
+        description,
+        "contact": *[_type == "siteSettings"][0].contact 
     }
   }
 `)
@@ -55,14 +57,18 @@ export const CLUB_PAGE_QUERY = defineQuery(`
     stadiumDescription, "stadiumImageUrl": stadiumImage.asset->url, stadiumAddress, stadiumCapacity, stadiumBuilt,
     clubAuthorities[] { name, group, role, isVisible },
     
-    // POBIERANIE SEKCJI DYNAMICZNYCH
+    
     contentBuilder[] {
       _type, _key, heading, title, description, content, isCentered, layout, columns, eyebrow, design,
       _type == "imageTextSection" => { image { asset-> } },
       _type == "featuresSection" => { items[] { title, description, iconName } },
       _type == "tableSection" => { heading, layout, content, tableRows[] { _key, isHeader, cells } },
       _type == "gallerySection" => { heading, description, columns, images[] { _key, asset->, alt } },
-      _type == "contactSection" => { title, description }
+       _type == "contactSection" => { 
+        title, 
+        description,
+        "contact": *[_type == "siteSettings"][0].contact 
+    }
     }
   }
 `)
@@ -80,7 +86,11 @@ export const DONATE_PAGE_QUERY = defineQuery(`
       _type == "featuresSection" => { items[] { title, description, iconName } },
       _type == "tableSection" => { heading, layout, content, tableRows[] { _key, isHeader, cells } },
       _type == "gallerySection" => { heading, description, columns, images[] { _key, asset->, alt } },
-      _type == "contactSection" => { title, description }
+       _type == "contactSection" => { 
+        title, 
+        description,
+        "contact": *[_type == "siteSettings"][0].contact 
+    }
     }
   }
 `)
@@ -102,3 +112,12 @@ export const PAGE_VISIBILITY_QUERY = `*[_type == "siteSettings"][0]{
   "klub100": coalesce(*[_type == "club100Page"][0].isPageVisible, true),
   "wesprzyj": coalesce(*[_type == "donatePage"][0].isPageVisible, true)
 }`
+
+export const HOME_PAGE_QUERY = defineQuery(`
+  *[_type == "homePage"][0] {
+    heroOvertitle,
+    heroTitle,
+    heroDescription,
+    "heroImageUrl": heroImage.asset->url
+  }
+`)

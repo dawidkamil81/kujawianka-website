@@ -11,6 +11,11 @@ interface SanitySection {
   _key: string
   title?: string
   description?: string
+  contact?: {
+    address?: string
+    email?: string
+    phone?: string
+  }
   [key: string]: unknown
 }
 
@@ -43,6 +48,7 @@ export default function SectionsRenderer({ sections }: SectionsRendererProps) {
               key={section._key}
               title={section.title}
               description={section.description}
+              contact={section.contact}
             />
           )
         }
