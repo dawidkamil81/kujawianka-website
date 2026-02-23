@@ -144,7 +144,7 @@ export default function PlayerCard({ player, statsConfig }: PlayerCardProps) {
           </div>
 
           {/* STATYSTYKI WIDOCZNE WARUNKOWO */}
-          <div className="flex flex-1 flex-col gap-1 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent flex flex-1 flex-col gap-1 overflow-y-auto md:[-ms-overflow-style:none] md:[scrollbar-width:none] md:[&::-webkit-scrollbar]:hidden">
             {config.showMatches && (
               <StatRow label="Mecze" value={stats.matches || 0} />
             )}
