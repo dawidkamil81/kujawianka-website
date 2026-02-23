@@ -51,6 +51,7 @@ export type SponsorsPageData = {
     label: string
     icon: 'handshake' | 'users' | 'trending' | 'calendar' | 'trophy' | 'star'
   }[]
+  contentBuilder?: Record<string, unknown>[] // <--- POPRAWIONE
   ctaTitle?: string
   ctaDescription?: string
 }
@@ -101,6 +102,7 @@ export type OfferPageData = {
     label: string
     iconName: string
   }[]
+  contentBuilder?: Record<string, unknown>[] // <--- POPRAWIONE
   ctaTitle?: string
   ctaDescription?: string
 }
@@ -114,6 +116,7 @@ export type PartnersPageData = {
     description: string
     iconName: string
   }[]
+  contentBuilder?: Record<string, unknown>[] // <--- POPRAWIONE
   ctaTitle?: string
   ctaDescription?: string
 }
@@ -126,8 +129,9 @@ export type Club100PageData = {
     description: string
     iconName: string
   }[]
-  aboutTitle?: string // <--- NOWE
-  aboutContent?: string // <--- NOWE
+  aboutTitle?: string
+  aboutContent?: string
+  contentBuilder?: Record<string, unknown>[] // <--- POPRAWIONE
   ctaTitle?: string
   ctaDescription?: string
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Sponsor, SponsorsPageData } from '@/types/index'
-import ContactSection from '@/components/sections/ContactSection'
+import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import SponsorsStats from './SponsorsStats'
 import MainSponsors from './MainSponsors'
 import StrategicSponsors from './StrategicSponsors'
@@ -67,13 +67,13 @@ export default function SponsorsView({
 
       <OtherSponsors groups={otherGroups} />
 
-      <ContactSection
-        title={pageData.ctaTitle || 'Dołącz do Rodziny Kujawianki'}
-        description={
-          pageData.ctaDescription ||
-          'Budujmy razem silną markę i wspierajmy lokalny sport.'
-        }
-      />
+      {/* Sekcje Dynamiczne z CMS */}
+      {pageData?.contentBuilder && pageData.contentBuilder.length > 0 && (
+        <div>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <SectionsRenderer sections={pageData.contentBuilder as any[]} />
+        </div>
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { defineField, defineType } from 'sanity'
 
-// Wspólne pola (nagłówek, opis)
+// Wspólne pola (nagłówek, opis, widoczność i PAGE BUILDER)
 const commonFields = [
   defineField({
     name: 'isPageVisible',
@@ -21,9 +21,15 @@ const commonFields = [
     type: 'text',
     rows: 3,
   }),
+  // --- NOWOŚĆ: DYNAMICZNE SEKCJE DLA KAŻDEJ STRONY BIZNESOWEJ ---
+  defineField({
+    name: 'contentBuilder',
+    title: 'Dynamiczne Sekcje Strony',
+    type: 'pageBuilder',
+  }),
 ]
 
-// === 1. STRONA OFERTY (Zostawiamy tę wersję, bo działa poprawnie z frontendem) ===
+// === 1. STRONA OFERTY ===
 export const offerPage = defineType({
   name: 'offerPage',
   title: 'Strona: Oferta',
@@ -126,26 +132,10 @@ export const offerPage = defineType({
         },
       ],
     }),
-    defineField({
-      name: 'contentBuilder',
-      title: 'Dynamiczne Sekcje Strony',
-      type: 'pageBuilder', // <--- To musi tu być
-    }),
-
-    defineField({
-      name: 'ctaTitle',
-      title: 'Nagłówek sekcji kontaktowej',
-      type: 'string',
-    }),
-    defineField({
-      name: 'ctaDescription',
-      title: 'Opis sekcji kontaktowej',
-      type: 'text',
-    }),
   ],
 })
 
-// === 2. STRONA SPONSORÓW (Przywrócona pełna wersja z Twojego kodu) ===
+// === 2. STRONA SPONSORÓW ===
 export const sponsorsPage = defineType({
   name: 'sponsorsPage',
   title: 'Strona: Sponsorzy',
@@ -173,7 +163,7 @@ export const sponsorsPage = defineType({
               type: 'string',
             }),
             defineField({
-              name: 'icon', // Tutaj w Sponsorach używamy pola 'icon', w ofercie 'iconName' (zgodnie z historią zmian)
+              name: 'icon',
               title: 'Ikona',
               type: 'string',
               options: {
@@ -200,22 +190,6 @@ export const sponsorsPage = defineType({
       ],
       validation: (rule) =>
         rule.max(4).warning('Zalecane maksymalnie 4 kafelki'),
-    }),
-
-    // SEKCJA CTA (DOLNA)
-    defineField({
-      name: 'ctaTitle',
-      title: 'Tytuł sekcji kontaktowej',
-      type: 'string',
-      initialValue: 'Dołącz do Rodziny Kujawianki',
-    }),
-    defineField({
-      name: 'ctaDescription',
-      title: 'Opis sekcji kontaktowej',
-      type: 'text',
-      rows: 2,
-      initialValue:
-        'Budujmy razem silną markę i wspierajmy lokalny sport. Sprawdź naszą ofertę sponsorską.',
     }),
   ],
 })
@@ -267,18 +241,6 @@ export const partnersPage = defineType({
         },
       ],
     }),
-
-    // CTA
-    defineField({
-      name: 'ctaTitle',
-      title: 'Nagłówek sekcji kontaktowej',
-      type: 'string',
-    }),
-    defineField({
-      name: 'ctaDescription',
-      title: 'Opis sekcji kontaktowej',
-      type: 'text',
-    }),
   ],
 })
 
@@ -323,7 +285,6 @@ export const club100Page = defineType({
           ],
         },
       ],
-      // Usunięto validation: rule => rule.max(3), możesz dodać ile chcesz
     }),
 
     // 2. NOWOŚĆ: Sekcja "Więcej niż wsparcie" (Środkowa)
@@ -340,18 +301,6 @@ export const club100Page = defineType({
       rows: 6,
       initialValue:
         'Klub 100 to inicjatywa skierowana do osób prywatnych i lokalnych przedsiębiorców...',
-    }),
-
-    // 3. CTA
-    defineField({
-      name: 'ctaTitle',
-      title: 'Nagłówek sekcji kontaktowej',
-      type: 'string',
-    }),
-    defineField({
-      name: 'ctaDescription',
-      title: 'Opis sekcji kontaktowej',
-      type: 'text',
     }),
   ],
 })

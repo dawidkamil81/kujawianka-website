@@ -17,6 +17,8 @@ export default function Club100Benefits({
 }: {
   pageData?: Club100PageData
 }) {
+  const pageTitle = pageData?.title || 'Klubu'
+
   const defaultBenefits = [
     {
       iconName: 'crown',
@@ -27,8 +29,8 @@ export default function Club100Benefits({
     {
       iconName: 'shield',
       title: 'Dedykowany Gadżet',
-      description:
-        'Unikalna, numerowana odznaka lub szalik dostępny wyłącznie dla członków Klubu 100.',
+      // DYNAMICZNA NAZWA:
+      description: `Unikalna, numerowana odznaka lub szalik dostępny wyłącznie dla członków ${pageTitle}.`,
     },
     {
       iconName: 'users',
@@ -71,7 +73,7 @@ export default function Club100Benefits({
               <h4 className="font-montserrat mb-3 text-xl font-bold text-white uppercase transition-colors group-hover:text-emerald-400">
                 {benefit.title}
               </h4>
-              <p className="text-sm leading-relaxed text-gray-400">
+              <p className="leading-relaxed text-gray-400">
                 {benefit.description}
               </p>
             </motion.div>

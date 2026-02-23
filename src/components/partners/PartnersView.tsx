@@ -1,7 +1,7 @@
 'use client'
 
 import { Sponsor, PartnersPageData } from '@/types/index'
-import ContactSection from '@/components/sections/ContactSection'
+import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import PartnersBenefits from './PartnersBenefits'
 import PartnersList from './PartnersList'
 import PageHero from '../common/PageHero'
@@ -33,13 +33,13 @@ export default function PartnersView({ members, pageData }: PartnersViewProps) {
 
           <PartnersList members={members} />
 
-          <ContactSection
-            title={pageData?.ctaTitle || 'Dołącz do Klubu Biznesu'}
-            description={
-              pageData?.ctaDescription ||
-              'Chcesz dołączyć do elitarnego grona wspierającego Kujawiankę? Skontaktuj się z nami.'
-            }
-          />
+          {/* Sekcje Dynamiczne z CMS */}
+          {pageData?.contentBuilder && pageData.contentBuilder.length > 0 && (
+            <div>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              <SectionsRenderer sections={pageData.contentBuilder as any[]} />
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -6,6 +6,7 @@ import ClubAchievements from './ClubAchievements'
 import ClubStadium from './ClubStadium'
 import ClubAuthorities from './ClubAuthorities'
 import PageHero from '../common/PageHero'
+import SectionsRenderer from '@/components/sections/SectionsRenderer'
 
 interface ClubViewProps {
   data: {
@@ -29,6 +30,12 @@ interface ClubViewProps {
       group: 'management' | 'audit'
       role: string
       isVisible: boolean
+    }>
+    // W PEŁNI POPRAWNY TYP (bez any i bez konfliktów)
+    contentBuilder?: Array<{
+      _type: string
+      _key: string
+      [key: string]: unknown
     }>
   }
 }
@@ -64,6 +71,13 @@ export default function ClubView({ data }: ClubViewProps) {
         />
 
         <ClubAuthorities authorities={data.clubAuthorities} />
+
+        {/* Renderowanie bez rzutowania as any */}
+        {data.contentBuilder && data.contentBuilder.length > 0 && (
+          <div className="mt-16">
+            <SectionsRenderer sections={data.contentBuilder} />
+          </div>
+        )}
       </div>
     </main>
   )
