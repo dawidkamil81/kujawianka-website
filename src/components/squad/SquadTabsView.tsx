@@ -99,7 +99,11 @@ export default function SquadTabsView({
                   {/* Grid Kart */}
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-6 lg:grid-cols-5">
                     {groupPlayers.map((player) => (
-                      <PlayerCard key={player._id} player={player} />
+                      <PlayerCard
+                        key={player._id}
+                        player={player}
+                        statsConfig={statsConfig}
+                      />
                     ))}
                   </div>
                 </section>
