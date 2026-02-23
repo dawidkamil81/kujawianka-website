@@ -2,7 +2,6 @@
 
 import { Sponsor, Club100PageData } from '@/types/index'
 import PageHero from '@/components/common/PageHero'
-import ContactSection from '@/components/sections/ContactSection'
 import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import Club100About from './Club100About'
 import Club100Benefits from './Club100Benefits'

@@ -53,7 +53,17 @@ export const CLUB_PAGE_QUERY = defineQuery(`
     heroHeading, heroDescription, historyTitle, historyContent, "historyImageUrl": historyImage.asset->url,
     achievements[] { title, description, iconType },
     stadiumDescription, "stadiumImageUrl": stadiumImage.asset->url, stadiumAddress, stadiumCapacity, stadiumBuilt,
-    clubAuthorities[] { name, group, role, isVisible }
+    clubAuthorities[] { name, group, role, isVisible },
+    
+    // POBIERANIE SEKCJI DYNAMICZNYCH
+    contentBuilder[] {
+      _type, _key, heading, title, description, content, isCentered, layout, columns, eyebrow, design,
+      _type == "imageTextSection" => { image { asset-> } },
+      _type == "featuresSection" => { items[] { title, description, iconName } },
+      _type == "tableSection" => { heading, layout, content, tableRows[] { _key, isHeader, cells } },
+      _type == "gallerySection" => { heading, description, columns, images[] { _key, asset->, alt } },
+      _type == "contactSection" => { title, description }
+    }
   }
 `)
 
@@ -61,7 +71,17 @@ export const DONATE_PAGE_QUERY = defineQuery(`
   *[_id == "donatePage"][0] {
     heroHeading, krsNumber, specificGoal, goalsList,
     steps[] { title, description },
-    socialProof { "imageUrl": image.asset->url, quote, author }
+    socialProof { "imageUrl": image.asset->url, quote, author },
+    
+    // POBIERANIE SEKCJI DYNAMICZNYCH
+    contentBuilder[] {
+      _type, _key, heading, title, description, content, isCentered, layout, columns, eyebrow, design,
+      _type == "imageTextSection" => { image { asset-> } },
+      _type == "featuresSection" => { items[] { title, description, iconName } },
+      _type == "tableSection" => { heading, layout, content, tableRows[] { _key, isHeader, cells } },
+      _type == "gallerySection" => { heading, description, columns, images[] { _key, asset->, alt } },
+      _type == "contactSection" => { title, description }
+    }
   }
 `)
 

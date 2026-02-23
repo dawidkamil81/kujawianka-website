@@ -203,11 +203,26 @@ export const clubPage = defineType({
         },
       ],
     }),
+    defineField({
+      name: 'contentBuilder',
+      title: 'Dodatkowe Sekcje Strony',
+      type: 'array',
+      group: 'dynamicSections',
+      of: [
+        { type: 'textSection' },
+        { type: 'imageTextSection' },
+        { type: 'featuresSection' },
+        { type: 'tableSection' },
+        { type: 'gallerySection' },
+        { type: 'contactSection' },
+      ],
+    }),
   ],
   groups: [
     { name: 'history', title: 'Historia' },
     { name: 'achievements', title: 'Osiągnięcia' },
     { name: 'stadium', title: 'Stadion' },
     { name: 'board', title: 'Władze Klubu', icon: Users },
+    { name: 'dynamicSections', title: 'Sekcje Dynamiczne' },
   ],
 })

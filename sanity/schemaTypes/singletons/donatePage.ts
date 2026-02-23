@@ -114,5 +114,18 @@ export const donatePage = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'contentBuilder',
+      title: 'Dodatkowe Sekcje Strony',
+      type: 'array',
+      of: [
+        { type: 'textSection' },
+        { type: 'imageTextSection' },
+        { type: 'featuresSection' },
+        { type: 'tableSection' },
+        { type: 'gallerySection' },
+        { type: 'contactSection' },
+      ],
+    }),
   ],
 })

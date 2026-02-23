@@ -1,7 +1,6 @@
 'use client'
 
 import { Sponsor, SponsorsPageData } from '@/types/index'
-import ContactSection from '@/components/sections/ContactSection'
 import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import SponsorsStats from './SponsorsStats'
 import MainSponsors from './MainSponsors'
