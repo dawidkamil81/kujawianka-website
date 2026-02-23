@@ -4,9 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Player } from '@/types/index'
 import { ArrowUp, ArrowDown, ArrowUpDown, User } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
-// NOWOŚĆ: Definiujemy interfejs dla konfiguracji z bazy
 export interface StatsConfig {
   showMatches?: boolean
   showGoals?: boolean
