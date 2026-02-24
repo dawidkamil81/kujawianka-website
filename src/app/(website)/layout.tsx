@@ -6,6 +6,7 @@ import {
   SQUADS_NAVIGATION_QUERY,
   SETTINGS_QUERY,
   PAGE_VISIBILITY_QUERY,
+  SQUADS_WITH_RESULTS_QUERY, // <--- 1. DODANY IMPORT
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 
@@ -55,6 +56,11 @@ export default async function RootLayout({
   const { data: settings } = await sanityFetch({ query: SETTINGS_QUERY })
   const { data: squads } = await sanityFetch({ query: SQUADS_NAVIGATION_QUERY })
 
+  // NOWOŚĆ: Pobieramy tylko te drużyny, które posiadają wyniki/tabele
+  const { data: resultSquads } = await sanityFetch({
+    query: SQUADS_WITH_RESULTS_QUERY,
+  })
+
   // 3. Pobieramy flagi widoczności stron
   const { data: pageVisibility } = await sanityFetch({
     query: PAGE_VISIBILITY_QUERY,
@@ -66,16 +72,18 @@ export default async function RootLayout({
   return (
     <html lang="pl">
       <body className="flex min-h-screen flex-col bg-[#121212] font-sans text-white antialiased">
-        {/* Przekazujemy pageVisibility do Headera */}
+        {/* Przekazujemy pageVisibility oraz resultSquads do Headera */}
         <Header
           settings={settings}
           squads={squads}
+          resultSquads={resultSquads} // <--- 2. PRZEKAZUJEMY NOWĄ ZMIENNĄ DO HEADERA
           pageVisibility={pageVisibility}
         />
 
         <main className="w-full flex-grow">{children}</main>
 
-        <Footer settings={settings} />
+        {/* --- POPRAWKA TUTAJ: Przekazujemy pageVisibility do Stopki --- */}
+        <Footer settings={settings} pageVisibility={pageVisibility} />
 
         {/* Komponent nasłuchujący zmian (Pobiera nowe dane) */}
         <SanityLive />

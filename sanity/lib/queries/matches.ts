@@ -83,3 +83,10 @@ export const MATCH_CENTER_QUERY = defineQuery(`
     "clubLogo": *[_type == "siteSettings"][0].logo.asset->url
   }
 `)
+
+export const SQUADS_WITH_RESULTS_QUERY = defineQuery(`
+  *[_type == "squad" && count(*[_type == "competition" && squad._ref == ^._id]) > 0] | order(order asc) {
+    name,
+    "slug": slug.current
+  }
+`)

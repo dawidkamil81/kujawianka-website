@@ -5,7 +5,15 @@ import Image from 'next/image'
 import { ArrowRight, Handshake } from 'lucide-react'
 import { Sponsor } from '@/types/index'
 
-export default function SponsorsTeaser({ sponsors }: { sponsors: Sponsor[] }) {
+interface SponsorsTeaserProps {
+  sponsors: Sponsor[]
+  sponsorsSlug?: string // <-- DODANE
+}
+
+export default function SponsorsTeaser({
+  sponsors,
+  sponsorsSlug = 'sponsorzy',
+}: SponsorsTeaserProps) {
   // 1. Zabezpieczenie danych
   const validSponsors =
     sponsors?.filter((s) => s.logoUrl && s.logoUrl.trim() !== '') || []
@@ -42,7 +50,7 @@ export default function SponsorsTeaser({ sponsors }: { sponsors: Sponsor[] }) {
           </div>
 
           <Link
-            href="/biznes/sponsorzy"
+            href={`/biznes/${sponsorsSlug}`} // <-- ZMIENIONE NA DYNAMICZNE
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"
           >
             Zostań sponsorem

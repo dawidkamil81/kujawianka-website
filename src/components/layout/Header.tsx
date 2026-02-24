@@ -12,6 +12,7 @@ import type { SiteSettings } from '@/types'
 export interface NavItemVisibility {
   isVisible: boolean
   title: string
+  slug?: string
 }
 
 // ZMODYFIKOWANO: Typ dla naszych flag widoczności i tytułów stron
@@ -27,12 +28,14 @@ export interface PageVisibility {
 interface HeaderProps {
   settings?: SiteSettings | null
   squads?: { name: string; slug: string; hasTable?: boolean }[]
+  resultSquads?: { name: string; slug: string }[] // <--- DODANE: pobieramy resultSquads
   pageVisibility?: PageVisibility
 }
 
 export default function Header({
   settings,
   squads,
+  resultSquads, // <--- ODBIERAMY NOWY PROP
   pageVisibility = {},
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -90,27 +93,28 @@ export default function Header({
         `
   }
 
-  // Filtrujemy drużyny, które mają przypisaną tabelę
-  const squadsWithTable = squads?.filter((s) => s.hasTable) || []
-
   // --- LOGIKA WIDOCZNOŚCI I TYTUŁÓW Z CMS ---
-  // Rozpakowujemy dane podane z queries, zabezpieczając się fallbackami, gdyby z CMS przyszły braki
+  // Rozpakowujemy dane podane z queries, dodając zapasowe "slugi" na wypadek gdyby brakowało danych
   const klub = pageVisibility.klub || { isVisible: true, title: 'Klub' }
   const oferta = pageVisibility.oferta || {
     isVisible: true,
     title: 'Współpraca',
+    slug: 'oferta',
   }
   const sponsorzy = pageVisibility.sponsorzy || {
     isVisible: true,
     title: 'Sponsorzy',
+    slug: 'sponsorzy',
   }
   const klubowicze = pageVisibility.klubowicze || {
     isVisible: true,
     title: 'Klubowicze',
+    slug: 'klubowicze',
   }
   const klub100 = pageVisibility.klub100 || {
     isVisible: true,
     title: 'Klub 100',
+    slug: 'klub-100',
   }
   const wesprzyj = pageVisibility.wesprzyj || {
     isVisible: true,
@@ -211,8 +215,8 @@ export default function Header({
             </div>
           )}
 
-          {/* --- DROPDOWN: WYNIKI (Tylko z hasTable: true) --- */}
-          {squadsWithTable.length > 0 && (
+          {/* --- DROPDOWN: WYNIKI (Tylko drużyny z przypisanymi Rozgrywkami) --- */}
+          {resultSquads && resultSquads.length > 0 && (
             <div
               className="group relative w-full text-center lg:w-auto"
               onMouseEnter={() =>
@@ -240,7 +244,7 @@ export default function Header({
               >
                 <div className="overflow-hidden">
                   <div className="scrollbar-custom max-h-80 overflow-y-auto py-2">
-                    {squadsWithTable.map((squad) => (
+                    {resultSquads.map((squad) => (
                       <Link
                         key={squad.slug}
                         href={`/wyniki/${squad.slug}`}
@@ -298,7 +302,7 @@ export default function Header({
                   <div className="scrollbar-custom max-h-60 overflow-y-auto py-2">
                     {oferta.isVisible && (
                       <Link
-                        href="/biznes/oferta"
+                        href={`/biznes/${oferta.slug}`}
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
@@ -307,7 +311,7 @@ export default function Header({
                     )}
                     {sponsorzy.isVisible && (
                       <Link
-                        href="/biznes/sponsorzy"
+                        href={`/biznes/${sponsorzy.slug}`}
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
@@ -316,7 +320,7 @@ export default function Header({
                     )}
                     {klubowicze.isVisible && (
                       <Link
-                        href="/biznes/klubowicze"
+                        href={`/biznes/${klubowicze.slug}`}
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
@@ -325,7 +329,7 @@ export default function Header({
                     )}
                     {klub100.isVisible && (
                       <Link
-                        href="/biznes/klub-100"
+                        href={`/biznes/${klub100.slug}`}
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >

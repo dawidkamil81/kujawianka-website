@@ -17,11 +17,24 @@ const commonFields = [
     type: 'string',
   }),
   defineField({
+    name: 'slug',
+    title: 'Adres URL (Slug)',
+    description:
+      'Końcówka adresu strony (np. "klub-100"). Kliknij "Generate", aby wygenerować z nazwy.',
+    type: 'slug',
+    options: {
+      source: 'navTitle',
+      maxLength: 96,
+    },
+    validation: (rule) => rule.required(),
+  }),
+  defineField({
     name: 'title',
     title: 'Tytuł strony',
     type: 'string',
     initialValue: 'Tytuł strony',
   }),
+
   defineField({
     name: 'description',
     title: 'Opis pod tytułem',

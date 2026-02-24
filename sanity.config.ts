@@ -112,49 +112,94 @@ export default defineConfig({
             locations: [{ title: 'O Klubie', href: '/klub' }],
           },
 
-          // --- DODAJ TE LINIJKI DLA BRAKUJĄCYCH STRON ---
-
           // Singleton: Strona Wesprzyj
           donatePage: {
             locations: [{ title: 'Wesprzyj Nas', href: '/wesprzyj' }],
           },
 
-          // Singleton: Strona Sponsorzy (lub użyj nazwy z Twojego schematu dla tej strony)
+          // --- STRONY DYNAMICZNE BIZNESOWE ---
           sponsorsPage: {
-            // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [{ title: 'Sponsorzy', href: '/biznes/sponsorzy' }],
+            select: {
+              title: 'navTitle',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => {
+              if (!doc?.slug) return null
+              return {
+                locations: [
+                  {
+                    title: doc.title || 'Sponsorzy',
+                    href: `/biznes/${doc.slug}`,
+                  },
+                ],
+              }
+            },
           },
 
           offerPage: {
-            // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [{ title: 'Oferta', href: '/biznes/oferta' }],
+            select: {
+              title: 'navTitle',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => {
+              if (!doc?.slug) return null
+              return {
+                locations: [
+                  { title: doc.title || 'Oferta', href: `/biznes/${doc.slug}` },
+                ],
+              }
+            },
           },
+
           partnersPage: {
-            // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [{ title: 'Kluboicze', href: '/biznes/klubowicze' }],
+            select: {
+              title: 'navTitle',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => {
+              if (!doc?.slug) return null
+              return {
+                locations: [
+                  {
+                    title: doc.title || 'Klubowicze',
+                    href: `/biznes/${doc.slug}`,
+                  },
+                ],
+              }
+            },
           },
 
           club100Page: {
-            // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [{ title: 'Klub 100', href: '/biznes/klub-100' }],
+            select: {
+              title: 'navTitle',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => {
+              if (!doc?.slug) return null
+              return {
+                locations: [
+                  {
+                    title: doc.title || 'Klub 100',
+                    href: `/biznes/${doc.slug}`,
+                  },
+                ],
+              }
+            },
           },
+
+          // Pobieranie - stała zakładka (skorygowany adres z /biznes/do-pobrania na /do-pobrania)
           downloadPage: {
-            // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [
-              { title: 'Pliki do Pobrania', href: '/biznes/do-pobrania' },
-            ],
+            locations: [{ title: 'Pliki do Pobrania', href: '/do-pobrania' }],
           },
 
           // 3. Dokumenty: Aktualności
           news: {
-            // Wybieramy tylko te pola, których potrzebujemy do wygenerowania linku
             select: {
               title: 'title',
               slug: 'slug.current',
             },
             resolve: (doc) => {
               if (!doc?.slug) return null
-
               return {
                 locations: [
                   {
@@ -178,7 +223,6 @@ export default defineConfig({
             },
             resolve: (doc) => {
               if (!doc?.slug) return null
-
               return {
                 locations: [
                   {
@@ -198,7 +242,6 @@ export default defineConfig({
             },
             resolve: (doc) => {
               if (!doc?.slug) return null
-
               return {
                 locations: [
                   {

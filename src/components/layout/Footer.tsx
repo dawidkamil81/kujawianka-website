@@ -14,6 +14,7 @@ import {
   Download,
 } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
+import type { PageVisibility } from './Header' // <-- DODANY IMPORT
 
 // 1. TikTok
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -85,9 +86,10 @@ interface FooterSettings {
 
 interface FooterProps {
   settings?: FooterSettings
+  pageVisibility?: PageVisibility // <-- DODANE
 }
 
-export default function Footer({ settings }: FooterProps) {
+export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
   // Rozpakowanie ustawień
   const { contact, socialLinks, footerCertificate, footerDownloads } =
     settings || {}
@@ -140,11 +142,14 @@ export default function Footer({ settings }: FooterProps) {
     },
   ]
 
+  // Bezpieczne pobranie sluga oferty (fallback 'oferta', jeśli z CMS przyjdzie pusto)
+  const offerSlug = pageVisibility?.oferta?.slug || 'oferta'
+
   const navItems = [
     { name: 'Aktualności', href: '/aktualnosci' },
     { name: 'Wyniki i tabela', href: '/wyniki/seniorzy' },
     { name: 'Kadra zespołu', href: '/druzyny/seniorzy' },
-    { name: 'Współpraca', href: '/biznes/oferta' },
+    { name: 'Współpraca', href: `/biznes/${offerSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
     { name: 'Przekaż 1.5%', href: '/wesprzyj' },
   ]
 
@@ -319,7 +324,6 @@ export default function Footer({ settings }: FooterProps) {
                   <a
                     key={idx}
                     href={`${file.fileUrl}?dl=`}
-                    // POPRAWKA W TEJ LINIJCE: DODANO justify-center ORAZ lg:justify-start
                     className="group flex w-full items-center justify-center gap-4 lg:w-auto lg:justify-start"
                   >
                     {/* Ikona */}
