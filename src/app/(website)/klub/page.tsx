@@ -1,6 +1,7 @@
 import { sanityFetch } from '@/sanity/lib/live'
 import { CLUB_PAGE_QUERY } from '@/sanity/lib/queries'
 import ClubView from '@/components/club/ClubView'
+import { notFound } from 'next/navigation'
 
 export const metadata = {
   title: 'O Klubie | Kujawianka Izbica Kujawska',
@@ -10,12 +11,8 @@ export const metadata = {
 export default async function ClubPage() {
   const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY })
 
-  if (!data) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-white">
-        Brak danych o klubie.
-      </div>
-    )
+  if (!data || data.isPageVisible === false) {
+    notFound()
   }
 
   return <ClubView data={data} />

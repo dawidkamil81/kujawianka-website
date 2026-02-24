@@ -8,21 +8,26 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
 import type { SiteSettings } from '@/types'
 
-// NOWOŚĆ: Typ dla naszych flag widoczności stron
+// NOWOŚĆ: Interfejs definiujący pojedynczy element nawigacji
+export interface NavItemVisibility {
+  isVisible: boolean
+  title: string
+}
+
+// ZMODYFIKOWANO: Typ dla naszych flag widoczności i tytułów stron
 export interface PageVisibility {
-  klub?: boolean
-  oferta?: boolean
-  sponsorzy?: boolean
-  klubowicze?: boolean
-  klub100?: boolean
-  wesprzyj?: boolean
+  klub?: NavItemVisibility
+  oferta?: NavItemVisibility
+  sponsorzy?: NavItemVisibility
+  klubowicze?: NavItemVisibility
+  klub100?: NavItemVisibility
+  wesprzyj?: NavItemVisibility
 }
 
 interface HeaderProps {
   settings?: SiteSettings | null
-  // Dodajemy opcjonalne pole 'hasTable' do typu propsów
   squads?: { name: string; slug: string; hasTable?: boolean }[]
-  pageVisibility?: PageVisibility // NOWOŚĆ: przekazujemy flagi do headera
+  pageVisibility?: PageVisibility
 }
 
 export default function Header({
@@ -33,8 +38,6 @@ export default function Header({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
-
-  // USUNIĘTO: setInterval z router.refresh(), by uniknąć migotania i obciążania strony.
 
   const logoSrc = settings?.logo ? urlFor(settings.logo).url() : '/logo.png'
   const siteTitle = settings?.title || 'Kujawianka Izbica Kujawska'
@@ -90,18 +93,36 @@ export default function Header({
   // Filtrujemy drużyny, które mają przypisaną tabelę
   const squadsWithTable = squads?.filter((s) => s.hasTable) || []
 
-  // --- LOGIKA WIDOCZNOŚCI ---
-  // Domyślnie na true, jeżeli w CMS ktoś zapomni odznaczyć
-  const showKlub = pageVisibility.klub !== false
-  const showOferta = pageVisibility.oferta !== false
-  const showSponsorzy = pageVisibility.sponsorzy !== false
-  const showKlubowicze = pageVisibility.klubowicze !== false
-  const showKlub100 = pageVisibility.klub100 !== false
-  const showWesprzyj = pageVisibility.wesprzyj !== false
+  // --- LOGIKA WIDOCZNOŚCI I TYTUŁÓW Z CMS ---
+  // Rozpakowujemy dane podane z queries, zabezpieczając się fallbackami, gdyby z CMS przyszły braki
+  const klub = pageVisibility.klub || { isVisible: true, title: 'Klub' }
+  const oferta = pageVisibility.oferta || {
+    isVisible: true,
+    title: 'Współpraca',
+  }
+  const sponsorzy = pageVisibility.sponsorzy || {
+    isVisible: true,
+    title: 'Sponsorzy',
+  }
+  const klubowicze = pageVisibility.klubowicze || {
+    isVisible: true,
+    title: 'Klubowicze',
+  }
+  const klub100 = pageVisibility.klub100 || {
+    isVisible: true,
+    title: 'Klub 100',
+  }
+  const wesprzyj = pageVisibility.wesprzyj || {
+    isVisible: true,
+    title: 'Przekaż 1.5%',
+  }
 
   // Menu biznesowe pokazuje się, jeśli JAKAŚ jego podstrona jest widoczna
   const showBiznes =
-    showOferta || showSponsorzy || showKlubowicze || showKlub100
+    oferta.isVisible ||
+    sponsorzy.isVisible ||
+    klubowicze.isVisible ||
+    klub100.isVisible
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[linear-gradient(135deg,#174135f2_30%,#8d1010e6_100%)] text-white shadow-lg backdrop-blur-md">
@@ -236,13 +257,13 @@ export default function Header({
           )}
 
           {/* O KLUBIE */}
-          {showKlub && (
+          {klub.isVisible && (
             <Link
               href="/klub"
               className={getVisualClasses('/klub')}
               onClick={closeMenu}
             >
-              Klub
+              {klub.title}
             </Link>
           )}
 
@@ -275,40 +296,40 @@ export default function Header({
               >
                 <div className="overflow-hidden">
                   <div className="scrollbar-custom max-h-60 overflow-y-auto py-2">
-                    {showOferta && (
+                    {oferta.isVisible && (
                       <Link
                         href="/biznes/oferta"
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
-                        Współpraca
+                        {oferta.title}
                       </Link>
                     )}
-                    {showSponsorzy && (
+                    {sponsorzy.isVisible && (
                       <Link
                         href="/biznes/sponsorzy"
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
-                        Sponsorzy
+                        {sponsorzy.title}
                       </Link>
                     )}
-                    {showKlubowicze && (
+                    {klubowicze.isVisible && (
                       <Link
                         href="/biznes/klubowicze"
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
-                        Klubowicze
+                        {klubowicze.title}
                       </Link>
                     )}
-                    {showKlub100 && (
+                    {klub100.isVisible && (
                       <Link
                         href="/biznes/klub-100"
                         className="block px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                         onClick={closeMenu}
                       >
-                        Klub 100
+                        {klub100.title}
                       </Link>
                     )}
                   </div>
@@ -325,13 +346,13 @@ export default function Header({
             Do pobrania
           </Link>
 
-          {showWesprzyj && (
+          {wesprzyj.isVisible && (
             <Link
               href="/wesprzyj"
               className={getVisualClasses('/wesprzyj')}
               onClick={closeMenu}
             >
-              Przekaż 1.5%
+              {wesprzyj.title}
             </Link>
           )}
         </nav>

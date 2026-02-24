@@ -1,9 +1,10 @@
 import { sanityFetch } from '@/sanity/lib/live'
 import {
   SPONSORS_PAGE_QUERY,
-  ALL_SUPPORTERS_COUNT_QUERY, // <--- DODANY IMPORT
+  ALL_SUPPORTERS_COUNT_QUERY,
 } from '@/sanity/lib/queries'
 import SponsorsView from '@/components/sponsors/SponsorsView'
+import { notFound } from 'next/navigation' // <--- DODANY IMPORT
 
 export const metadata = {
   title: 'Sponsorzy | Kujawianka Izbica Kujawska',
@@ -19,12 +20,12 @@ export default async function SponsorsPage() {
   // 2. Pobieramy dane strony Sponsorów
   const { data } = await sanityFetch({ query: SPONSORS_PAGE_QUERY })
 
-  if (!data) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-white">
-        Brak danych o sponsorach.
-      </div>
-    )
+  // 3. Wyciągamy pageData z pobranego obiektu
+  const pageData = data?.pageData
+
+  // 4. Logika blokowania widoczności - rzuca 404 jeśli brak danych lub strona ukryta
+  if (!pageData || pageData.isPageVisible === false) {
+    notFound()
   }
 
   return (
@@ -33,9 +34,9 @@ export default async function SponsorsPage() {
 
       <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
         <SponsorsView
-          sponsors={data.sponsors || []} // Zależnie od tego jak zwraca to Twoje zapytanie
-          pageData={data.pageData || data}
-          totalSupportersCount={count || 0} // <--- PRZEKAZUJEMY NOWĄ ZMIENNĄ
+          sponsors={data?.sponsors || []}
+          pageData={pageData}
+          totalSupportersCount={count || 0}
         />
       </div>
     </main>

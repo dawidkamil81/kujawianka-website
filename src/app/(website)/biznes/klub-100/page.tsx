@@ -4,6 +4,7 @@ import { sanityFetch } from '@/sanity/lib/live'
 import { CLUB100_PAGE_QUERY } from '@/sanity/lib/queries'
 import Club100View from '@/components/club100/Club100View'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Klub 100 | Kujawianka Izbica Kujawska',
@@ -16,6 +17,10 @@ export default async function Club100Page() {
 
   const pageData = data?.pageData
   const members = data?.members || []
+
+  if (!pageData || pageData.isPageVisible === false) {
+    notFound()
+  }
 
   return <Club100View members={members} pageData={pageData} />
 }

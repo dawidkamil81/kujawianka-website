@@ -10,6 +10,13 @@ const commonFields = [
     initialValue: true,
   }),
   defineField({
+    name: 'navTitle',
+    title: 'Nazwa w nawigacji',
+    description:
+      'Krótka nazwa wyświetlana w menu głównym (np. "Klub 100", "Współpraca")',
+    type: 'string',
+  }),
+  defineField({
     name: 'title',
     title: 'Tytuł strony',
     type: 'string',

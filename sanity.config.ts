@@ -136,7 +136,7 @@ export default defineConfig({
 
           club100Page: {
             // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'
-            locations: [{ title: 'Klub 100', href: '/biznes/klub100' }],
+            locations: [{ title: 'Klub 100', href: '/biznes/klub-100' }],
           },
           downloadPage: {
             // UWAGA: upewnij się, czy w schemaTypes ta strona nazywa się 'sponsorsPage' czy np. 'sponsors' lub 'businessPages'

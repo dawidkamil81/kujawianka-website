@@ -7,6 +7,7 @@ import {
 } from '@/sanity/lib/queries'
 import OfferView from '@/components/offert/OfferView'
 import { Metadata } from 'next'
+import { notFound } from 'next/dist/client/components/navigation'
 
 export const metadata: Metadata = {
   title: 'Oferta Sponsorska | Kujawianka Izbica Kujawska',
@@ -22,6 +23,10 @@ export default async function OfferPage() {
 
   // 2. Pobieramy dane strony (w tym contentBuilder)
   const { data: pageData } = await sanityFetch({ query: OFFER_PAGE_QUERY })
+
+  if (!pageData || pageData.isPageVisible === false) {
+    notFound()
+  }
 
   return <OfferView sponsorsCount={count || 0} pageData={pageData} />
 }
