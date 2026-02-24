@@ -24,6 +24,7 @@ import {
   ClipboardList,
   Trophy,
   ListOrdered,
+  Home,
 } from 'lucide-react'
 
 // --- POMOCNICZA FUNKCJA WIDOKU ROZGRYWEK (BEZ ZMIAN) ---
@@ -291,6 +292,13 @@ export const structure: StructureResolver = async (S) => {
           S.list()
             .title('Strony Statyczne')
             .items([
+              S.listItem()
+                .title('Strona Główna')
+                .icon(Home)
+                .child(
+                  S.document().schemaType('homePage').documentId('homePage'),
+                ),
+              S.divider(),
               S.listItem()
                 .title('Współpraca')
                 .icon(Handshake)

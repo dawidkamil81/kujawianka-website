@@ -18,7 +18,9 @@ const gridColsMap: Record<string, string> = {
 interface GalleryImage {
   _key?: string
   alt?: string
-  asset?: unknown
+  asset?: {
+    _ref: string
+  }
 }
 
 interface GallerySectionProps {
@@ -40,7 +42,7 @@ export default function GallerySection({ data }: GallerySectionProps) {
   }, [])
 
   const gridClass = gridColsMap[data.columns || '3']
-  const images = data.images || []
+  const images = (data.images || []).filter((image) => image.asset)
 
   if (images.length === 0) return null
 

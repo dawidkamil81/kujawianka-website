@@ -6,16 +6,25 @@ import { MapPin, Mail, Phone, ArrowRight } from 'lucide-react'
 interface ContactSectionProps {
   title?: string
   description?: string
+  contact?: {
+    address?: string
+    email?: string
+    phone?: string
+  }
 }
 
 export default function ContactSection({
   title = 'Skontaktuj się',
   description = 'Masz pytania lub propozycję współpracy? Jesteśmy do Twojej dyspozycji.',
+  contact,
 }: ContactSectionProps) {
+  const address = contact?.address || 'ul. Sportowa 1a, Izbica Kujawska, 87-865'
+  const email = contact?.email || 'kujawiankaizbicakujawska@gmail.com'
+  const phone = contact?.phone || '+48 665 426 757'
+
   return (
     <section id="contact" className="relative overflow-hidden py-24">
-      {/* Tło sekcji (gradient od dołu) */}
-      <div className="inset-0, transparent_70%)] pointer-events-none absolute" />
+      {/* Tło usunięte - sekcja przyjmuje tło strony macierzystej */}
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-4">
         <motion.div
@@ -50,9 +59,7 @@ export default function ContactSection({
                     Adres Klubu
                   </strong>
                   <span className="font-montserrat text-lg font-bold text-white">
-                    {/* ZMIANA: Łamanie linii na mobile */}
-                    ul. Sportowa 1a, <br className="md:hidden" /> Izbica
-                    Kujawska, 87-865
+                    {address}
                   </span>
                 </div>
               </li>
@@ -66,12 +73,11 @@ export default function ContactSection({
                   <strong className="mb-1 text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors group-hover:text-gray-300">
                     E-mail
                   </strong>
-                  {/* ZMIANA: text-sm na mobile, text-lg na desktop + break-all */}
                   <a
-                    href="mailto:kujawiankaizbicakujawska@gmail.com"
+                    href={`mailto:${email}`}
                     className="font-montserrat flex items-center gap-2 text-sm font-bold break-all text-white transition-colors hover:text-emerald-400 md:text-lg md:break-normal"
                   >
-                    kujawiankaizbicakujawska@gmail.com
+                    {email}
                     <ArrowRight
                       size={16}
                       className="hidden shrink-0 -translate-x-2 opacity-0 transition-opacity group-hover:translate-x-0 group-hover:opacity-100 md:block"
@@ -90,10 +96,10 @@ export default function ContactSection({
                     Telefon
                   </strong>
                   <a
-                    href="tel:+48665426757"
+                    href={`tel:${phone.replace(/\s+/g, '')}`}
                     className="font-montserrat text-lg font-bold text-white transition-colors hover:text-emerald-400"
                   >
-                    +48 665 426 757
+                    {phone}
                   </a>
                 </div>
               </li>
@@ -106,14 +112,13 @@ export default function ContactSection({
             <div className="pointer-events-none absolute inset-0 bg-emerald-500/20 opacity-20 blur-[100px]" />
 
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2282.963350705614!2d18.745801926966166!3d52.42295737045069!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471b5d480c17d867%3A0x31ec658c911624ee!2sStadion%20miejski%20w%20Izbicy%20Kujawskiej!5e0!3m2!1spl!2spl!4v1766778734852!5m2!1spl!2spl"
+              src="https://maps.google.com/maps?q=ul.+Sportowa+12,+87-865+Izbica+Kujawska&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen={false}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              // Filtr dla "Dark Mode Map" - odwraca kolory i zmniejsza nasycenie
               className="h-full w-full opacity-80 contrast-[1.2] grayscale-[0.8] invert-[0.85] transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0 group-hover:invert-0"
             />
 

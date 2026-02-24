@@ -127,7 +127,17 @@ export const squad = defineType({
       name: 'lastLineup',
       title: 'Ostatni Skład (Pamięć Systemowa)',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'player' }] }],
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'player' }],
+          options: {
+            disableNew: true,
+          },
+          weak: true,
+        },
+      ],
+
       hidden: true, // Ukrywamy to, bo będzie edytowane automatycznie przez nasz Panel
       description:
         'Przechowuje listę zawodników, którzy zagrali w ostatnim meczu, aby ułatwić wypełnianie formularza.',

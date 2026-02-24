@@ -17,11 +17,13 @@ type GroupedSponsors = {
 interface SponsorsViewProps {
   sponsors: Sponsor[]
   pageData: SponsorsPageData
+  totalSupportersCount: number
 }
 
 export default function SponsorsView({
   sponsors,
   pageData,
+  totalSupportersCount,
 }: SponsorsViewProps) {
   // 1. Grupowanie sponsorów
   const groupsMap = sponsors.reduce(
@@ -57,7 +59,7 @@ export default function SponsorsView({
       {pageData.stats && (
         <SponsorsStats
           stats={pageData.stats}
-          totalSponsorsCount={sponsors.length}
+          totalSponsorsCount={totalSupportersCount}
         />
       )}
 

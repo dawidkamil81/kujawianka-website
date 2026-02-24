@@ -1,7 +1,8 @@
-// src/components/Home/HomePage.tsx
+// src/components/home/HomePage.tsx
 'use client'
 
-import HeroSection from './HeroSection'
+// 1. ZMIANA: Importujemy typ HomePageData z HeroSection (jeśli go tam wyeksportowałeś, jak radziłem wcześniej)
+import HeroSection, { HomePageData } from './HeroSection'
 import MatchCenter from './MatchCenter'
 import ResultsTable from './ResultsTable'
 import PlayersTeaser from './PlayersTeaser'
@@ -13,14 +14,13 @@ import {
   LeagueTable,
   Match,
   Team,
-  LeagueConfig, // <--- 1. Importujemy poprawny typ z types/index
+  LeagueConfig,
 } from '@/types/index'
 
 type ResultsDataPacket = {
   table: LeagueTable
   lastMatches: Match[]
   teams: Team[]
-  // 2. Używamy precyzyjnego typu zamiast Record
   config?: LeagueConfig | null
 }
 
@@ -32,6 +32,7 @@ type MatchCenterDataPacket = {
 }
 
 interface HomeProps {
+  homePageData?: HomePageData // <--- 2. ZMIANA: Dodajemy homePageData do Propsów
   players: Player[]
   news: NewsItem[]
   sponsors: Sponsor[]
@@ -40,6 +41,7 @@ interface HomeProps {
 }
 
 export default function Home({
+  homePageData, // <--- 3. ZMIANA: Odbieramy homePageData w komponencie
   players,
   news,
   sponsors,
@@ -51,7 +53,8 @@ export default function Home({
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
 
       <div className="relative z-10 flex w-full flex-col">
-        <HeroSection news={news} />
+        {/* 4. ZMIANA: Przekazujemy dane do HeroSection */}
+        <HeroSection news={news} data={homePageData} />
 
         <MatchCenter
           nextMatch={matchCenterData.nextMatch}
@@ -64,7 +67,6 @@ export default function Home({
           table={resultsData.table}
           matches={resultsData.lastMatches}
           teams={resultsData.teams}
-          // 3. Konwertujemy ewentualny 'null' na 'undefined', co zadowoli interfejs ResultsTableProps
           config={resultsData.config || undefined}
         />
 
