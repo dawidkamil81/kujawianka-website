@@ -9,6 +9,10 @@ import {
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 
+// --- NOWE IMPORTY DLA EDYCJI WIZUALNEJ ---
+import { VisualEditing } from 'next-sanity/visual-editing'
+import { draftMode } from 'next/headers'
+
 // 1. DYNAMICZNE METADATA (SEO)
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({ query: SETTINGS_QUERY })
@@ -56,10 +60,13 @@ export default async function RootLayout({
     query: PAGE_VISIBILITY_QUERY,
   })
 
+  // --- 4. SPRAWDZENIE CZY JESTEŚMY W TRYBIE DRAFTU ---
+  const { isEnabled: isDraftMode } = await draftMode()
+
   return (
     <html lang="pl">
       <body className="flex min-h-screen flex-col bg-[#121212] font-sans text-white antialiased">
-        {/* 4. Przekazujemy pageVisibility do Headera */}
+        {/* Przekazujemy pageVisibility do Headera */}
         <Header
           settings={settings}
           squads={squads}
@@ -70,8 +77,11 @@ export default async function RootLayout({
 
         <Footer settings={settings} />
 
-        {/* Komponent nasłuchujący zmian */}
+        {/* Komponent nasłuchujący zmian (Pobiera nowe dane) */}
         <SanityLive />
+
+        {/* --- 5. KOMPONENT EDYCJI WIZUALNEJ DLA SANITY STUDIO --- */}
+        {isDraftMode && <VisualEditing />}
       </body>
     </html>
   )
