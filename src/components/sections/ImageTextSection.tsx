@@ -65,7 +65,7 @@ export default function ImageTextSection({ data }: ImageTextSectionProps) {
         {/* Kontener zdjęcia */}
         <div className="relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl lg:aspect-[4/3]">
           {/* 3. Używamy warunku ? <Image /> : null zamiast && */}
-          {data.image ? (
+          {data.image?.asset ? (
             <Image
               src={urlFor(data.image).url()}
               alt={data.heading || 'Zdjęcie sekcji'}

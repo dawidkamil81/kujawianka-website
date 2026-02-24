@@ -94,7 +94,6 @@ export const player = defineType({
       type: 'reference',
       to: [{ type: 'squad' }],
       description: 'Wybierz grupę wiekową, do której należy ten zawodnik.',
-      validation: (rule) => rule.required(),
     }),
 
     defineField({
