@@ -23,7 +23,7 @@ export default function ClubAuthorities({
   if (managementBoard.length === 0 && auditCommittee.length === 0) return null
 
   const cardClass =
-    'p-6 rounded-2xl bg-[#121212] border border-white/5 hover:border-emerald-500/30 transition-colors group flex flex-col items-center justify-center text-center h-full min-h-[280px]'
+    'p-6 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] rounded-2xl bg-[#121212] border border-white/5 hover:border-emerald-500/30 transition-colors group flex flex-col items-center justify-center text-center min-h-[280px]'
 
   return (
     <motion.section
@@ -48,7 +48,7 @@ export default function ClubAuthorities({
           <h3 className="mb-8 flex items-center justify-center gap-3 text-center text-2xl font-bold tracking-widest text-white uppercase opacity-90">
             <Users className="text-emerald-500" size={24} /> Zarząd Klubu
           </h3>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-6">
             {managementBoard.map((member, idx) => (
               <div key={idx} className={cardClass}>
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/5 transition-transform group-hover:scale-110">
@@ -75,7 +75,7 @@ export default function ClubAuthorities({
             <FileText className="text-emerald-500" size={24} /> Komisja
             Rewizyjna
           </h3>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-6">
             {auditCommittee.map((member, idx) => (
               <div key={idx} className={cardClass}>
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/5 transition-transform group-hover:scale-110">

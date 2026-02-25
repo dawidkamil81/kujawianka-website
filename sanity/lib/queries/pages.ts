@@ -52,6 +52,7 @@ export const SETTINGS_QUERY = defineQuery(`
 
 export const CLUB_PAGE_QUERY = defineQuery(`
   *[_id == "clubPage"][0] {
+    isPageVisible, navTitle, title, description,
     heroHeading, heroDescription, historyTitle, historyContent, "historyImageUrl": historyImage.asset->url,
     achievements[] { title, description, iconType },
     stadiumDescription, "stadiumImageUrl": stadiumImage.asset->url, stadiumAddress, stadiumCapacity, stadiumBuilt,
@@ -75,6 +76,7 @@ export const CLUB_PAGE_QUERY = defineQuery(`
 
 export const DONATE_PAGE_QUERY = defineQuery(`
   *[_id == "donatePage"][0] {
+    isPageVisible, navTitle, title, description,
     heroHeading, krsNumber, specificGoal, goalsList,
     steps[] { title, description },
     socialProof { "imageUrl": image.asset->url, quote, author },
@@ -105,12 +107,34 @@ export const DOWNLOADS_QUERY = defineQuery(`
 `)
 
 export const PAGE_VISIBILITY_QUERY = `*[_type == "siteSettings"][0]{
-  "klub": coalesce(*[_type == "clubPage"][0].isPageVisible, true),
-  "oferta": coalesce(*[_type == "offerPage"][0].isPageVisible, true),
-  "sponsorzy": coalesce(*[_type == "sponsorsPage"][0].isPageVisible, true),
-  "klubowicze": coalesce(*[_type == "partnersPage"][0].isPageVisible, true),
-  "klub100": coalesce(*[_type == "club100Page"][0].isPageVisible, true),
-  "wesprzyj": coalesce(*[_type == "donatePage"][0].isPageVisible, true)
+  "klub": {
+    "isVisible": coalesce(*[_type == "clubPage"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "clubPage"][0].navTitle, "Klub")
+  },
+  "oferta": {
+    "isVisible": coalesce(*[_type == "offerPage"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "offerPage"][0].navTitle, "Współpraca"),
+    "slug": coalesce(*[_type == "offerPage"][0].slug.current, "oferta")
+  },
+  "sponsorzy": {
+    "isVisible": coalesce(*[_type == "sponsorsPage"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "sponsorsPage"][0].navTitle, "Sponsorzy"),
+    "slug": coalesce(*[_type == "sponsorsPage"][0].slug.current, "sponsorzy")
+  },
+  "klubowicze": {
+    "isVisible": coalesce(*[_type == "partnersPage"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "partnersPage"][0].navTitle, "Klubowicze"),
+    "slug": coalesce(*[_type == "partnersPage"][0].slug.current, "klubowicze")
+  },
+  "klub100": {
+    "isVisible": coalesce(*[_type == "club100Page"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "club100Page"][0].navTitle, "Klub 100"),
+    "slug": coalesce(*[_type == "club100Page"][0].slug.current, "klub-100")
+  },
+  "wesprzyj": {
+    "isVisible": coalesce(*[_type == "donatePage"][0].isPageVisible, true),
+    "title": coalesce(*[_type == "donatePage"][0].navTitle, "Przekaż 1.5%")
+  }
 }`
 
 export const HOME_PAGE_QUERY = defineQuery(`

@@ -17,6 +17,7 @@ export const ALL_SUPPORTERS_COUNT_QUERY = defineQuery(`
 export const SPONSORS_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "sponsorsPage"][0] {
+      isPageVisible, navTitle,
       title, description,
       stats[] { value, label, icon },
       ${PAGE_BUILDER_FIELDS}
@@ -39,6 +40,7 @@ export const HOMEPAGE_SPONSORS_QUERY = defineQuery(`
 export const CLUB100_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "club100Page"][0] {
+      isPageVisible, navTitle,
       title, description, benefits[] { title, description, iconName },
       aboutTitle, aboutContent,
       ${PAGE_BUILDER_FIELDS}
@@ -52,6 +54,7 @@ export const CLUB100_PAGE_QUERY = defineQuery(`
 export const PARTNERS_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "partnersPage"][0] {
+      isPageVisible, navTitle,
       title, description, benefitsTitle,
       benefits[] { title, description, iconName },
       ${PAGE_BUILDER_FIELDS}
@@ -65,6 +68,7 @@ export const PARTNERS_PAGE_QUERY = defineQuery(`
 
 export const OFFER_PAGE_QUERY = defineQuery(`
   *[_id == "offerPage"][0] {
+    isPageVisible, navTitle,
     title, description,
     packages[] { title, description, iconName, colorTheme, link },
     stats[] { value, label, iconName },

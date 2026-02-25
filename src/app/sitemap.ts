@@ -1,11 +1,10 @@
 import { MetadataRoute } from 'next'
 import { client } from '@/sanity/lib/client'
 import { defineQuery } from 'next-sanity'
+import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages' // <-- DODANY IMPORT
 
-// ZMIEŃ TO na swój prawdziwy adres domeny po wykupieniu
 const BASE_URL = 'https://kujawianka-izbica.pl'
 
-// Dodajemy prosty interfejs dla elementów zwracanych z zapytania Sanity
 interface SitemapNewsPost {
   slug: string
   publishedAt?: string
@@ -21,7 +20,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   `)
   const news = await client.fetch(NEWS_QUERY)
 
-  // 2. Generujemy wpisy dla newsów używając naszego interfejsu zamiast 'any'
+  // 2. Pobieramy dynamiczne slugi dla stron biznesowych
+  const visibility = await client.fetch(PAGE_VISIBILITY_QUERY)
+
   const newsEntries: MetadataRoute.Sitemap = news.map(
     (post: SitemapNewsPost) => ({
       url: `${BASE_URL}/aktualnosci/${post.slug}`,
@@ -31,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   )
 
-  // 3. Statyczne podstrony
+  // 3. Statyczne podstrony z użyciem DYNAMICZNYCH SLUGÓW
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
@@ -58,24 +59,60 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/biznes/oferta`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
       url: `${BASE_URL}/do-pobrania`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
-    {
+  ]
+
+  // Dodajemy dynamiczne strony biznesowe do sitemapy TYLKO jeśli są włączone (isVisible: true)
+  if (visibility?.oferta?.isVisible !== false && visibility?.oferta?.slug) {
+    staticRoutes.push({
+      url: `${BASE_URL}/biznes/${visibility.oferta.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    })
+  }
+  if (
+    visibility?.sponsorzy?.isVisible !== false &&
+    visibility?.sponsorzy?.slug
+  ) {
+    staticRoutes.push({
+      url: `${BASE_URL}/biznes/${visibility.sponsorzy.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    })
+  }
+  if (
+    visibility?.klubowicze?.isVisible !== false &&
+    visibility?.klubowicze?.slug
+  ) {
+    staticRoutes.push({
+      url: `${BASE_URL}/biznes/${visibility.klubowicze.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    })
+  }
+  if (visibility?.klub100?.isVisible !== false && visibility?.klub100?.slug) {
+    staticRoutes.push({
+      url: `${BASE_URL}/biznes/${visibility.klub100.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    })
+  }
+  if (visibility?.wesprzyj?.isVisible !== false) {
+    staticRoutes.push({
       url: `${BASE_URL}/wesprzyj`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
-    },
-  ]
+    })
+  }
 
   return [...staticRoutes, ...newsEntries]
 }
