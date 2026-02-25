@@ -15,13 +15,13 @@ export const clubPage = defineType({
       type: 'boolean',
       initialValue: true,
     }),
-    defineField({
-      name: 'navTitle',
-      title: 'Nazwa w nawigacji',
-      description:
-        'Krótka nazwa wyświetlana w menu głównym (np. "Klub 100", "Współpraca")',
-      type: 'string',
-    }),
+    // defineField({
+    //   name: 'navTitle',
+    //   title: 'Nazwa w nawigacji',
+    //   description:
+    //     'Krótka nazwa wyświetlana w menu głównym (np. "Klub 100", "Współpraca")',
+    //   type: 'string',
+    // }),
     // === SEKCJA HERO ===
     defineField({
       name: 'heroHeading',
