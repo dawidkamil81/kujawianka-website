@@ -16,11 +16,23 @@ export default function OtherSponsors({
 }: {
   groups: GroupedSponsors[]
 }) {
+  // Sprawdzamy czy są jakiekolwiek grupy do wyświetlenia
   if (!groups || groups.length === 0) return null
+
+  // Filtrujemy grupy, aby wyświetlić tylko te, które mają przynajmniej jednego
+  // poprawnego sponsora (posiadającego nazwę lub logo)
+  const visibleGroups = groups
+    .map((group) => ({
+      ...group,
+      sponsors: group.sponsors.filter((s) => s.name || s.logoUrl),
+    }))
+    .filter((group) => group.sponsors.length > 0)
+
+  if (visibleGroups.length === 0) return null
 
   return (
     <>
-      {groups.map((group) => (
+      {visibleGroups.map((group) => (
         <section key={group.tierName}>
           <SectionHeader
             title={group.tierName}
