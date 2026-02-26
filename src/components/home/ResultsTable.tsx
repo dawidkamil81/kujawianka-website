@@ -18,6 +18,7 @@ type ResultsTableProps = {
   matches: ExtendedMatch[]
   teams: Team[]
   config?: LeagueConfig // Teraz korzysta z zaimportowanego, poprawnego typu
+  defaultResultSlug?: string
 }
 
 export default function ResultsTable({
@@ -25,6 +26,7 @@ export default function ResultsTable({
   matches,
   teams,
   config,
+  defaultResultSlug,
 }: ResultsTableProps) {
   const getTeamLogo = (teamName: string) => {
     if (!teamName) return '/l1.png'
@@ -65,6 +67,10 @@ export default function ResultsTable({
   const relPlayoffSpots = config?.relegationPlayoffSpots || 0
   const relSpots = config?.relegationSpots || 0
 
+  const resultsUrl = defaultResultSlug
+    ? `/wyniki/${defaultResultSlug}`
+    : '/wyniki/seniorzy'
+
   return (
     <section className="relative w-full overflow-hidden border-t border-white/5 bg-[#0e0e0e] py-16">
       <div className="bg-club-green/5 pointer-events-none absolute right-0 bottom-0 h-[600px] w-[600px] rounded-full blur-[150px]" />
@@ -78,7 +84,7 @@ export default function ResultsTable({
           </div>
 
           <Link
-            href="/wyniki/seniorzy"
+            href={resultsUrl}
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"
           >
             Pełna tabela i wyniki

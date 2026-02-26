@@ -143,13 +143,15 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
   ]
 
   // Bezpieczne pobranie sluga oferty (fallback 'oferta', jeśli z CMS przyjdzie pusto)
-  const offerSlug = pageVisibility?.oferta?.slug || 'oferta'
+  // const offerSlug = pageVisibility?.oferta?.slug || 'oferta'
+  const clubSlug = pageVisibility?.klub100?.slug || 'klub-1946'
 
   const navItems = [
     { name: 'Aktualności', href: '/aktualnosci' },
     { name: 'Wyniki i tabela', href: '/wyniki/seniorzy' },
     { name: 'Kadra zespołu', href: '/druzyny/seniorzy' },
-    { name: 'Współpraca', href: `/biznes/${offerSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    // { name: 'Współpraca', href: `/biznes/${offerSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    { name: 'Klub 1946', href: `/biznes/${clubSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
     { name: 'Przekaż 1.5%', href: '/wesprzyj' },
   ]
 
@@ -346,7 +348,7 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
         {/* === Dolny pasek (Copyright) === */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-xs text-white/40 md:flex-row">
           <p>
-            © {new Date().getFullYear()} MKS Kujawianka Izbica Kujawska.
+            © {new Date().getFullYear()} MGKS Kujawianka Izbica Kujawska.
             Wszelkie prawa zastrzeżone.
           </p>
 

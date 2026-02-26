@@ -78,7 +78,7 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
   }
 
   return (
-    <div className="flex w-full flex-col gap-8">
+    <div id="terminarz" className="flex w-full flex-col gap-8">
       <div className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-xl md:flex-row">
         <div className="bg-club-green/5 pointer-events-none absolute top-0 right-0 h-full w-64 blur-3xl" />
         <div className="z-10 flex items-center gap-3">
