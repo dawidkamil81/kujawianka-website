@@ -1,5 +1,4 @@
 // src/components/home/HomePage.tsx
-'use client'
 
 import HeroSection, { HomePageData } from './HeroSection'
 import MatchCenter from './MatchCenter'
