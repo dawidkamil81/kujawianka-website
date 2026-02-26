@@ -1,38 +1,56 @@
 import { MetadataRoute } from 'next'
 import { client } from '@/sanity/lib/client'
 import { defineQuery } from 'next-sanity'
-import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages' // <-- DODANY IMPORT
+import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages'
 
 const BASE_URL = 'https://kujawianka-izbica.pl'
 
-interface SitemapNewsPost {
-  slug: string
-  publishedAt?: string
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 1. Pobieramy wszystkie slug-i aktualności z Sanity
-  const NEWS_QUERY = defineQuery(`
-    *[_type == "news"] {
-      "slug": slug.current,
-      publishedAt
-    }
-  `)
-  const news = await client.fetch(NEWS_QUERY)
+  // 1. Pobieramy wszystkie dane potrzebne do sitemapy równolegle (Wydajność!)
+  const [news, squads, visibility] = await Promise.all([
+    // Pobieramy newsy
+    client.fetch(
+      defineQuery(`*[_type == "news"] { "slug": slug.current, publishedAt }`),
+    ),
+    // Pobieramy wszystkie drużyny (squads)
+    client.fetch(
+      defineQuery(
+        `*[_type == "squad" && defined(slug.current)] { "slug": slug.current, _updatedAt }`,
+      ),
+    ),
+    // Pobieramy widoczność stron biznesowych
+    client.fetch(PAGE_VISIBILITY_QUERY),
+  ])
 
-  // 2. Pobieramy dynamiczne slugi dla stron biznesowych
-  const visibility = await client.fetch(PAGE_VISIBILITY_QUERY)
+  // 2. Generujemy wpisy dla aktualności
+  const newsEntries: MetadataRoute.Sitemap = news.map((post: any) => ({
+    url: `${BASE_URL}/aktualnosci/${post.slug}`,
+    lastModified: new Date(post.publishedAt || new Date()),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
 
-  const newsEntries: MetadataRoute.Sitemap = news.map(
-    (post: SitemapNewsPost) => ({
-      url: `${BASE_URL}/aktualnosci/${post.slug}`,
-      lastModified: new Date(post.publishedAt || new Date()),
+  // 3. Generujemy wpisy dla WSZYSTKICH drużyn i ich wyników
+  const squadEntries: MetadataRoute.Sitemap = []
+
+  squads.forEach((squad: any) => {
+    // Dodajemy stronę kadry danej drużyny
+    squadEntries.push({
+      url: `${BASE_URL}/druzyny/${squad.slug}`,
+      lastModified: new Date(squad._updatedAt),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    })
+    // Dodajemy stronę wyników danej drużyny
+    squadEntries.push({
+      url: `${BASE_URL}/wyniki/${squad.slug}`,
+      lastModified: new Date(squad._updatedAt),
       changeFrequency: 'weekly',
-      priority: 0.7,
-    }),
-  )
+      priority: 0.8,
+    })
+  })
 
-  // 3. Statyczne podstrony z użyciem DYNAMICZNYCH SLUGÓW
+  // 4. Bazowe statyczne trasy
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
@@ -47,72 +65,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/wyniki/seniorzy`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/druzyny/seniorzy`,
+      url: `${BASE_URL}/klub`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.5,
     },
     {
       url: `${BASE_URL}/do-pobrania`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
-      priority: 0.5,
+      priority: 0.3,
     },
   ]
 
-  // Dodajemy dynamiczne strony biznesowe do sitemapy TYLKO jeśli są włączone (isVisible: true)
-  if (visibility?.oferta?.isVisible !== false && visibility?.oferta?.slug) {
-    staticRoutes.push({
-      url: `${BASE_URL}/biznes/${visibility.oferta.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    })
-  }
-  if (
-    visibility?.sponsorzy?.isVisible !== false &&
-    visibility?.sponsorzy?.slug
-  ) {
-    staticRoutes.push({
-      url: `${BASE_URL}/biznes/${visibility.sponsorzy.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    })
-  }
-  if (
-    visibility?.klubowicze?.isVisible !== false &&
-    visibility?.klubowicze?.slug
-  ) {
-    staticRoutes.push({
-      url: `${BASE_URL}/biznes/${visibility.klubowicze.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    })
-  }
-  if (visibility?.klub100?.isVisible !== false && visibility?.klub100?.slug) {
-    staticRoutes.push({
-      url: `${BASE_URL}/biznes/${visibility.klub100.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    })
-  }
+  // 5. Dynamiczne strony biznesowe (logika bez zmian, ale czyściej)
+  const businessPages = [
+    { key: 'oferta', path: 'biznes', priority: 0.6 },
+    { key: 'sponsorzy', path: 'biznes', priority: 0.6 },
+    { key: 'klubowicze', path: 'biznes', priority: 0.6 },
+    { key: 'klub100', path: 'biznes', priority: 0.6 },
+  ]
+
+  businessPages.forEach(({ key, path, priority }) => {
+    const page = visibility?.[key]
+    if (page?.isVisible !== false && page?.slug) {
+      staticRoutes.push({
+        url: `${BASE_URL}/${path}/${page.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority,
+      })
+    }
+  })
+
   if (visibility?.wesprzyj?.isVisible !== false) {
     staticRoutes.push({
       url: `${BASE_URL}/wesprzyj`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
-      priority: 0.6,
+      priority: 0.4,
     })
   }
 
-  return [...staticRoutes, ...newsEntries]
+  return [...staticRoutes, ...newsEntries, ...squadEntries]
 }

@@ -39,3 +39,7 @@ export const NEWS_PAGE_QUERY = defineQuery(`
     _id, title, "slug": slug.current, publishedAt, excerpt, "imageUrl": mainImage.asset->url, isHighlighted
   }
 `)
+
+export const NEWS_SLUGS_QUERY = defineQuery(`
+  *[_type == "news" && defined(slug.current)].slug.current
+`)
