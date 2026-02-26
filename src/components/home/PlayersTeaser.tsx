@@ -6,7 +6,19 @@ import { ArrowRight } from 'lucide-react'
 import { Player } from '@/types/index'
 import PlayerCard from '@/components/common/PlayerCard' // Upewnij się, że ścieżka jest poprawna
 
-export default function PlayersTeaser({ players }: { players: Player[] }) {
+interface PlayersTeaserProps {
+  players: Player[]
+  defaultSquadSlug?: string
+}
+
+export default function PlayersTeaser({
+  players,
+  defaultSquadSlug, // <--- Odbieramy prop
+}: PlayersTeaserProps) {
+  const squadUrl = defaultSquadSlug
+    ? `/druzyny/${defaultSquadSlug}`
+    : '/druzyny/seniorzy'
+
   return (
     <section className="relative w-full overflow-hidden border-t border-white/5 bg-[#0e0e0e] py-16">
       {/* Tło gradientowe (Glow) */}
@@ -22,7 +34,7 @@ export default function PlayersTeaser({ players }: { players: Player[] }) {
           </div>
 
           <Link
-            href="/druzyny/seniorzy"
+            href={squadUrl}
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"
           >
             Zobacz pełną kadrę

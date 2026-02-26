@@ -12,9 +12,11 @@ interface SponsorsTeaserProps {
 
 export default function SponsorsTeaser({
   sponsors,
-  sponsorsSlug = 'sponsorzy',
+  sponsorsSlug,
 }: SponsorsTeaserProps) {
   // 1. Zabezpieczenie danych
+  const linkUrl = sponsorsSlug ? `/biznes/${sponsorsSlug}` : '/biznes/partnerzy'
+
   const validSponsors =
     sponsors?.filter((s) => s.logoUrl && s.logoUrl.trim() !== '') || []
 
@@ -45,15 +47,15 @@ export default function SponsorsTeaser({
         <div className="mb-12 flex flex-col items-end justify-between gap-4 border-b border-white/10 pb-4 md:flex-row">
           <div className="flex items-center gap-3">
             <h2 className="font-montserrat text-3xl font-black tracking-tight text-white uppercase md:text-4xl">
-              Nasi <span className="text-emerald-500">Sponsorzy</span>
+              Nasi <span className="text-emerald-500">Partnerzy</span>
             </h2>
           </div>
 
           <Link
-            href={`/biznes/${sponsorsSlug}`} // <-- ZMIENIONE NA DYNAMICZNE
+            href={linkUrl}
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"
           >
-            Zostań sponsorem
+            Zostań partnerem
             <ArrowRight
               size={16}
               className="text-club-green transition-transform group-hover:translate-x-1"

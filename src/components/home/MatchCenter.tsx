@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import { MapPin, Calendar, ArrowRight, Shield } from 'lucide-react'
 import { Match, Team } from '@/types/index'
 
-// 1. ZMIANA: Tworzymy rozszerzony typ, aby poinformować TypeScript o dodatkowych polach z GROQ
 type ExtendedMatch = Match & {
   _id?: string
   round?: number
@@ -17,12 +16,11 @@ interface MatchCenterProps {
   lastMatches: ExtendedMatch[]
   teams: Team[]
   clubLogo?: string
+  defaultResultSlug?: string // <--- DODANE
 }
 
-// Stała nazwa naszej drużyny do wykrywania lokalizacji
 const CLUB_NAME_PART = 'Kujawianka Izbica'
 
-// --- WYCIĄGNIĘTE KOMPONENTY / FUNKCJE DLA TIMERA ---
 const formatTimeValue = (value: number) => String(value).padStart(2, '0')
 
 const TimeBox = ({
@@ -46,7 +44,6 @@ const TimeBox = ({
   </div>
 )
 
-// --- 1. KOMPONENT TIMERA ---
 const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
   const calculateTimeLeft = () => {
     if (!targetDate) return null
@@ -107,14 +104,12 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
   )
 }
 
-// 2. ZMIANA: Używamy ExtendedMatch
 const getLocation = (match: ExtendedMatch) => {
   const homeName = match.homeTeam?.name || ''
   if (homeName.includes(CLUB_NAME_PART)) return 'Dom'
   return 'Wyjazd'
 }
 
-// --- 2. KARTA OSTATNIEGO MECZU ---
 const LastMatchCard = ({
   match,
   getLogo,
@@ -202,12 +197,12 @@ const LastMatchCard = ({
   )
 }
 
-// --- GŁÓWNY KOMPONENT ---
 export default function MatchCenter({
   nextMatch,
   lastMatches,
   teams,
   clubLogo,
+  defaultResultSlug, // <--- ODBIERAMY PROP
 }: MatchCenterProps) {
   const getLogo = (teamName: string) => {
     if (!teamName) return '/logo.png'
@@ -247,6 +242,10 @@ export default function MatchCenter({
   const nextHomeLogo = nextMatch?.homeTeam?.logoUrl || getLogo(nextHomeName)
   const nextAwayLogo = nextMatch?.awayTeam?.logoUrl || getLogo(nextAwayName)
 
+  // GŁÓWNA ZMIANA: Dynamiczny adres URL z domyślnym fallbackiem 'seniorzy' w razie braku danych
+  const resultsUrl = defaultResultSlug
+    ? `/wyniki/${defaultResultSlug}#terminarz`
+    : '/wyniki/seniorzy#terminarz'
   return (
     <section className="relative w-full overflow-hidden border-t border-white/5 bg-[#0e0e0e] py-16">
       <div className="bg-club-green/10 pointer-events-none absolute top-0 left-1/2 h-[300px] w-full max-w-4xl -translate-x-1/2 rounded-full blur-[120px]" />
@@ -258,8 +257,9 @@ export default function MatchCenter({
               Centrum <span className="text-emerald-500">Meczowe</span>
             </h2>
           </div>
+          {/* Używamy tutaj naszej nowej, dynamicznej zmiennej */}
           <Link
-            href="/wyniki"
+            href={resultsUrl}
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"
           >
             Pełny terminarz{' '}
@@ -388,7 +388,6 @@ export default function MatchCenter({
             </div>
             {lastMatches && lastMatches.length > 0 ? (
               lastMatches.map((match) => (
-                // Używamy _id lub _key w zależności od tego, co dostarczyło zapytanie GROQ
                 <LastMatchCard
                   key={match._id || match._key}
                   match={match}
