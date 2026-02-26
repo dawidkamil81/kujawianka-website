@@ -11,9 +11,12 @@ export const ALL_SPONSORS_QUERY = defineQuery(`
 `)
 
 export const ALL_SUPPORTERS_COUNT_QUERY = defineQuery(`
-  count(*[_type in ["sponsor", "partner", "club100"]])
+  count(*[
+    _type in ["sponsor", "partner", "club100"] && 
+    !(_id in path("drafts.**")) && 
+    (defined(logo) || defined(name))
+  ])
 `)
-
 export const SPONSORS_PAGE_QUERY = defineQuery(`
   {
     "pageData": *[_id == "sponsorsPage"][0] {
