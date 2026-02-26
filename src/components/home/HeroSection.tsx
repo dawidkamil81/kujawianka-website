@@ -1,4 +1,5 @@
 // src/components/home/HeroSection.tsx
+
 import { NewsItem } from '@/types/index'
 import HeroNewsSlider from './HeroNewsSlider'
 import Image from 'next/image'
