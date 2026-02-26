@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.sanity.io',
         port: '',
-        pathname: `/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/**`,
+        pathname: '/images/**', // Uproszczona ścieżka akceptująca wszystkie projekty
       },
     ],
   },
