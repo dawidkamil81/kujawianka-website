@@ -34,7 +34,11 @@ const nextConfig: NextConfig = {
       {
         source: '/(.*)',
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' }, // Blokuje osadzanie strony w ramkach na obcych stronach
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "frame-ancestors 'self' https://*.sanity.studio http://localhost:3333 http://localhost:3000",
+          },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
