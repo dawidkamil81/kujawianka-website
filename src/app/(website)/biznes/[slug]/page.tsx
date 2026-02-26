@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { sanityFetch } from '@/sanity/lib/live'
+// === 1. NOWY IMPORT ZWYKŁEGO KLIENTA ===
+import { client } from '@/sanity/lib/client'
 import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages'
 import {
   OFFER_PAGE_QUERY,
@@ -17,6 +19,26 @@ import Club100View from '@/components/club100/Club100View'
 import PartnersView from '@/components/partners/PartnersView'
 
 export const revalidate = 60
+
+// === 2. NOWOŚĆ: GENEROWANIE STATYCZNE (SSG) ===
+export async function generateStaticParams() {
+  // Używamy client.fetch zamiast sanityFetch, by uniknąć błędów draftMode przy buildzie
+  const visibility = await client.fetch(PAGE_VISIBILITY_QUERY)
+
+  const slugs: string[] = []
+
+  // Zbieramy do tablicy wszystkie aktywne slugi z ustawień
+  if (visibility?.oferta?.slug) slugs.push(visibility.oferta.slug)
+  if (visibility?.sponsorzy?.slug) slugs.push(visibility.sponsorzy.slug)
+  if (visibility?.klub100?.slug) slugs.push(visibility.klub100.slug)
+  if (visibility?.klubowicze?.slug) slugs.push(visibility.klubowicze.slug)
+
+  // Zwracamy tablicę w formacie oczekiwanym przez Next.js: [{ slug: 'oferta' }, { slug: 'sponsorzy' }...]
+  return slugs.map((slug) => ({
+    slug: slug,
+  }))
+}
+// ===============================================
 
 // --- DYNAMICZNE METADANE (SEO) ---
 export async function generateMetadata({
@@ -101,7 +123,6 @@ export default async function BusinessDynamicPage({
     const pageData = data?.pageData
     if (!pageData || pageData.isPageVisible === false) notFound()
 
-    // Renderujemy z dodatkowym kontenerem tła, który miałeś w oryginalnym pliku
     return (
       <main className="flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
         <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
