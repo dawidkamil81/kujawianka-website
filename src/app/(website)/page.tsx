@@ -51,6 +51,7 @@ export default async function Page() {
 
   return (
     <Home
+      key={homePageData.data?._updatedAt || 'home-initial'}
       homePageData={homePageData.data}
       players={players.data}
       news={news}
