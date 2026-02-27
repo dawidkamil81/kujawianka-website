@@ -152,7 +152,10 @@ const LastMatchCard = ({
                 className="object-contain"
               />
             </div>
-            <span className="line-clamp-2 text-center text-[10px] leading-tight font-bold text-gray-400 uppercase">
+            <span
+              title={homeName}
+              className="text-center text-[10px] leading-tight font-bold text-balance break-words text-gray-400 uppercase"
+            >
               {homeName}
             </span>
           </div>
@@ -172,7 +175,10 @@ const LastMatchCard = ({
                 className="object-contain"
               />
             </div>
-            <span className="line-clamp-2 text-center text-[10px] leading-tight font-bold text-gray-400 uppercase">
+            <span
+              title={awayName}
+              className="text-center text-[10px] leading-tight font-bold text-balance break-words text-gray-400 uppercase"
+            >
               {awayName}
             </span>
           </div>

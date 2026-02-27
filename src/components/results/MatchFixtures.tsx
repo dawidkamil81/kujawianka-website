@@ -163,7 +163,10 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
                         className="object-contain"
                       />
                     </div>
-                    <span className="line-clamp-2 text-center text-[11px] leading-tight font-bold text-gray-300 uppercase">
+                    <span
+                      title={safeHomeName}
+                      className="text-center text-[11px] leading-tight font-bold text-balance break-words text-gray-300 uppercase"
+                    >
                       {safeHomeName}
                     </span>
                   </div>
@@ -200,7 +203,10 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
                         className="object-contain"
                       />
                     </div>
-                    <span className="line-clamp-2 text-center text-[11px] leading-tight font-bold text-gray-300 uppercase">
+                    <span
+                      title={safeAwayName}
+                      className="text-center text-[11px] leading-tight font-bold text-balance break-words text-gray-300 uppercase"
+                    >
                       {safeAwayName}
                     </span>
                   </div>
