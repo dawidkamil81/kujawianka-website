@@ -9,12 +9,16 @@ export default function SplitColorTitle({
 }: SplitColorTitleProps) {
   if (!text) return null
 
-  const words = text.trim().split(/\s+/)
+  // ZMIANA: Wyrażenie regularne, które wyłapuje:
+  // 1. \([^)]+\) -> wszystko, co jest wewnątrz nawiasów (wraz z nawiasami)
+  // 2. \S+       -> wszystkie pozostałe "normalne" słowa (ciągi znaków bez spacji)
+  const words = text.trim().match(/\([^)]+\)|\S+/g) || []
+
   if (words.length < 2) {
     return <span className={className}>{text}</span>
   }
 
-  // Domyślnie dzieli w połowie, tak jak w oryginalnym kodzie
+  // Obliczenia pozostają bez zmian - teraz cały nawias to po prostu jeden element w tablicy "words"
   const splitIndex = Math.ceil(words.length / 2)
   const firstHalf = words.slice(0, splitIndex).join(' ')
   const secondHalf = words.slice(splitIndex).join(' ')

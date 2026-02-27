@@ -56,19 +56,24 @@ export default function SponsorsStats({
   if (!calculatedStats || calculatedStats.length === 0) return null
 
   return (
-    <section className="grid grid-cols-2 gap-6 md:grid-cols-4">
+    // ZMIANA: Zmniejszono gap z gap-6 na gap-3 dla małych ekranów (sm:gap-6 dla większych)
+    <section className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-4">
       {calculatedStats.map((stat, index) => (
         <div
           key={index}
-          className="group flex flex-col items-center justify-center rounded-3xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/30"
+          // ZMIANA: Zmniejszono padding p-6 na p-4 na mobile, aby zyskać przestrzeń wewnątrz kafelka
+          className="group flex flex-col items-center justify-center rounded-3xl border border-white/10 bg-[#121212] p-4 text-center transition-all duration-300 hover:border-emerald-500/30 sm:p-6"
         >
-          <div className="mb-3 rounded-full bg-white/5 p-3 transition-colors group-hover:bg-emerald-500/10">
+          {/* ZMIANA: Delikatnie zmniejszono margines pod ikoną na mobile */}
+          <div className="mb-2 rounded-full bg-white/5 p-3 transition-colors group-hover:bg-emerald-500/10 sm:mb-3">
             {iconMap[stat.icon] || iconMap['handshake']}
           </div>
-          <span className="font-montserrat mb-1 text-3xl font-black tracking-tight text-white md:text-4xl">
+          {/* KLUCZOWA ZMIANA: Dodano whitespace-nowrap oraz dopasowano rozmiary fontów (text-2xl na najmniejszych ekranach) */}
+          <span className="font-montserrat mb-1 text-2xl font-black tracking-tight whitespace-nowrap text-white sm:text-3xl md:text-4xl">
             {stat.value}
           </span>
-          <span className="text-center text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors group-hover:text-gray-300">
+          {/* ZMIANA: Zmniejszono font etykiety dla mobile (text-[10px]), żeby nie dominowała na małym ekranie */}
+          <span className="text-[10px] font-bold tracking-widest text-gray-500 uppercase transition-colors group-hover:text-gray-300 sm:text-xs">
             {stat.label}
           </span>
         </div>

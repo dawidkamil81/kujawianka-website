@@ -3,7 +3,7 @@
 import { Phone, Mail, User, CalendarRange } from 'lucide-react'
 import { PortableText } from '@portabletext/react'
 
-// Konfiguracja stylów dla tekstu z Sanity (przeniesiona z page.tsx)
+// Konfiguracja stylów dla tekstu z Sanity
 const portableTextComponents = {
   block: {
     h3: ({ children }: { children?: React.ReactNode }) => (
@@ -53,10 +53,12 @@ export default function SquadInfoBoard({
   if (!description && !coachName) return null
 
   return (
-    <div className="mx-auto mb-16 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">
+    // ZMIANA: Dodano items-start, aby kolumny nie rozciągały się do wspólnej wysokości
+    <div className="mx-auto mb-16 grid max-w-6xl grid-cols-1 items-start gap-6 md:grid-cols-2">
       {/* 1. INFO */}
       {description && (
-        <div className="group flex h-full flex-col rounded-3xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/30 md:p-8">
+        // ZMIANA: Usunięto h-full
+        <div className="group flex flex-col rounded-3xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/30 md:p-8">
           <div className="mb-6 flex items-center gap-4 border-b border-white/5 pb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 text-emerald-500 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white">
               <CalendarRange size={24} />
@@ -67,7 +69,8 @@ export default function SquadInfoBoard({
               </h2>
             </div>
           </div>
-          <div className="prose prose-invert max-w-none flex-grow">
+          {/* ZMIANA: Usunięto flex-grow */}
+          <div className="prose prose-invert max-w-none">
             <PortableText
               value={description}
               components={portableTextComponents}
@@ -78,7 +81,8 @@ export default function SquadInfoBoard({
 
       {/* 2. TRENER */}
       {coachName && (
-        <div className="group flex h-full flex-col rounded-3xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/30 md:p-8">
+        // ZMIANA: Usunięto h-full
+        <div className="group flex flex-col rounded-3xl border border-white/10 bg-[#121212] p-6 transition-all duration-300 hover:border-emerald-500/30 md:p-8">
           <div className="mb-6 flex items-center gap-4 border-b border-white/5 pb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 text-emerald-500 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white">
               <User size={24} />
@@ -93,7 +97,8 @@ export default function SquadInfoBoard({
             </div>
           </div>
 
-          <div className="flex flex-grow flex-col justify-center space-y-4">
+          {/* ZMIANA: Usunięto flex-grow i justify-center, dodano standardowy odstęp */}
+          <div className="flex flex-col space-y-4">
             {coachPhone && (
               <div className="group/item flex items-start gap-4">
                 <div className="mt-1 rounded-xl bg-white/5 p-3 text-emerald-500 transition-colors duration-300 group-hover/item:bg-emerald-500 group-hover/item:text-white">
