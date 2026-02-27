@@ -268,7 +268,7 @@ export default function SquadStatsTable({
                     </span>
                   </div>
                 )}
-                {config.showGoals && (
+                {config.showGoals && player.position !== 'Bramkarz' && (
                   <div className="flex flex-col items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-900/10 py-2">
                     <span className="mb-1 text-[9px] font-bold tracking-widest text-emerald-500 uppercase">
                       Bramki
@@ -278,6 +278,19 @@ export default function SquadStatsTable({
                     </span>
                   </div>
                 )}
+
+                {/* Logika dla bramkarzy (Czyste konta w kolorze czerwonym) */}
+                {(config.showCleanSheets || config.showGoals) &&
+                  player.position === 'Bramkarz' && (
+                    <div className="flex flex-col items-center justify-center rounded-lg border border-red-500/20 bg-red-900/10 px-1 py-2 text-center">
+                      <span className="mb-1 text-[9px] leading-tight font-bold tracking-widest text-red-500 uppercase">
+                        Czyste konta
+                      </span>
+                      <span className="font-mono text-base font-bold text-red-400">
+                        {stats.cleanSheets}
+                      </span>
+                    </div>
+                  )}
                 {config.showAssists && (
                   <div className="flex flex-col items-center justify-center rounded-lg bg-white/5 py-2">
                     <span className="mb-1 text-[9px] font-bold tracking-widest text-gray-500 uppercase">
@@ -455,7 +468,7 @@ export default function SquadStatsTable({
                     {config.showCleanSheets && (
                       <td className="hidden px-4 py-3 text-right font-mono text-sm text-gray-400 md:table-cell">
                         {player.position === 'Bramkarz' && stats.cleanSheets ? (
-                          <span className="font-bold text-emerald-500">
+                          <span className="font-bold text-red-500">
                             {stats.cleanSheets}
                           </span>
                         ) : (
