@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Mail, Phone, ArrowRight } from 'lucide-react'
 
@@ -21,6 +22,7 @@ export default function ContactSection({
   const address = contact?.address || 'ul. Sportowa 1a, Izbica Kujawska, 87-865'
   const email = contact?.email || 'kujawiankaizbicakujawska@gmail.com'
   const phone = contact?.phone || '+48 665 426 757'
+  const [isMapActive, setIsMapActive] = useState(false)
 
   return (
     <section id="contact" className="relative overflow-hidden py-24">
@@ -107,7 +109,10 @@ export default function ContactSection({
           </div>
 
           {/* Prawa kolumna: Mapa */}
-          <div className="group relative h-[450px] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl">
+          <div
+            className="relative h-[450px] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl"
+            onMouseLeave={() => setIsMapActive(false)}
+          >
             {/* Efekt poświaty pod mapą */}
             <div className="pointer-events-none absolute inset-0 bg-emerald-500/20 opacity-20 blur-[100px]" />
 
@@ -119,12 +124,22 @@ export default function ContactSection({
               allowFullScreen={false}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              className="h-full w-full opacity-80 contrast-[1.2] grayscale-[0.8] invert-[0.85] transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0 group-hover:invert-0"
+              className={`h-full w-full transition-all duration-500 ${
+                isMapActive
+                  ? 'opacity-100 grayscale-0 invert-0'
+                  : 'opacity-80 contrast-[1.2] grayscale-[0.8] invert-[0.85]'
+              }`}
             />
 
-            {/* Overlay "Interaktywny" znikający po najechaniu */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity duration-500 group-hover:opacity-0">
-              <span className="rounded-full border border-white/10 bg-black/60 px-4 py-2 text-xs font-bold tracking-widest text-white uppercase backdrop-blur-md">
+            {/* Overlay "Interaktywny" obsługujący kliknięcia na mobile i hover na desktopie */}
+            <div
+              className={`absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 transition-opacity duration-500 ${
+                isMapActive ? 'pointer-events-none opacity-0' : 'opacity-100'
+              }`}
+              onClick={() => setIsMapActive(true)}
+              onMouseEnter={() => setIsMapActive(true)}
+            >
+              <span className="rounded-full border border-white/10 bg-black/60 px-4 py-2 text-xs font-bold tracking-widest text-white uppercase backdrop-blur-md transition-transform hover:scale-105">
                 Zobacz na mapie
               </span>
             </div>

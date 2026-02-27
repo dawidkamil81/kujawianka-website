@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Trophy, Table2 } from 'lucide-react'
-// ZMIANA 1: Dodany import LeagueConfig z globalnych typów
 import { LeagueTable, Match, Team, LeagueConfig } from '@/types/index'
 import { cn } from '@/lib/utils'
 
@@ -9,13 +8,11 @@ type ExtendedMatch = Match & {
   _id?: string
 }
 
-// ZMIANA 2: Usunięto lokalną definicję "type LeagueConfig = { ... }"
-
 type ResultsTableProps = {
   table: LeagueTable
   matches: ExtendedMatch[]
   teams: Team[]
-  config?: LeagueConfig // Teraz korzysta z zaimportowanego, poprawnego typu
+  config?: LeagueConfig
   defaultResultSlug?: string
 }
 
@@ -59,7 +56,6 @@ export default function ResultsTable({
   const teaserTable = rows.slice(adjustedStart, adjustedEnd)
   const recentMatches = matches || []
 
-  // ZMIANA 3: Dopasowanie do poprawnej struktury (config.promotionRelegation)
   const promoSpots = config?.promotionSpots || 0
   const promoPlayoffSpots = config?.promotionPlayoffSpots || 0
   const relPlayoffSpots = config?.relegationPlayoffSpots || 0
@@ -116,13 +112,18 @@ export default function ResultsTable({
                   return (
                     <div
                       key={match._id || match._key}
-                      className="group hover:border-club-green/30 relative flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] px-4 py-4 shadow-lg transition-all duration-300 hover:bg-white/5"
+                      className="group hover:border-club-green/30 relative flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] px-3 py-6 shadow-lg transition-all duration-300 hover:bg-white/5 sm:px-5"
                     >
-                      <div className="flex w-[40%] items-center justify-end gap-3">
-                        <span className="group-hover:text-club-green-light line-clamp-1 text-right text-sm leading-tight font-bold text-white transition-colors">
+                      {/* GOSPODARZ */}
+                      <div className="flex w-[40%] items-center justify-end gap-2 sm:gap-3">
+                        {/* ZMIANA: Dodano tracking-tight aby zmieścić więcej liter w linii */}
+                        <span
+                          title={homeName}
+                          className="group-hover:text-club-green-light line-clamp-2 min-w-0 flex-1 text-left text-sm leading-normal font-bold tracking-tight text-balance break-words text-white transition-colors sm:text-xs md:line-clamp-none"
+                        >
                           {homeName}
                         </span>
-                        <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300">
+                        <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300 sm:h-10 sm:w-10">
                           <Image
                             src={homeLogo}
                             alt={homeName}
@@ -132,8 +133,9 @@ export default function ResultsTable({
                         </div>
                       </div>
 
+                      {/* WYNIK */}
                       <div className="flex w-[20%] items-center justify-center">
-                        <div className="font-montserrat flex h-9 min-w-[60px] items-center justify-center rounded-lg border border-white/10 bg-black/40 text-lg font-black text-white shadow-inner transition-colors group-hover:border-white/20">
+                        <div className="font-montserrat flex h-9 min-w-[50px] items-center justify-center rounded-lg border border-white/10 bg-black/40 text-base font-black text-white shadow-inner transition-colors group-hover:border-white/20 sm:min-w-[60px] sm:text-lg">
                           {match.homeScore !== undefined &&
                           match.awayScore !== undefined ? (
                             <>
@@ -163,8 +165,9 @@ export default function ResultsTable({
                         </div>
                       </div>
 
-                      <div className="flex w-[40%] items-center justify-start gap-3">
-                        <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300">
+                      {/* GOŚĆ */}
+                      <div className="flex w-[40%] items-center justify-start gap-2 sm:gap-3">
+                        <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300 sm:h-10 sm:w-10">
                           <Image
                             src={awayLogo}
                             alt={awayName}
@@ -172,7 +175,11 @@ export default function ResultsTable({
                             className="object-contain"
                           />
                         </div>
-                        <span className="group-hover:text-club-green-light line-clamp-1 text-left text-sm leading-tight font-bold text-white transition-colors">
+                        {/* ZMIANA: Dodano tracking-tight aby zmieścić więcej liter w linii */}
+                        <span
+                          title={awayName}
+                          className="group-hover:text-club-green-light line-clamp-2 min-w-0 flex-1 text-left text-sm leading-normal font-bold tracking-tight text-balance break-words text-white transition-colors sm:text-xs md:line-clamp-none"
+                        >
                           {awayName}
                         </span>
                       </div>
@@ -215,10 +222,8 @@ export default function ResultsTable({
                     {teaserTable.map((row, index) => {
                       const isKujawianka = row.teamName.includes('Kujawianka')
 
-                      // BEZPIECZNA POZYCJA: Nawet jeśli w bazie będzie ucięte, ta linijka zawsze wyliczy 100% poprawną pozycję.
                       const pos = row.position || adjustedStart + index + 1
 
-                      // OBLICZANIE STREF
                       const isPromotion = promoSpots > 0 && pos <= promoSpots
                       const isPromoPlayoff =
                         promoPlayoffSpots > 0 &&
@@ -288,8 +293,10 @@ export default function ResultsTable({
                                 />
                               </div>
                               <span
+                                title={row.teamName}
                                 className={cn(
-                                  'block max-w-[140px] truncate text-xs font-semibold sm:max-w-[180px] sm:text-sm',
+                                  // Zamiast ucinania uaktywniamy elastyczne łamanie wierszy
+                                  'line-clamp-2 block text-xs font-semibold text-balance break-words sm:text-sm md:line-clamp-none',
                                   isKujawianka
                                     ? 'text-club-green-light font-black tracking-wide'
                                     : 'text-gray-300',

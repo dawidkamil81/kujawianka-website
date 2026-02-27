@@ -255,8 +255,11 @@ export default function LeagueTable({
                               />
                             </div>
                             <span
+                              title={safeTeamName}
                               className={cn(
-                                'max-w-[140px] truncate text-sm tracking-wide uppercase md:max-w-none md:text-base',
+                                // Usunięto: 'max-w-[140px] truncate'
+                                // Dodano: 'text-balance line-clamp-2 md:line-clamp-none'
+                                'line-clamp-2 text-sm tracking-wide text-balance uppercase md:line-clamp-none md:text-base',
                                 isMyTeam
                                   ? 'font-black text-white'
                                   : 'font-bold text-gray-300',
