@@ -9,6 +9,7 @@ import {
   SQUADS_WITH_RESULTS_QUERY, // <--- 1. DODANY IMPORT
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
+import { Analytics } from '@vercel/analytics/react'
 
 // --- NOWE IMPORTY DLA EDYCJI WIZUALNEJ ---
 import { VisualEditing } from 'next-sanity/visual-editing'
@@ -90,6 +91,7 @@ export default async function RootLayout({
 
         {/* --- 5. KOMPONENT EDYCJI WIZUALNEJ DLA SANITY STUDIO --- */}
         {isDraftMode && <VisualEditing />}
+        <Analytics />
       </body>
     </html>
   )
