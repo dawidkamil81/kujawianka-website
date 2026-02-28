@@ -9,7 +9,7 @@ import {
   SQUADS_WITH_RESULTS_QUERY, // <--- 1. DODANY IMPORT
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/react'
+import { Analytics } from '@vercel/analytics/next'
 
 // --- NOWE IMPORTY DLA EDYCJI WIZUALNEJ ---
 import { VisualEditing } from 'next-sanity/visual-editing'
