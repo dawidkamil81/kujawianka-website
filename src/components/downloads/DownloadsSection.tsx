@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import { FileText, Download, HardDrive, Calendar } from 'lucide-react'
 import { format } from 'date-fns'

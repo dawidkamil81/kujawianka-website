@@ -1,5 +1,3 @@
-'use client'
-
 import Image from 'next/image'
 import { Trophy, Bus, Shirt, Users, Heart, Star, Quote } from 'lucide-react'
 

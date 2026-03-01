@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react' // <--- DODANO useCallback
 import Image from 'next/image'
 import { Trophy, ChevronDown, ChevronUp, Minus, Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -46,31 +46,35 @@ export default function LeagueTable({
     setExpandedRow(expandedRow === key ? null : key)
   }
 
-  // Funkcja obliczająca formę
-  const getTeamForm = (teamName: string) => {
-    if (!teamName) return []
-    const teamMatches = matches
-      .filter(
-        (m) =>
-          (m.homeTeam?.name === teamName || m.awayTeam?.name === teamName) &&
-          typeof m.homeScore === 'number' &&
-          typeof m.awayScore === 'number',
-      )
-      .sort((a, b) => b.round - a.round)
-      .slice(0, 5)
-      .reverse()
+  // OPTYMALIZACJA: Funkcja obliczająca formę jest teraz zapamiętana
+  // i odświeży się tylko wtedy, gdy zmieni się lista meczów (matches)
+  const getTeamForm = useCallback(
+    (teamName: string) => {
+      if (!teamName) return []
+      const teamMatches = matches
+        .filter(
+          (m) =>
+            (m.homeTeam?.name === teamName || m.awayTeam?.name === teamName) &&
+            typeof m.homeScore === 'number' &&
+            typeof m.awayScore === 'number',
+        )
+        .sort((a, b) => b.round - a.round)
+        .slice(0, 5)
+        .reverse()
 
-    return teamMatches.map((m) => {
-      const isHome = m.homeTeam?.name === teamName
-      const myScore = isHome ? m.homeScore : m.awayScore
-      const oppScore = isHome ? m.awayScore : m.homeScore
+      return teamMatches.map((m) => {
+        const isHome = m.homeTeam?.name === teamName
+        const myScore = isHome ? m.homeScore : m.awayScore
+        const oppScore = isHome ? m.awayScore : m.homeScore
 
-      if (myScore === undefined || oppScore === undefined) return 'U'
-      if (myScore > oppScore!) return 'W'
-      if (myScore === oppScore) return 'D'
-      return 'L'
-    })
-  }
+        if (myScore === undefined || oppScore === undefined) return 'U'
+        if (myScore > oppScore!) return 'W'
+        if (myScore === oppScore) return 'D'
+        return 'L'
+      })
+    },
+    [matches],
+  ) // <--- Lista zależności dla useCallback
 
   const renderFormIcon = (result: string, index: number) => {
     let colorClass = 'bg-gray-600'
@@ -257,8 +261,6 @@ export default function LeagueTable({
                             <span
                               title={safeTeamName}
                               className={cn(
-                                // Usunięto: 'max-w-[140px] truncate'
-                                // Dodano: 'text-balance line-clamp-2 md:line-clamp-none'
                                 'line-clamp-2 text-sm tracking-wide text-balance uppercase md:line-clamp-none md:text-base',
                                 isMyTeam
                                   ? 'font-black text-white'

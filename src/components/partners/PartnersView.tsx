@@ -1,5 +1,3 @@
-'use client'
-
 import { Sponsor, PartnersPageData } from '@/types/index'
 import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import PartnersBenefits from './PartnersBenefits'

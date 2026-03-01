@@ -1,5 +1,3 @@
-'use client'
-
 import { ArrowRight, ArrowUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

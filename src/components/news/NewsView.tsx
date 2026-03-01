@@ -1,5 +1,3 @@
-'use client'
-
 import { NewsItem } from '@/types'
 import NewsCard from '@/components/common/NewsCard'
 import HeroNewsSlider from '@/components/home/HeroNewsSlider'

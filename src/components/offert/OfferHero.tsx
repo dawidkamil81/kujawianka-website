@@ -1,5 +1,3 @@
-'use client'
-
 import SplitColorTitle from '@/components/ui/SplitColorTitle'
 import SectionBadge from '@/components/ui/SectionBadge'
 

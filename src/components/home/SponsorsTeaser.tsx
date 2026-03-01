@@ -121,6 +121,7 @@ export default function SponsorsTeaser({
                   key={`${sponsor._id}-${i}`}
                   href={sponsor.website || '#'}
                   target={sponsor.website ? '_blank' : '_self'}
+                  rel={sponsor.website ? 'noopener noreferrer' : undefined}
                   className="relative h-[60px] w-[130px] flex-shrink-0 opacity-60 transition-all duration-300 hover:scale-110 hover:opacity-100"
                 >
                   <Image

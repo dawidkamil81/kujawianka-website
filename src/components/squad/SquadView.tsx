@@ -1,7 +1,3 @@
-// W pliku src/components/squad/SquadView.tsx
-
-'use client'
-
 import PageHero from '@/components/common/PageHero'
 import SquadTabsView from './SquadTabsView'
 import SquadInfoBoard from './SquadInfoBoard'

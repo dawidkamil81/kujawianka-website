@@ -1,5 +1,3 @@
-'use client'
-
 import PageHero from '@/components/common/PageHero'
 import LeagueTable, { TableRow, LeagueConfig } from './LeagueTable'
 import MatchFixtures from './MatchFixtures'

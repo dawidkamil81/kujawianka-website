@@ -1,9 +1,13 @@
-import TextSection from './TextSection'
-import ImageTextSection from './ImageTextSection'
-import ContactSection from '@/components/sections/ContactSection'
-import FeaturesSection from './FeaturesSection'
-import TableSection from './TableSection'
-import GallerySection from './GallerySection'
+import dynamic from 'next/dynamic'
+
+const TextSection = dynamic(() => import('./TextSection'))
+const ImageTextSection = dynamic(() => import('./ImageTextSection'))
+const ContactSection = dynamic(
+  () => import('@/components/sections/ContactSection'),
+)
+const FeaturesSection = dynamic(() => import('./FeaturesSection'))
+const TableSection = dynamic(() => import('./TableSection'))
+const GallerySection = dynamic(() => import('./GallerySection'))
 
 // Deklarujemy typ dla przychodzących z Sanity sekcji
 interface SanitySection {

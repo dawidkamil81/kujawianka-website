@@ -10,7 +10,7 @@ import {
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
-
+import { Montserrat } from 'next/font/google'
 // --- NOWE IMPORTY DLA EDYCJI WIZUALNEJ ---
 import { VisualEditing } from 'next-sanity/visual-editing'
 import { draftMode } from 'next/headers'
@@ -48,6 +48,13 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+const montserrat = Montserrat({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '600', '700'],
+  variable: '--font-montserrat',
+  display: 'swap',
+})
+
 export default async function RootLayout({
   children,
 }: {
@@ -72,7 +79,9 @@ export default async function RootLayout({
 
   return (
     <html lang="pl">
-      <body className="flex min-h-screen flex-col bg-[#121212] font-sans text-white antialiased">
+      <body
+        className={`${montserrat.variable} font-montserrat flex min-h-screen flex-col bg-[#121212] text-white antialiased`}
+      >
         {/* Przekazujemy pageVisibility oraz resultSquads do Headera */}
         <Header
           settings={settings}
@@ -86,7 +95,6 @@ export default async function RootLayout({
         {/* --- POPRAWKA TUTAJ: Przekazujemy pageVisibility do Stopki --- */}
         <Footer settings={settings} pageVisibility={pageVisibility} />
 
-        {/* Komponent nasłuchujący zmian (Pobiera nowe dane) */}
         <SanityLive />
 
         {/* --- 5. KOMPONENT EDYCJI WIZUALNEJ DLA SANITY STUDIO --- */}

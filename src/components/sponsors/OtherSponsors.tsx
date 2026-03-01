@@ -1,5 +1,3 @@
-'use client'
-
 import Image from 'next/image'
 import { ExternalLink } from 'lucide-react'
 import { Sponsor } from '@/types/index'
