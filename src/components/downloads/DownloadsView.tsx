@@ -1,5 +1,3 @@
-'use client'
-
 import PageHero from '@/components/common/PageHero'
 import DownloadsSection, { DownloadFile } from './DownloadsSection'
 

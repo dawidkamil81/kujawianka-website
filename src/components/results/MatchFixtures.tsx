@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react' // <--- DODANY IMPORT useMemo
 import Image from 'next/image'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -11,29 +11,40 @@ interface MatchFixturesProps {
 }
 
 export default function MatchFixtures({ matches }: MatchFixturesProps) {
-  const rounds = Array.from(new Set(matches.map((m) => m.round))).sort(
-    (a, b) => a - b,
-  )
+  // OPTYMALIZACJA: Obliczamy listę dostępnych kolejek tylko RAZ,
+  // dopóki nie zmieni się zestaw wszystkich meczów.
+  const rounds = useMemo(() => {
+    return Array.from(new Set(matches.map((m) => m.round))).sort(
+      (a, b) => a - b,
+    )
+  }, [matches])
 
-  const lastPlayedRound = matches
-    .filter((m) => m.homeScore !== null && m.homeScore !== undefined)
-    .reduce((max, m) => (m.round > max ? m.round : max), rounds[0] || 1)
+  // OPTYMALIZACJA: Obliczamy ostatnio rozegraną kolejkę tylko RAZ.
+  const lastPlayedRound = useMemo(() => {
+    return matches
+      .filter((m) => m.homeScore !== null && m.homeScore !== undefined)
+      .reduce((max, m) => (m.round > max ? m.round : max), rounds[0] || 1)
+  }, [matches, rounds])
 
   const [currentRound, setCurrentRound] = useState(lastPlayedRound || 1)
 
-  const currentMatches = matches
-    .filter((m) => m.round === currentRound)
-    .sort((a, b) => {
-      const isKujawiankaA =
-        (a.homeTeam?.name || '').toLowerCase().includes('kujawianka') ||
-        (a.awayTeam?.name || '').toLowerCase().includes('kujawianka')
-      const isKujawiankaB =
-        (b.homeTeam?.name || '').toLowerCase().includes('kujawianka') ||
-        (b.awayTeam?.name || '').toLowerCase().includes('kujawianka')
-      if (isKujawiankaA && !isKujawiankaB) return -1
-      if (!isKujawiankaA && isKujawiankaB) return 1
-      return 0
-    })
+  // OPTYMALIZACJA: Przelicza mecze tylko wtedy, gdy zmienimy kolejkę (currentRound)
+  // lub zaktualizuje się lista wszystkich meczów z serwera.
+  const currentMatches = useMemo(() => {
+    return matches
+      .filter((m) => m.round === currentRound)
+      .sort((a, b) => {
+        const isKujawiankaA =
+          (a.homeTeam?.name || '').toLowerCase().includes('kujawianka') ||
+          (a.awayTeam?.name || '').toLowerCase().includes('kujawianka')
+        const isKujawiankaB =
+          (b.homeTeam?.name || '').toLowerCase().includes('kujawianka') ||
+          (b.awayTeam?.name || '').toLowerCase().includes('kujawianka')
+        if (isKujawiankaA && !isKujawiankaB) return -1
+        if (!isKujawiankaA && isKujawiankaB) return 1
+        return 0
+      })
+  }, [matches, currentRound])
 
   const handleRoundChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setCurrentRound(Number(e.target.value))
@@ -96,7 +107,7 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
           <button
             onClick={goToPrevRound}
             disabled={rounds.indexOf(currentRound) === 0}
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+            className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-3 text-white transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <ChevronLeft size={20} />
           </button>
@@ -119,7 +130,7 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
           <button
             onClick={goToNextRound}
             disabled={rounds.indexOf(currentRound) === rounds.length - 1}
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+            className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-3 text-white transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <ChevronRight size={20} />
           </button>

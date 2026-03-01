@@ -27,7 +27,6 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
 
-  // Tutaj sanityFetch zostaje bez zmian (to jest dozwolone)
   const { data: news } = await sanityFetch({
     query: SINGLE_NEWS_QUERY,
     params: { slug },
@@ -37,6 +36,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${news.title} | Kujawianka Izbica Kujawska`,
+    description: news.excerpt || 'Najnowsze informacje z życia klubu.',
+    openGraph: {
+      title: news.title,
+      description: news.excerpt || 'Najnowsze informacje z życia klubu.',
+      type: 'article',
+      publishedTime: news.publishedAt,
+      // Automatycznie wczytuje zdjęcie artykułu do podglądu na Facebooku!
+      images: news.imageUrl ? [{ url: news.imageUrl }] : [],
+    },
   }
 }
 

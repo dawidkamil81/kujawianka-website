@@ -54,7 +54,7 @@ export default function PartnersList({ members }: { members: Sponsor[] }) {
                     <a
                       href={member.website}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="mt-2 block text-xs font-bold tracking-widest text-emerald-600 uppercase transition-colors hover:text-emerald-400"
                     >
                       Odwiedź stronę &rarr;

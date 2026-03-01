@@ -1,5 +1,3 @@
-'use client'
-
 import { PortableText, PortableTextBlock } from 'next-sanity'
 import { motion } from 'framer-motion'
 

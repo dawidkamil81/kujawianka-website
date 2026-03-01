@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link' // <--- DODANY IMPORT
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
 
@@ -28,30 +29,31 @@ export default function Pagination({
     router.push(createPageURL(e.target.value))
   }
 
-  const goToPrev = () => {
-    if (currentPage > 1) router.push(createPageURL(currentPage - 1))
-  }
-
-  const goToNext = () => {
-    if (currentPage < totalPages) router.push(createPageURL(currentPage + 1))
-  }
-
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
 
   return (
     <div className="mt-16 mb-20 flex items-center justify-center gap-4 text-sm font-medium">
       {/* Przycisk Wstecz */}
-      <button
-        onClick={goToPrev}
-        disabled={currentPage <= 1}
-        className="group rounded-lg p-2 text-white/40 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-20"
-        aria-label="Poprzednia strona"
-      >
-        <ChevronLeft
-          size={20}
-          className="transition-transform group-hover:-translate-x-0.5"
-        />
-      </button>
+      {currentPage > 1 ? (
+        <Link
+          href={createPageURL(currentPage - 1)}
+          className="group rounded-lg p-2 text-white/40 transition-all hover:bg-white/5 hover:text-white"
+          aria-label="Poprzednia strona"
+        >
+          <ChevronLeft
+            size={20}
+            className="transition-transform group-hover:-translate-x-0.5"
+          />
+        </Link>
+      ) : (
+        <button
+          disabled
+          className="group cursor-not-allowed rounded-lg p-2 text-white/40 opacity-20"
+          aria-label="Poprzednia strona"
+        >
+          <ChevronLeft size={20} />
+        </button>
+      )}
 
       {/* Select - Stylizowany, widoczny, czytelny */}
       <div className="group relative">
@@ -74,17 +76,26 @@ export default function Pagination({
       </div>
 
       {/* Przycisk Dalej */}
-      <button
-        onClick={goToNext}
-        disabled={currentPage >= totalPages}
-        className="group rounded-lg p-2 text-white/40 transition-all hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-20"
-        aria-label="Następna strona"
-      >
-        <ChevronRight
-          size={20}
-          className="transition-transform group-hover:translate-x-0.5"
-        />
-      </button>
+      {currentPage < totalPages ? (
+        <Link
+          href={createPageURL(currentPage + 1)}
+          className="group rounded-lg p-2 text-white/40 transition-all hover:bg-white/5 hover:text-white"
+          aria-label="Następna strona"
+        >
+          <ChevronRight
+            size={20}
+            className="transition-transform group-hover:translate-x-0.5"
+          />
+        </Link>
+      ) : (
+        <button
+          disabled
+          className="group cursor-not-allowed rounded-lg p-2 text-white/40 opacity-20"
+          aria-label="Następna strona"
+        >
+          <ChevronRight size={20} />
+        </button>
+      )}
     </div>
   )
 }

@@ -1,0 +1,42 @@
+name: 90minut Scraper
+
+on:
+  # 1. Automatyczne uruchamianie (CRON)
+  schedule:
+    # Uruchamia się o 20:00 czasu UTC (czyli 21:00/22:00 w Polsce) w sobotę (6) i niedzielę (0)
+    - cron: "0 20 * * 0,6"
+
+  # 2. Ręczne uruchamianie (Pozwala na kliknięcie przycisku "Run workflow" w panelu GitHub)
+  workflow_dispatch:
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pobiera kod z Twojego repozytorium
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Instaluje środowisko Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11" # Możesz dostosować wersję, z której korzystasz
+          cache: "pip" # Przyspiesza działanie poprzez cache'owanie paczek
+
+      # Instaluje biblioteki (BeautifulSoup, requests, dotenv itp.) z pliku requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      # Uruchamia główny skrypt scrapera
+      - name: Run Scraper
+        env:
+          # Przekazanie bezpiecznych zmiennych z GitHub Secrets do skryptu
+          SANITY_API_KEY: ${{ secrets.SANITY_API_KEY }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+        run: |
+          python scraper/main.py

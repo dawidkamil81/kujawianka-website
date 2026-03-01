@@ -37,6 +37,7 @@ export default function HeroSection({ news, data }: HeroSectionProps) {
             fill
             className="object-cover"
             priority
+            fetchPriority="high" // <--- Dodatkowa wskazówka dla przeglądarki
           />
         </div>
         <div className="absolute inset-0 bg-black/70" />

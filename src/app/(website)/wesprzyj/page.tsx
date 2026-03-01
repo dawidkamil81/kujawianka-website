@@ -6,9 +6,20 @@ import { notFound } from 'next/navigation'
 
 export const revalidate = 60
 
-export const metadata: Metadata = {
-  title: 'Wesprzyj Nas | Kujawianka Izbica Kujawska',
-  description: 'Przekaż 1,5% podatku lub wesprzyj klub w inny sposób.',
+export async function generateMetadata(): Promise<Metadata> {
+  const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
+
+  if (!data) {
+    return {
+      title: 'Wesprzyj Nas | Kujawianka Izbica Kujawska',
+    }
+  }
+
+  return {
+    title: `${data.heroHeading || 'Wesprzyj Nas'} | Kujawianka Izbica Kujawska`,
+    description:
+      'Przekaż 1,5% podatku lub wesprzyj klub Kujawianka Izbica Kujawska. Każda pomoc ma znaczenie.',
+  }
 }
 
 export default async function DonatePage() {

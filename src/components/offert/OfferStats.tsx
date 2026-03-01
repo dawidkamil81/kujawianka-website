@@ -1,5 +1,3 @@
-'use client'
-
 import { Users, TrendingUp, Calendar, Trophy, Handshake } from 'lucide-react'
 
 export interface StatData {

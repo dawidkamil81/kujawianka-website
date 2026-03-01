@@ -1,5 +1,3 @@
-'use client'
-
 import { Phone, Mail, User, CalendarRange } from 'lucide-react'
 import { PortableText } from '@portabletext/react'
 

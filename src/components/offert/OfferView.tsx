@@ -1,5 +1,3 @@
-'use client'
-
 import SectionsRenderer from '@/components/sections/SectionsRenderer'
 import OfferPackages, { PackageData } from './OfferPackages'
 import OfferStats, { StatData } from './OfferStats'
