@@ -6,16 +6,14 @@ import {
   SQUADS_NAVIGATION_QUERY,
   SETTINGS_QUERY,
   PAGE_VISIBILITY_QUERY,
-  SQUADS_WITH_RESULTS_QUERY, // <--- 1. DODANY IMPORT
+  SQUADS_WITH_RESULTS_QUERY,
 } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { Montserrat } from 'next/font/google'
-// --- NOWE IMPORTY DLA EDYCJI WIZUALNEJ ---
 import { VisualEditing } from 'next-sanity/visual-editing'
 import { draftMode } from 'next/headers'
 
-// 1. DYNAMICZNE METADATA (SEO)
 export async function generateMetadata(): Promise<Metadata> {
   const { data: settings } = await sanityFetch({ query: SETTINGS_QUERY })
 
@@ -34,7 +32,6 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: title,
       description: description,
-      // Używamy nowej zmiennej ogImageUrl i odpowiedniego formatu Next.js
       images: settings?.ogImageUrl ? [{ url: settings.ogImageUrl }] : [],
     },
 
@@ -60,21 +57,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // 2. POBIERANIE DANYCH W TRYBIE LIVE
-  const { data: settings } = await sanityFetch({ query: SETTINGS_QUERY })
-  const { data: squads } = await sanityFetch({ query: SQUADS_NAVIGATION_QUERY })
+  const [
+    { data: settings },
+    { data: squads },
+    { data: resultSquads },
+    { data: pageVisibility },
+  ] = await Promise.all([
+    sanityFetch({ query: SETTINGS_QUERY }),
+    sanityFetch({ query: SQUADS_NAVIGATION_QUERY }),
+    sanityFetch({ query: SQUADS_WITH_RESULTS_QUERY }),
+    sanityFetch({ query: PAGE_VISIBILITY_QUERY }),
+  ])
 
-  // NOWOŚĆ: Pobieramy tylko te drużyny, które posiadają wyniki/tabele
-  const { data: resultSquads } = await sanityFetch({
-    query: SQUADS_WITH_RESULTS_QUERY,
-  })
-
-  // 3. Pobieramy flagi widoczności stron
-  const { data: pageVisibility } = await sanityFetch({
-    query: PAGE_VISIBILITY_QUERY,
-  })
-
-  // --- 4. SPRAWDZENIE CZY JESTEŚMY W TRYBIE DRAFTU ---
+  // --- 3. SPRAWDZENIE CZY JESTEŚMY W TRYBIE DRAFTU ---
   const { isEnabled: isDraftMode } = await draftMode()
 
   return (
@@ -82,22 +77,18 @@ export default async function RootLayout({
       <body
         className={`${montserrat.variable} font-montserrat flex min-h-screen flex-col bg-[#121212] text-white antialiased`}
       >
-        {/* Przekazujemy pageVisibility oraz resultSquads do Headera */}
         <Header
           settings={settings}
           squads={squads}
-          resultSquads={resultSquads} // <--- 2. PRZEKAZUJEMY NOWĄ ZMIENNĄ DO HEADERA
+          resultSquads={resultSquads}
           pageVisibility={pageVisibility}
         />
 
         <main className="w-full flex-grow">{children}</main>
 
-        {/* --- POPRAWKA TUTAJ: Przekazujemy pageVisibility do Stopki --- */}
         <Footer settings={settings} pageVisibility={pageVisibility} />
 
         <SanityLive />
-
-        {/* --- 5. KOMPONENT EDYCJI WIZUALNEJ DLA SANITY STUDIO --- */}
         {isDraftMode && <VisualEditing />}
         <Analytics />
       </body>
