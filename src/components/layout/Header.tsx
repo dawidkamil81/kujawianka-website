@@ -142,6 +142,7 @@ export default function Header({
               src={logoSrc}
               alt={siteTitle}
               fill
+              sizes="96px"
               className="object-contain"
               priority
             />

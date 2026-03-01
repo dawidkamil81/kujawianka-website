@@ -164,9 +164,13 @@ def get_or_create_team(raw_name):
     pretty_name = raw_name.replace('\xa0', ' ').strip()
     print(f"✨ Tworzę zespół: '{pretty_name}'")
     
+    # ZMIANA: Generujemy ID lokalnie!
+    new_team_id = f"team-{str(uuid.uuid4())}"
+    
     new_team_payload = {
         "mutations": [{
             "create": {
+                "_id": new_team_id, # <--- Wymuszamy nasze ID
                 "_type": "team",
                 "name": pretty_name
             }
@@ -182,11 +186,10 @@ def get_or_create_team(raw_name):
         )
         res.raise_for_status()
         if res.status_code == 200:
-            created_ids = res.json().get('results', [])
-            if created_ids:
-                new_id = created_ids[0].get('id')
-                TEAM_CACHE[target_key] = new_id
-                return new_id
+            # ZMIANA: Skoro wymusiliśmy new_team_id, możemy go od razu użyć, 
+            # bez potrzeby parsowania odpowiedzi z Sanity
+            TEAM_CACHE[target_key] = new_team_id
+            return new_team_id
     except RequestException as e:
         print(f"❌ Błąd tworzenia zespołu '{pretty_name}': {e}")
     
