@@ -129,6 +129,7 @@ export default function ResultsTable({
                             alt={homeName}
                             fill
                             className="object-contain"
+                            sizes="112px"
                           />
                         </div>
                       </div>
@@ -173,6 +174,7 @@ export default function ResultsTable({
                             alt={awayName}
                             fill
                             className="object-contain"
+                            sizes="112px"
                           />
                         </div>
                         {/* ZMIANA: Dodano tracking-tight aby zmieścić więcej liter w linii */}
@@ -290,6 +292,7 @@ export default function ResultsTable({
                                   alt={row.teamName}
                                   fill
                                   className="object-contain"
+                                  sizes="112px"
                                 />
                               </div>
                               <span
