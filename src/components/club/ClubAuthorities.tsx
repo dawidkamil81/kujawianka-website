@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Briefcase, Users, FileText, User } from 'lucide-react'
 
@@ -8,6 +9,7 @@ interface AuthorityMember {
   group: 'management' | 'audit'
   role: string
   isVisible: boolean
+  imageUrl?: string
 }
 
 export default function ClubAuthorities({
@@ -51,12 +53,24 @@ export default function ClubAuthorities({
           <div className="flex flex-wrap justify-center gap-6">
             {managementBoard.map((member, idx) => (
               <div key={idx} className={cardClass}>
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/5 transition-transform group-hover:scale-110">
-                  <User
-                    className="text-gray-400 transition-colors group-hover:text-emerald-500"
-                    size={40}
-                  />
+                {/* --- Zmodyfikowany kontener zdjęcia (h-32 w-32 to 128x128px) --- */}
+                <div className="relative mb-5 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white/5 shadow-lg transition-transform group-hover:scale-105">
+                  {member.imageUrl ? (
+                    <Image
+                      src={member.imageUrl}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
+                  ) : (
+                    <User
+                      className="text-gray-400 transition-colors group-hover:text-emerald-500"
+                      size={64}
+                    />
+                  )}
                 </div>
+                {/* --------------------------------------------------------------- */}
                 <h4 className="mb-1 text-lg font-bold text-white">
                   {member.name}
                 </h4>
@@ -78,12 +92,24 @@ export default function ClubAuthorities({
           <div className="flex flex-wrap justify-center gap-6">
             {auditCommittee.map((member, idx) => (
               <div key={idx} className={cardClass}>
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/5 transition-transform group-hover:scale-110">
-                  <User
-                    className="text-gray-400 transition-colors group-hover:text-emerald-500"
-                    size={40}
-                  />
+                {/* --- Zmodyfikowany kontener zdjęcia (h-32 w-32 to 128x128px) --- */}
+                <div className="relative mb-5 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white/5 shadow-lg transition-transform group-hover:scale-105">
+                  {member.imageUrl ? (
+                    <Image
+                      src={member.imageUrl}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
+                  ) : (
+                    <User
+                      className="text-gray-400 transition-colors group-hover:text-emerald-500"
+                      size={64}
+                    />
+                  )}
                 </div>
+                {/* --------------------------------------------------------------- */}
                 <h4 className="mb-1 text-lg font-bold text-white">
                   {member.name}
                 </h4>

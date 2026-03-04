@@ -56,7 +56,7 @@ export const CLUB_PAGE_QUERY = defineQuery(`
     heroHeading, heroDescription, historyTitle, historyContent, "historyImageUrl": historyImage.asset->url,
     achievements[] { title, description, iconType },
     stadiumDescription, "stadiumImageUrl": stadiumImage.asset->url, stadiumAddress, stadiumCapacity, stadiumBuilt,
-    clubAuthorities[] { name, group, role, isVisible },
+    clubAuthorities[] { name, group, role, isVisible, "imageUrl": image.asset->url },
     
     
     contentBuilder[] {
