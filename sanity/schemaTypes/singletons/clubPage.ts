@@ -15,14 +15,7 @@ export const clubPage = defineType({
       type: 'boolean',
       initialValue: true,
     }),
-    // defineField({
-    //   name: 'navTitle',
-    //   title: 'Nazwa w nawigacji',
-    //   description:
-    //     'Krótka nazwa wyświetlana w menu głównym (np. "Klub 100", "Współpraca")',
-    //   type: 'string',
-    // }),
-    // === SEKCJA HERO ===
+
     defineField({
       name: 'heroHeading',
       title: 'Nagłówek główny (Hero)',
@@ -189,6 +182,14 @@ export const clubPage = defineType({
               title: 'Widoczny na stronie?',
               type: 'boolean',
               initialValue: true,
+            }),
+            defineField({
+              name: 'image',
+              title: 'Zdjęcie',
+              type: 'image',
+              options: {
+                hotspot: true, // Pozwala na kadrowanie zdjęcia w panelu
+              },
             }),
           ],
           preview: {

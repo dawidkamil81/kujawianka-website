@@ -30,6 +30,7 @@ interface ClubViewProps {
       group: 'management' | 'audit'
       role: string
       isVisible: boolean
+      imageUrl?: string
     }>
     // W PEŁNI POPRAWNY TYP (bez any i bez konfliktów)
     contentBuilder?: Array<{
