@@ -65,7 +65,7 @@ body {
   background-color: var(--background-main);
   color: var(--text-main);
   /* Font Montserrat z importu */
-  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
 }
 
 a {
@@ -82,7 +82,8 @@ img {
 
 @theme {
   --animate-scroll: scroll 35s linear infinite;
-
+  --font-montserrat:
+    var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   @keyframes scroll {
     0% {
       transform: translateX(0);
