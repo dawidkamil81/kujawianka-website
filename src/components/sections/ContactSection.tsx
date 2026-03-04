@@ -115,9 +115,9 @@ export default function ContactSection({
           >
             {/* Efekt poświaty pod mapą */}
             <div className="pointer-events-none absolute inset-0 bg-emerald-500/20 opacity-20 blur-[100px]" />
-
             <iframe
-              src="https://maps.google.com/maps?q=ul.+Sportowa+12,+87-865+Izbica+Kujawska&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              // Używamy oficjalnej domeny maps.google.com
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2266.6054908060705!2d18.746926817051754!3d52.42267488687621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471b5d480c17d867%3A0x31ec658c911624ee!2sStadion%20miejski%20w%20Izbicy%20Kujawskiej!5e0!3m2!1spl!2spl!4v1772635711983!5m2!1spl!2spl"
               width="100%"
               height="100%"
               style={{ border: 0 }}

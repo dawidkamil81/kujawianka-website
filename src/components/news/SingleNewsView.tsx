@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Share2 } from 'lucide-react'
+import { ArrowLeft, Calendar } from 'lucide-react'
 import { PortableText, PortableTextComponents } from 'next-sanity'
 import ShareButton from '@/components/news/ShareButton'
 

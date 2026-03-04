@@ -76,7 +76,8 @@ export default function PlayerCard({ player, statsConfig }: PlayerCardProps) {
                 alt={`${player.name} ${player.surname}`}
                 fill
                 className="object-cover transition-all duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                quality={85}
                 priority={false}
               />
             ) : (

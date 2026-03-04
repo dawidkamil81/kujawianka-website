@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
   images: {
@@ -10,6 +11,8 @@ const nextConfig: NextConfig = {
         pathname: '/images/**',
       },
     ],
+    qualities: [75, 85, 95],
+    formats: ['image/avif', 'image/webp'],
   },
   poweredByHeader: false,
   compiler: {
@@ -26,10 +29,11 @@ const nextConfig: NextConfig = {
             value: `
               default-src 'self';
               script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-scripts.com va.vercel-scripts.com;
-              style-src 'self' 'unsafe-inline';
+              style-src 'self' 'unsafe-inline' fonts.googleapis.com;
               img-src 'self' blob: data: cdn.sanity.io;
-              font-src 'self' data:;
+              font-src 'self' data: fonts.gstatic.com ${isDev ? 'https://fonts.gstatic.com' : ''};
               connect-src 'self' *.sanity.io *.vercel-insights.com *.vitals.vercel-insights.com;
+              frame-src 'self' https://www.google.com https://maps.google.com;
               frame-ancestors 'self' https://*.sanity.studio http://localhost:3333 http://localhost:3000;
               upgrade-insecure-requests;
             `
