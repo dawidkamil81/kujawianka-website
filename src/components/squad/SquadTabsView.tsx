@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Player } from '@/types'
 import PlayerCard from '@/components/common/PlayerCard'
 import SquadStatsTable, {
@@ -22,22 +23,13 @@ const SECTIONS_ORDER = [
   'Sztab',
 ] as const
 
-export default function SquadTabsView({
-  players,
-  statsConfig,
-}: SquadTabsViewProps) {
-  const [activeTab, setActiveTab] = useState<'squad' | 'stats'>('squad')
+function SquadTabsContent({ players, statsConfig }: SquadTabsViewProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const [isMounted, setIsMounted] = useState(false)
 
-  useEffect(() => {
-    const savedTab = localStorage.getItem('kujawianka_active_tab')
-    if (savedTab === 'stats' || savedTab === 'squad') {
-      setActiveTab(savedTab)
-    }
-    // Małe opóźnienie (np. 100ms) doda elegancji, ale samo true też zadziała
-    setIsMounted(true)
-  }, [])
-
+  // 1. Grupowanie zawodników
   const squadGroups = useMemo(() => {
     return {
       Bramkarze: players.filter((p) => p.position === 'Bramkarz'),
@@ -48,43 +40,67 @@ export default function SquadTabsView({
     }
   }, [players])
 
+  // 2. Sprawdzamy, czy w drużynie są jacyś faktyczni zawodnicy (nie sztab)
+  const hasActualPlayers = useMemo(() => {
+    return players.some((p) => p.position !== 'Sztab')
+  }, [players])
+
+  // 3. Odczytujemy aktywną zakładkę. Jeśli ktoś wpisał ?tab=stats dla drużyny bez zawodników, wymuszamy 'squad'
+  const activeTab =
+    searchParams.get('tab') === 'stats' && hasActualPlayers ? 'stats' : 'squad'
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const handleTabChange = (tab: 'squad' | 'stats') => {
-    setActiveTab(tab)
-    localStorage.setItem('kujawianka_active_tab', tab)
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (tab === 'squad') {
+      params.delete('tab')
+    } else {
+      params.set('tab', tab)
+    }
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   if (!players?.length) return null
 
   return (
     <div className="w-full">
-      {/* --- PRZEŁĄCZNIK ZAKŁADEK Z ANIMACJĄ WEJŚCIA --- */}
-      <div
-        className={cn(
-          'mb-12 flex justify-center gap-4 transition-all duration-700 ease-out',
-          isMounted ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0',
-        )}
-      >
-        {['squad', 'stats'].map((tab) => {
-          const isSquad = tab === 'squad'
-          const isActive = activeTab === tab
+      {/* --- PRZEŁĄCZNIK ZAKŁADEK (Widoczny tylko gdy są zawodnicy) --- */}
+      {hasActualPlayers && (
+        <div
+          className={cn(
+            'mb-12 flex justify-center gap-4 transition-all duration-700 ease-out',
+            isMounted
+              ? 'translate-y-0 opacity-100'
+              : '-translate-y-4 opacity-0',
+          )}
+        >
+          {['squad', 'stats'].map((tab) => {
+            const isSquad = tab === 'squad'
+            const isActive = activeTab === tab
 
-          return (
-            <button
-              key={tab}
-              onClick={() => handleTabChange(tab as 'squad' | 'stats')}
-              className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-300 md:text-sm',
-                isActive
-                  ? 'scale-105 transform border-emerald-500 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                  : 'border-white/10 bg-[#121212] text-gray-400 hover:border-emerald-500/50 hover:text-white',
-              )}
-            >
-              {isSquad ? <Users size={16} /> : <BarChart3 size={16} />}
-              {isSquad ? 'Kadra' : 'Statystyki'}
-            </button>
-          )
-        })}
-      </div>
+            return (
+              <button
+                key={tab}
+                onClick={() => handleTabChange(tab as 'squad' | 'stats')}
+                className={cn(
+                  'flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-300 md:text-sm',
+                  isActive
+                    ? 'scale-105 transform border-emerald-500 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                    : 'border-white/10 bg-[#121212] text-gray-400 hover:border-emerald-500/50 hover:text-white',
+                )}
+              >
+                {isSquad ? <Users size={16} /> : <BarChart3 size={16} />}
+                {isSquad ? 'Kadra' : 'Statystyki'}
+              </button>
+            )
+          })}
+        </div>
+      )}
 
       {/* --- TREŚĆ ZAKŁADEK --- */}
       <div
@@ -127,15 +143,25 @@ export default function SquadTabsView({
         </div>
 
         {/* WIDOK STATYSTYK */}
-        <div
-          className={cn(
-            activeTab === 'stats' ? 'block' : 'hidden',
-            'animate-in fade-in duration-500',
-          )}
-        >
-          <SquadStatsTable players={players} statsConfig={statsConfig} />
-        </div>
+        {hasActualPlayers && (
+          <div
+            className={cn(
+              activeTab === 'stats' ? 'block' : 'hidden',
+              'animate-in fade-in duration-500',
+            )}
+          >
+            <SquadStatsTable players={players} statsConfig={statsConfig} />
+          </div>
+        )}
       </div>
     </div>
+  )
+}
+
+export default function SquadTabsView(props: SquadTabsViewProps) {
+  return (
+    <Suspense fallback={<div className="min-h-[400px]" />}>
+      <SquadTabsContent {...props} />
+    </Suspense>
   )
 }

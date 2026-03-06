@@ -42,24 +42,21 @@ export default function DonateGoals({
       {/* Prawa kolumna: Social Proof (Zdjęcie i cytat) */}
       <section className="group bg-club-dark relative flex flex-col overflow-hidden rounded-3xl border border-white/10 lg:min-h-[450px] lg:justify-end">
         {/* Kontener zdjęcia */}
-        {/* ZMIANA: Użyto aspect-video/aspect-square zamiast sztywnego h-64, aby na mobilce zapewnić miejscu zdjęciu z object-contain */}
         <div className="relative aspect-[4/3] w-full shrink-0 sm:aspect-video lg:absolute lg:inset-0 lg:aspect-auto lg:h-full">
           {socialProof?.imageUrl && (
             <Image
               src={socialProof.imageUrl}
               alt="Akademia Kujawianki"
               fill
-              // ZMIANA: object-contain na mobile (nie przycina), object-cover na desktopie.
-              // ZMIANA: opacity-90 na mobile (bardzo jasne), lg:group-hover:opacity-100 na desktopie (efekt podświetlenia).
               className="object-contain opacity-90 transition-all duration-700 ease-out lg:object-cover lg:opacity-50 lg:group-hover:scale-105 lg:group-hover:opacity-100"
             />
           )}
-          {/* ZMIANA: Gradient sam w sobie blednie przy hover (lg:group-hover:opacity-30), co potęguje efekt jasności zdjęcia */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/50 to-transparent transition-opacity duration-700 lg:via-[#0e0e0e]/80 lg:to-black/50 lg:group-hover:opacity-30" />
         </div>
 
         {/* Treść cytatu */}
-        <div className="bg-club-dark/95 lg:group-hover:bg-club-dark/40 relative z-10 mt-auto flex flex-col p-6 transition-all duration-700 md:p-8 lg:bg-transparent lg:p-10">
+        {/* ZMIANA: Dodano lg:group-hover:opacity-0 oraz opcjonalnie pointer-events-none (aby po zniknięciu tekst nie blokował kliknięć w zdjęcie) */}
+        <div className="bg-club-dark/95 relative z-10 mt-auto flex flex-col p-6 transition-all duration-700 md:p-8 lg:bg-transparent lg:p-10 lg:group-hover:pointer-events-none lg:group-hover:opacity-0">
           <Quote className="text-club-red mb-4 h-10 w-10 opacity-90 drop-shadow-md" />
 
           <blockquote className="border-club-red border-l-4 pl-5 text-lg leading-relaxed font-medium text-white md:text-xl lg:text-2xl lg:leading-snug">
