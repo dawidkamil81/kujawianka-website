@@ -18,7 +18,7 @@ import SponsorsView from '@/components/sponsors/SponsorsView'
 import Club100View from '@/components/club100/Club100View'
 import PartnersView from '@/components/partners/PartnersView'
 
-export const revalidate = 60
+export const revalidate = 1800 //30minutes
 
 // === 2. NOWOŚĆ: GENEROWANIE STATYCZNE (SSG) ===
 export async function generateStaticParams() {

@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const revalidate = 450 //7.5minute
 
 import { client } from '@/sanity/lib/client'
 import { NewsItem } from '@/types'

@@ -1,3 +1,5 @@
+export const revalidate = 43200 //12hours
+
 import { sanityFetch } from '@/sanity/lib/live'
 import { CLUB_PAGE_QUERY } from '@/sanity/lib/queries'
 import ClubView from '@/components/club/ClubView'
@@ -35,7 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ClubPage() {
   const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY })
-
   // Wyrzuca 404, jeśli strona jest ukryta w Sanity
   if (!data || data.isPageVisible === false) {
     notFound()

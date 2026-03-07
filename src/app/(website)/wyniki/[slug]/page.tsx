@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const revalidate = 1800 //30minutes
 
 import { notFound } from 'next/navigation'
 import { sanityFetch } from '@/sanity/lib/live'

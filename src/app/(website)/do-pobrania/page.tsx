@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const revalidate = 43200 //12hours
 
 import { sanityFetch } from '@/sanity/lib/live'
 import { DOWNLOADS_QUERY } from '@/sanity/lib/queries'

@@ -4,7 +4,7 @@ import DonateView from '@/components/donate/DonateView'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 60
+export const revalidate = 43200 //12hours
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
