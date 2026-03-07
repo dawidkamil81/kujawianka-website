@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const revalidate = 1800 //30minutes
 
 // 1. Dodajemy import zwykłego klienta Sanity
 import { client } from '@/sanity/lib/client'

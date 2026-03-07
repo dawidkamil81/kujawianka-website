@@ -1,4 +1,4 @@
-export const revalidate = 60 // Odświeżanie Route Cache (HTML) co 60s
+export const revalidate = 300 //5minutes
 
 import { client } from '@/sanity/lib/client'
 import { sanityFetch } from '@/sanity/lib/live'
@@ -11,6 +11,8 @@ import {
   HOME_PAGE_QUERY,
 } from '@/sanity/lib/queries'
 import Home from '@/components/home/HomePage'
+
+import NotFoundVAR from './not-found'
 
 export default async function Page() {
   // Rozszerzamy Promise.all o zapytanie wyciągające domyślny slug dla wyników
@@ -31,7 +33,7 @@ export default async function Page() {
     sanityFetch({ query: HOMEPAGE_PLAYERS_QUERY }),
 
     // 2. NEWSY: Standardowy klient
-    client.fetch(HOMEPAGE_NEWS_QUERY, {}, { next: { revalidate: 60 } }),
+    client.fetch(HOMEPAGE_NEWS_QUERY, {}, { next: { revalidate: 300 } }),
 
     // 3. SPONSORZY: Live
     sanityFetch({ query: HOMEPAGE_SPONSORS_QUERY }),
@@ -48,6 +50,14 @@ export default async function Page() {
 
     client.fetch(`*[_type == "sponsorsPage"][0].slug.current`), // <--- DODANE ZAPYTANIE
   ])
+
+  // 2. SPRAWDZAMY CZY DANE STRONY GŁÓWNEJ ISTNIEJĄ
+  // Jeśli z jakiegoś powodu w Sanity brakuje opublikowanego dokumentu Strony Głównej,
+  // przerywamy renderowanie i wyświetlamy Twój plik not-found.tsx
+  if (!homePageData.data) {
+    // Zwracamy Twój komponent bezpośrednio, co daje 100% gwarancji, że się wyświetli!
+    return <NotFoundVAR />
+  }
 
   return (
     <Home
