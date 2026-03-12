@@ -3,8 +3,13 @@ name: 90minut Scraper
 on:
   # 1. Automatyczne uruchamianie (CRON)
   schedule:
-    # Uruchamia się o 20:00 czasu UTC (czyli 21:00/22:00 w Polsce) w sobotę (6) i niedzielę (0)
-    - cron: "0 20 * * 0,6"
+    # W tygodniu (poniedziałek - piątek) o 07:00 i 19:00 UTC
+    # (czyli ok. 8:00 rano i 20:00 wieczorem w Polsce)
+    - cron: '0 7,19 * * 1-5'
+
+    # W weekendy (sobota, niedziela) co godzinę od 07:00 do 21:00 UTC
+    # (czyli od ok. 8:00 do 22:00 w Polsce)
+    - cron: '0 7-21 * * 0,6'
 
   # 2. Ręczne uruchamianie (Pozwala na kliknięcie przycisku "Run workflow" w panelu GitHub)
   workflow_dispatch:
@@ -22,8 +27,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11" # Możesz dostosować wersję, z której korzystasz
-          cache: "pip" # Przyspiesza działanie poprzez cache'owanie paczek
+          python-version: '3.11' # Możesz dostosować wersję, z której korzystasz
+          cache: 'pip' # Przyspiesza działanie poprzez cache'owanie paczek
 
       # Instaluje biblioteki (BeautifulSoup, requests, dotenv itp.) z pliku requirements.txt
       - name: Install dependencies
