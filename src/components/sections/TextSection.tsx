@@ -1,3 +1,5 @@
+'use client' // <--- DODAJ TĘ LINIJKĘ NA SAMEJ GÓRZE
+
 import { PortableText, PortableTextBlock } from 'next-sanity'
 import { motion } from 'framer-motion'
 
