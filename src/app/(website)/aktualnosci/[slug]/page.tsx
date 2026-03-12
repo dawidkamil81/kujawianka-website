@@ -1,9 +1,4 @@
-export const revalidate = 1800 //30minutes
-
-// 1. Dodajemy import zwykłego klienta Sanity
 import { client } from '@/sanity/lib/client'
-
-import { sanityFetch } from '@/sanity/lib/live'
 import { SINGLE_NEWS_QUERY, NEWS_SLUGS_QUERY } from '@/sanity/lib/queries'
 import { notFound } from 'next/navigation'
 import SingleNewsView from '@/components/news/SingleNewsView'
@@ -13,24 +8,27 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
-// === POPRAWKA: Używamy client.fetch zamiast sanityFetch ===
 export async function generateStaticParams() {
-  // Zwykły client.fetch nie sprawdza draftMode() pod maską
-  const slugs = await client.fetch(NEWS_SLUGS_QUERY)
+  const slugs = await client.fetch(
+    NEWS_SLUGS_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   return slugs.map((slug: string) => ({
     slug: slug,
   }))
 }
-// =========================================================
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
 
-  const { data: news } = await sanityFetch({
-    query: SINGLE_NEWS_QUERY,
-    params: { slug },
-  })
+  // Zmiana na klienta i bezpośrednie przypisanie
+  const news = await client.fetch(
+    SINGLE_NEWS_QUERY,
+    { slug },
+    { next: { tags: ['sanity'] } },
+  )
 
   if (!news) return { title: 'Nie znaleziono artykułu' }
 
@@ -42,7 +40,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: news.excerpt || 'Najnowsze informacje z życia klubu.',
       type: 'article',
       publishedTime: news.publishedAt,
-      // Automatycznie wczytuje zdjęcie artykułu do podglądu na Facebooku!
       images: news.imageUrl ? [{ url: news.imageUrl }] : [],
     },
   }
@@ -51,11 +48,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NewsArticlePage({ params }: Props) {
   const { slug } = await params
 
-  // Tutaj sanityFetch też zostaje bez zmian
-  const { data: news } = await sanityFetch({
-    query: SINGLE_NEWS_QUERY,
-    params: { slug },
-  })
+  const news = await client.fetch(
+    SINGLE_NEWS_QUERY,
+    { slug },
+    { next: { tags: ['sanity'] } },
+  )
 
   if (!news) {
     notFound()

@@ -1,9 +1,5 @@
-export const revalidate = 1800 //30minutes
-
 import { notFound } from 'next/navigation'
-import { sanityFetch } from '@/sanity/lib/live'
-// === 1. NOWY IMPORT ZWYKŁEGO KLIENTA ===
-import { client } from '@/sanity/lib/client'
+import { client } from '@/sanity/lib/client' // <-- Zostawiamy tylko zwykłego klienta
 import { COMPETITION_BY_SQUAD_QUERY } from '@/sanity/lib/queries'
 import { calculateTableFromMatches } from '@/lib/tableCalculator'
 import { Match, Fixture } from '@/types/index'
@@ -14,10 +10,12 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-// === 2. NOWOŚĆ: GENEROWANIE STATYCZNE (SSG) ===
+// === GENEROWANIE STATYCZNE (SSG) ===
 export async function generateStaticParams() {
   const slugs = await client.fetch(
     `*[_type == "competition" && defined(squad->slug.current)].squad->slug.current`,
+    {},
+    { next: { tags: ['sanity'] } }, // <-- Tu też warto dodać tag, na wypadek dodania nowej drużyny!
   )
 
   const uniqueSlugs = Array.from(new Set(slugs))
@@ -32,10 +30,12 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params
 
-  const { data: competition } = await sanityFetch({
-    query: COMPETITION_BY_SQUAD_QUERY,
-    params: { slug },
-  })
+  // Zamiana na client.fetch i bezpośrednie przypisanie wyniku do "competition"
+  const competition = await client.fetch(
+    COMPETITION_BY_SQUAD_QUERY,
+    { slug }, // <-- Przekazujemy parametr slug
+    { next: { tags: ['sanity'] } }, // <-- Dodany tag webhooka
+  )
 
   if (!competition) {
     return {
@@ -57,10 +57,12 @@ export async function generateMetadata({
 export default async function DynamicResultsPage({ params }: PageProps) {
   const { slug } = await params
 
-  const { data: competition } = await sanityFetch({
-    query: COMPETITION_BY_SQUAD_QUERY,
-    params: { slug },
-  })
+  // Zamiana na client.fetch i bezpośrednie przypisanie wyniku do "competition"
+  const competition = await client.fetch(
+    COMPETITION_BY_SQUAD_QUERY,
+    { slug }, // <-- Przekazujemy parametr slug
+    { next: { tags: ['sanity'] } }, // <-- Dodany tag webhooka
+  )
 
   if (!competition) {
     return notFound()

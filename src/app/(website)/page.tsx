@@ -1,75 +1,38 @@
-export const revalidate = 300 //5minutes
+// export const revalidate = 300 //5minutes
 
+// src/app/(website)/page.tsx
 import { client } from '@/sanity/lib/client'
-import { sanityFetch } from '@/sanity/lib/live'
-import {
-  HOMEPAGE_PLAYERS_QUERY,
-  HOMEPAGE_NEWS_QUERY,
-  HOMEPAGE_SPONSORS_QUERY,
-  HOMEPAGE_RESULTS_QUERY,
-  MATCH_CENTER_QUERY,
-  HOME_PAGE_QUERY,
-} from '@/sanity/lib/queries'
+// Importujemy nasze nowe połączone zapytanie
+import { HOMEPAGE_COMBINED_QUERY } from '@/sanity/lib/queries'
 import Home from '@/components/home/HomePage'
-
 import NotFoundVAR from './not-found'
 
 export default async function Page() {
-  // Rozszerzamy Promise.all o zapytanie wyciągające domyślny slug dla wyników
-  const [
-    homePageData,
-    players,
-    news,
-    sponsors,
-    resultsData,
-    matchCenterData,
-    mainSquadSlug,
-    sponsorsPageSlug, // <--- NOWOŚĆ: Odbieramy domyślny slug
-  ] = await Promise.all([
-    // 0. DANE STRONY GŁÓWNEJ (HERO)
-    sanityFetch({ query: HOME_PAGE_QUERY }),
+  // Wykonujemy tylko JEDNO zapytanie do Sanity
+  // Dodajemy tag 'sanity', który zrobiliśmy w Webhooku!
+  const data = await client.fetch(
+    HOMEPAGE_COMBINED_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
-    // 1. ZAWODNICY: Live
-    sanityFetch({ query: HOMEPAGE_PLAYERS_QUERY }),
-
-    // 2. NEWSY: Standardowy klient
-    client.fetch(HOMEPAGE_NEWS_QUERY, {}, { next: { revalidate: 300 } }),
-
-    // 3. SPONSORZY: Live
-    sanityFetch({ query: HOMEPAGE_SPONSORS_QUERY }),
-
-    // 4. WYNIKI i TABELA: Live
-    sanityFetch({ query: HOMEPAGE_RESULTS_QUERY }),
-
-    // 5. CENTRUM MECZOWE: Live
-    sanityFetch({ query: MATCH_CENTER_QUERY }),
-
-    // 6. DOMYŚLNY SLUG DRUŻYNY (Dla linku "Pełny terminarz")
-    // Szuka pierwszej drużyny posortowanej po polu "order" i pobiera jej slug
-    client.fetch(`*[_type == "squad"] | order(order asc)[0].slug.current`),
-
-    client.fetch(`*[_type == "sponsorsPage"][0].slug.current`), // <--- DODANE ZAPYTANIE
-  ])
-
-  // 2. SPRAWDZAMY CZY DANE STRONY GŁÓWNEJ ISTNIEJĄ
-  // Jeśli z jakiegoś powodu w Sanity brakuje opublikowanego dokumentu Strony Głównej,
-  // przerywamy renderowanie i wyświetlamy Twój plik not-found.tsx
-  if (!homePageData.data) {
-    // Zwracamy Twój komponent bezpośrednio, co daje 100% gwarancji, że się wyświetli!
+  // Sprawdzamy, czy w pobranych danych w ogóle istnieje strona główna
+  if (!data || !data.homePageData) {
     return <NotFoundVAR />
   }
 
   return (
     <Home
-      key={homePageData.data?._updatedAt || 'home-initial'}
-      homePageData={homePageData.data}
-      players={players.data}
-      news={news}
-      sponsors={sponsors.data}
-      resultsData={resultsData.data}
-      matchCenterData={matchCenterData.data}
-      defaultResultSlug={mainSquadSlug} // <--- Przekazujemy slug dalej
-      sponsorsSlug={sponsorsPageSlug}
+      // Możesz zostawić klucz oparty np. o zmianę slugów lub usunąć, jeśli nie jest potrzebny
+      key={data.homePageData._updatedAt || 'home-initial'}
+      homePageData={data.homePageData}
+      players={data.players}
+      news={data.news}
+      sponsors={data.sponsors}
+      resultsData={data.resultsData}
+      matchCenterData={data.matchCenterData}
+      defaultResultSlug={data.mainSquadSlug}
+      sponsorsSlug={data.sponsorsPageSlug}
     />
   )
 }

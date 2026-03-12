@@ -108,31 +108,31 @@ export const DOWNLOADS_QUERY = defineQuery(`
 
 export const PAGE_VISIBILITY_QUERY = `*[_type == "siteSettings"][0]{
   "klub": {
-    "isVisible": coalesce(*[_type == "clubPage"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "clubPage"][0]) && coalesce(*[_type == "clubPage"][0].isPageVisible, true),
     "title": coalesce(*[_type == "clubPage"][0].navTitle, "Klub")
   },
   "oferta": {
-    "isVisible": coalesce(*[_type == "offerPage"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "offerPage"][0]) && coalesce(*[_type == "offerPage"][0].isPageVisible, true),
     "title": coalesce(*[_type == "offerPage"][0].navTitle, "Współpraca"),
     "slug": coalesce(*[_type == "offerPage"][0].slug.current, "oferta")
   },
   "sponsorzy": {
-    "isVisible": coalesce(*[_type == "sponsorsPage"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "sponsorsPage"][0]) && coalesce(*[_type == "sponsorsPage"][0].isPageVisible, true),
     "title": coalesce(*[_type == "sponsorsPage"][0].navTitle, "Sponsorzy"),
     "slug": coalesce(*[_type == "sponsorsPage"][0].slug.current, "sponsorzy")
   },
   "klubowicze": {
-    "isVisible": coalesce(*[_type == "partnersPage"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "partnersPage"][0]) && coalesce(*[_type == "partnersPage"][0].isPageVisible, true),
     "title": coalesce(*[_type == "partnersPage"][0].navTitle, "Klubowicze"),
     "slug": coalesce(*[_type == "partnersPage"][0].slug.current, "klubowicze")
   },
   "klub100": {
-    "isVisible": coalesce(*[_type == "club100Page"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "club100Page"][0]) && coalesce(*[_type == "club100Page"][0].isPageVisible, true),
     "title": coalesce(*[_type == "club100Page"][0].navTitle, "Klub 100"),
     "slug": coalesce(*[_type == "club100Page"][0].slug.current, "klub-100")
   },
   "wesprzyj": {
-    "isVisible": coalesce(*[_type == "donatePage"][0].isPageVisible, true),
+    "isVisible": defined(*[_type == "donatePage"][0]) && coalesce(*[_type == "donatePage"][0].isPageVisible, true),
     "title": coalesce(*[_type == "donatePage"][0].navTitle, "Przekaż 1.5%")
   }
 }`
@@ -143,5 +143,76 @@ export const HOME_PAGE_QUERY = defineQuery(`
     heroTitle,
     heroDescription,
     "heroImageUrl": heroImage.asset->url
+  }
+`)
+
+export const HOMEPAGE_COMBINED_QUERY = defineQuery(`
+  {
+    "homePageData": *[_type == "homePage"][0] {
+      heroOvertitle,
+      heroTitle,
+      heroDescription,
+      "heroImageUrl": heroImage.asset->url
+    },
+    
+    "players": *[_type == "player" && squad->slug.current == "seniorzy"] | order(number asc)[0...4] {
+      _id, name, surname, number, position,
+      "staffRole": staffRole->name, 
+      "imageUrl": image.asset->url,
+      "slug": slug.current,
+      "stats": {
+         "matches": coalesce(matches, 0),
+         "goals": coalesce(goals, 0),
+         "assists": coalesce(assists, 0),
+         "cleanSheets": coalesce(cleanSheets, 0),
+         "yellowCards": coalesce(yellowCards, 0),
+         "redCards": coalesce(redCards, 0)
+      }
+    },
+    
+    "news": *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
+      _id, title, "slug": slug.current, publishedAt, excerpt, "imageUrl": mainImage.asset->url, isHighlighted
+    },
+    
+    "sponsors": *[_type == "sponsor"] | order(tier->rank asc, name asc) {
+      _id, name, "logoUrl": logo.asset->url, website, tier->{ name, rank }
+    },
+    
+    "resultsData": {
+      "table": *[_type == "standing" && competition->squad->slug.current == "seniorzy"][0] {
+        rows[] { _key, position, "teamName": team->name, "teamLogo": team->logo.asset->url, matches, points }
+      },
+      "config": *[_type == "competition" && squad->slug.current == "seniorzy"][0].config,
+      "lastMatches": *[_type == "fixture" && competition->squad->slug.current == "seniorzy"] {
+        "expandedMatches": matches[defined(homeScore)] {
+          "_id": _key, "homeTeam": homeTeam->{ "name": name, "logoUrl": logo.asset->url },
+          "awayTeam": awayTeam->{ "name": name, "logoUrl": logo.asset->url },
+          homeScore, awayScore, date, "round": ^.roundNumber
+        }
+      }.expandedMatches[] | order(date desc)[0...8],
+      "teams": *[_type == "team"] { name, "logoUrl": logo.asset->url }
+    },
+    
+    "matchCenterData": {
+      "nextMatch": *[_type == "fixture" && competition->squad->slug.current == "seniorzy"] {
+        "expandedMatches": matches[!defined(homeScore) && (homeTeam->name match "Kujawianka*" || awayTeam->name match "Kujawianka*")] {
+          "_id": _key, "homeTeam": homeTeam->{ "name": name, "logoUrl": logo.asset->url },
+          "awayTeam": awayTeam->{ "name": name, "logoUrl": logo.asset->url },
+          date, "round": ^.roundNumber, "stadium": "Stadion Miejski"
+        }
+      }.expandedMatches[] | order(date asc)[0],
+      "lastMatches": *[_type == "fixture" && competition->squad->slug.current == "seniorzy"] {
+        "expandedMatches": matches[defined(homeScore) && (homeTeam->name match "Kujawianka*" || awayTeam->name match "Kujawianka*")] {
+          "_id": _key, "homeTeam": homeTeam->{ "name": name, "logoUrl": logo.asset->url },
+          "awayTeam": awayTeam->{ "name": name, "logoUrl": logo.asset->url },
+          homeScore, awayScore, date, "round": ^.roundNumber
+        }
+      }.expandedMatches[] | order(date desc)[0...2],
+      "teams": *[_type == "team"] { name, "logoUrl": logo.asset->url },
+      "clubLogo": *[_type == "siteSettings"][0].logo.asset->url
+    },
+    
+    "mainSquadSlug": *[_type == "squad"] | order(order asc)[0].slug.current,
+    "sponsorsPageSlug": *[_type == "sponsorsPage"][0].slug.current
   }
 `)

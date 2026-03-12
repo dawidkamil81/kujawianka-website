@@ -1,5 +1,3 @@
-export const revalidate = 450 //7.5minute
-
 import { client } from '@/sanity/lib/client'
 import { NewsItem } from '@/types'
 import {
@@ -23,15 +21,14 @@ interface PageProps {
 }
 
 export default async function NewsPage(props: PageProps) {
-  // Pobieranie parametrów z URL (np. ?page=2)
   const searchParams = await props.searchParams
   const currentPage = Number(searchParams?.page) || 1
 
-  // 1. Pobieranie newsów do slidera
+  // Zmieniamy odświeżanie na tagi
   const sliderNews: NewsItem[] = await client.fetch(
     NEWS_SLIDER_QUERY,
     {},
-    { next: { revalidate: 60 } },
+    { next: { tags: ['sanity'] } },
   )
 
   const sliderIds = sliderNews.map((item) => item._id)
@@ -39,23 +36,22 @@ export default async function NewsPage(props: PageProps) {
   const start = (currentPage - 1) * ITEMS_PER_PAGE
   const end = start + ITEMS_PER_PAGE
 
-  // 2. Pobieranie postów i licznika (równolegle dla wydajności)
+  // Tutaj również zamieniamy revalidate na tags
   const [paginatedNews, totalCount] = await Promise.all([
     client.fetch(
       NEWS_PAGINATED_QUERY,
       { excludeIds: sliderIds, start, end },
-      { next: { revalidate: 60 } },
+      { next: { tags: ['sanity'] } },
     ),
     client.fetch(
       NEWS_COUNT_QUERY,
       { excludeIds: sliderIds },
-      { next: { revalidate: 60 } },
+      { next: { tags: ['sanity'] } },
     ),
   ])
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
 
-  // 3. Przekazanie danych do czystego widoku
   return (
     <NewsView
       sliderNews={sliderNews}

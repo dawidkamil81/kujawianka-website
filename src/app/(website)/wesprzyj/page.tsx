@@ -1,13 +1,20 @@
-import { sanityFetch } from '@/sanity/lib/live'
+// export const revalidate = 43200 //12hours
+// const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
+//  const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
+
+import { client } from '@/sanity/lib/client' // <-- Zmieniony import
 import { DONATE_PAGE_QUERY } from '@/sanity/lib/queries'
 import DonateView from '@/components/donate/DonateView'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 43200 //12hours
-
 export async function generateMetadata(): Promise<Metadata> {
-  const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
+  // Zamieniamy sanityFetch na client.fetch i dodajemy tag
+  const data = await client.fetch(
+    DONATE_PAGE_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   if (!data) {
     return {
@@ -23,7 +30,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DonatePage() {
-  const { data } = await sanityFetch({ query: DONATE_PAGE_QUERY })
+  // Zamieniamy sanityFetch na client.fetch i dodajemy tag
+  const data = await client.fetch(
+    DONATE_PAGE_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   if (!data || data.isPageVisible === false) {
     notFound()

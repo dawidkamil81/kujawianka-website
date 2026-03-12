@@ -1,6 +1,7 @@
-export const revalidate = 43200 //12hours
+// export const revalidate = 43200 //12hours
+// const { data: files } = await sanityFetch({ query: DOWNLOADS_QUERY })
 
-import { sanityFetch } from '@/sanity/lib/live'
+import { client } from '@/sanity/lib/client' // <-- Zmieniony import
 import { DOWNLOADS_QUERY } from '@/sanity/lib/queries'
 import DownloadsView from '@/components/downloads/DownloadsView'
 import { Metadata } from 'next'
@@ -11,7 +12,11 @@ export const metadata: Metadata = {
 }
 
 export default async function DownloadsPage() {
-  const { data: files } = await sanityFetch({ query: DOWNLOADS_QUERY })
+  const files = await client.fetch(
+    DOWNLOADS_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   return <DownloadsView files={files || []} />
 }
