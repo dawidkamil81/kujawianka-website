@@ -44,7 +44,11 @@ const TimeBox = ({
   </div>
 )
 
+// === ZMODYFIKOWANY KOMPONENT COUNTDOWN TIMER ===
 const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
+  // Flaga sprawdzająca czy jesteśmy na kliencie (w przeglądarce)
+  const [isMounted, setIsMounted] = useState(false)
+
   const calculateTimeLeft = () => {
     if (!targetDate) return null
 
@@ -62,14 +66,21 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
   useEffect(() => {
+    // Odznaczamy flagę, gdy komponent zamontuje się w przeglądarce
+    setIsMounted(true)
+
     if (!targetDate) return
-    const timer = setTimeout(() => {
+
+    // Zmiana na setInterval (lepsze dla odliczania czasu)
+    const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft())
     }, 1000)
-    return () => clearTimeout(timer)
-  })
 
-  if (!timeLeft) {
+    return () => clearInterval(timer)
+  }, [targetDate]) // Dodana zależność
+
+  // Jeśli komponent jeszcze się nie zamontował (jest na serwerze) lub brak czasu - pokaż placeholdery
+  if (!isMounted || !timeLeft) {
     return (
       <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
         <TimeBox value="??" label="Dni" />
@@ -81,6 +92,10 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
           :
         </div>
         <TimeBox value="??" label="Min" />
+        <div className="mt-2 text-xl font-bold text-white/20 sm:mt-3 sm:text-2xl">
+          :
+        </div>
+        <TimeBox value="??" label="Sek" />
       </div>
     )
   }
@@ -103,6 +118,7 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
     </div>
   )
 }
+// ===============================================
 
 const getLocation = (match: ExtendedMatch) => {
   const homeName = match.homeTeam?.name || ''
@@ -208,7 +224,7 @@ export default function MatchCenter({
   lastMatches,
   teams,
   clubLogo,
-  defaultResultSlug, // <--- ODBIERAMY PROP
+  defaultResultSlug,
 }: MatchCenterProps) {
   const getLogo = (teamName: string) => {
     if (!teamName) return '/logo.png'
@@ -248,10 +264,10 @@ export default function MatchCenter({
   const nextHomeLogo = nextMatch?.homeTeam?.logoUrl || getLogo(nextHomeName)
   const nextAwayLogo = nextMatch?.awayTeam?.logoUrl || getLogo(nextAwayName)
 
-  // GŁÓWNA ZMIANA: Dynamiczny adres URL z domyślnym fallbackiem 'seniorzy' w razie braku danych
   const resultsUrl = defaultResultSlug
     ? `/wyniki/${defaultResultSlug}#terminarz`
     : '/wyniki/seniorzy#terminarz'
+
   return (
     <section className="relative w-full overflow-hidden border-t border-white/5 bg-[#0e0e0e] py-16">
       <div className="bg-club-green/10 pointer-events-none absolute top-0 left-1/2 h-[300px] w-full max-w-4xl -translate-x-1/2 rounded-full blur-[120px]" />
@@ -263,7 +279,6 @@ export default function MatchCenter({
               Centrum <span className="text-emerald-500">Meczowe</span>
             </h2>
           </div>
-          {/* Używamy tutaj naszej nowej, dynamicznej zmiennej */}
           <Link
             href={resultsUrl}
             className="group flex items-center gap-2 text-sm font-bold text-gray-400 transition-colors hover:text-white"

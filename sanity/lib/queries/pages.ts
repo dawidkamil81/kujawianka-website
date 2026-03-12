@@ -159,7 +159,15 @@ export const HOMEPAGE_COMBINED_QUERY = defineQuery(`
       _id, name, surname, number, position,
       "staffRole": staffRole->name, 
       "imageUrl": image.asset->url,
-      "slug": slug.current
+      "slug": slug.current,
+      "stats": {
+         "matches": coalesce(matches, 0),
+         "goals": coalesce(goals, 0),
+         "assists": coalesce(assists, 0),
+         "cleanSheets": coalesce(cleanSheets, 0),
+         "yellowCards": coalesce(yellowCards, 0),
+         "redCards": coalesce(redCards, 0)
+      }
     },
     
     "news": *[_type == "news" && isHighlighted == true && publishedAt < now()] | order(publishedAt desc)[0...5] {
