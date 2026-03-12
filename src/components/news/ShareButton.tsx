@@ -50,7 +50,7 @@ export default function ShareButton({ title }: ShareButtonProps) {
   return (
     <button
       onClick={handleShare}
-      className={`group flex h-12 items-center gap-3 rounded-full px-6 text-sm font-bold tracking-widest uppercase transition-all ${
+      className={`group flex h-12 cursor-pointer items-center gap-3 rounded-full px-6 text-sm font-bold tracking-widest uppercase transition-all ${
         isCopied
           ? 'bg-emerald-400 text-[#0e0e0e] ring-1 ring-emerald-400'
           : 'bg-emerald-400/10 text-emerald-400 ring-1 ring-emerald-400/50 hover:bg-emerald-400 hover:text-[#0e0e0e] hover:shadow-[0_0_20px_rgba(52,211,153,0.3)]'

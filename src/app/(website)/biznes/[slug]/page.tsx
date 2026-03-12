@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-import { sanityFetch } from '@/sanity/lib/live'
-// === 1. NOWY IMPORT ZWYKŁEGO KLIENTA ===
+// === 1. ZWYKŁY KLIENT ===
 import { client } from '@/sanity/lib/client'
 import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages'
 import {
@@ -18,22 +17,21 @@ import SponsorsView from '@/components/sponsors/SponsorsView'
 import Club100View from '@/components/club100/Club100View'
 import PartnersView from '@/components/partners/PartnersView'
 
-export const revalidate = 1800 //30minutes
-
-// === 2. NOWOŚĆ: GENEROWANIE STATYCZNE (SSG) ===
+// === GENEROWANIE STATYCZNE (SSG) ===
 export async function generateStaticParams() {
-  // Używamy client.fetch zamiast sanityFetch, by uniknąć błędów draftMode przy buildzie
-  const visibility = await client.fetch(PAGE_VISIBILITY_QUERY)
+  const visibility = await client.fetch(
+    PAGE_VISIBILITY_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   const slugs: string[] = []
 
-  // Zbieramy do tablicy wszystkie aktywne slugi z ustawień
   if (visibility?.oferta?.slug) slugs.push(visibility.oferta.slug)
   if (visibility?.sponsorzy?.slug) slugs.push(visibility.sponsorzy.slug)
   if (visibility?.klub100?.slug) slugs.push(visibility.klub100.slug)
   if (visibility?.klubowicze?.slug) slugs.push(visibility.klubowicze.slug)
 
-  // Zwracamy tablicę w formacie oczekiwanym przez Next.js: [{ slug: 'oferta' }, { slug: 'sponsorzy' }...]
   return slugs.map((slug) => ({
     slug: slug,
   }))
@@ -47,9 +45,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const { data: visibility } = await sanityFetch({
-    query: PAGE_VISIBILITY_QUERY,
-  })
+
+  const visibility = await client.fetch(
+    PAGE_VISIBILITY_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   if (slug === visibility?.oferta?.slug) {
     return {
@@ -90,20 +91,27 @@ export default async function BusinessDynamicPage({
 }) {
   const { slug } = await params
 
-  // Pobieramy mapowanie adresów url z CMS
-  const { data: visibility } = await sanityFetch({
-    query: PAGE_VISIBILITY_QUERY,
-  })
+  const visibility = await client.fetch(
+    PAGE_VISIBILITY_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   // 1. STRONA OFERTY
   if (
     slug === visibility?.oferta?.slug &&
     visibility?.oferta?.isVisible !== false
   ) {
-    const { data: count } = await sanityFetch({
-      query: ALL_SUPPORTERS_COUNT_QUERY,
-    })
-    const { data: pageData } = await sanityFetch({ query: OFFER_PAGE_QUERY })
+    const count = await client.fetch(
+      ALL_SUPPORTERS_COUNT_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
+    const pageData = await client.fetch(
+      OFFER_PAGE_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
 
     if (!pageData || pageData.isPageVisible === false) notFound()
 
@@ -115,10 +123,16 @@ export default async function BusinessDynamicPage({
     slug === visibility?.sponsorzy?.slug &&
     visibility?.sponsorzy?.isVisible !== false
   ) {
-    const { data: count } = await sanityFetch({
-      query: ALL_SUPPORTERS_COUNT_QUERY,
-    })
-    const { data } = await sanityFetch({ query: SPONSORS_PAGE_QUERY })
+    const count = await client.fetch(
+      ALL_SUPPORTERS_COUNT_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
+    const data = await client.fetch(
+      SPONSORS_PAGE_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
 
     const pageData = data?.pageData
     if (!pageData || pageData.isPageVisible === false) notFound()
@@ -142,7 +156,11 @@ export default async function BusinessDynamicPage({
     slug === visibility?.klub100?.slug &&
     visibility?.klub100?.isVisible !== false
   ) {
-    const { data } = await sanityFetch({ query: CLUB100_PAGE_QUERY })
+    const data = await client.fetch(
+      CLUB100_PAGE_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
 
     const pageData = data?.pageData
     const members = data?.members || []
@@ -157,7 +175,11 @@ export default async function BusinessDynamicPage({
     slug === visibility?.klubowicze?.slug &&
     visibility?.klubowicze?.isVisible !== false
   ) {
-    const { data } = await sanityFetch({ query: PARTNERS_PAGE_QUERY })
+    const data = await client.fetch(
+      PARTNERS_PAGE_QUERY,
+      {},
+      { next: { tags: ['sanity'] } },
+    )
 
     const pageData = data?.pageData
     const members = data?.members || []
@@ -167,6 +189,5 @@ export default async function BusinessDynamicPage({
     return <PartnersView members={members} pageData={pageData} />
   }
 
-  // Jeśli żaden z warunków nie został spełniony (nieprawidłowy slug lub strona wyłączona)
   notFound()
 }

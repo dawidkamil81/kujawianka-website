@@ -1,14 +1,16 @@
-export const revalidate = 43200 //12hours
-
-import { sanityFetch } from '@/sanity/lib/live'
+import { client } from '@/sanity/lib/client' // <-- Zmieniony import
 import { CLUB_PAGE_QUERY } from '@/sanity/lib/queries'
 import ClubView from '@/components/club/ClubView'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
-  // Pobieramy dane strony z Sanity
-  const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY })
+  // Pobieramy dane z tagiem webhooka (zamiast sanityFetch)
+  const data = await client.fetch(
+    CLUB_PAGE_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   // Zabezpieczenie na wypadek braku danych
   if (!data) {
@@ -36,7 +38,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ClubPage() {
-  const { data } = await sanityFetch({ query: CLUB_PAGE_QUERY })
+  // Pobieramy dane z tagiem webhooka (zamiast sanityFetch)
+  const data = await client.fetch(
+    CLUB_PAGE_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
+
   // Wyrzuca 404, jeśli strona jest ukryta w Sanity
   if (!data || data.isPageVisible === false) {
     notFound()

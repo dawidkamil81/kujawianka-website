@@ -1,7 +1,12 @@
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import { SanityLive, sanityFetch } from '@/sanity/lib/live'
+
+// === 1. ZWYKŁY KLIENT ===
+import { client } from '@/sanity/lib/client'
+// Zostawiamy SanityLive dla działania Visual Editing (usuwamy stąd sanityFetch)
+import { SanityLive } from '@/sanity/lib/live'
+
 import {
   SQUADS_NAVIGATION_QUERY,
   SETTINGS_QUERY,
@@ -15,7 +20,12 @@ import { VisualEditing } from 'next-sanity/visual-editing'
 import { draftMode } from 'next/headers'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data: settings } = await sanityFetch({ query: SETTINGS_QUERY })
+  // === 2. POBIERANIE METADANYCH Z TAGIEM ===
+  const settings = await client.fetch(
+    SETTINGS_QUERY,
+    {},
+    { next: { tags: ['sanity'] } },
+  )
 
   const title = settings?.title || 'MGKS Kujawianka Izbica Kujawska'
   const description =
@@ -57,19 +67,16 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [
-    { data: settings },
-    { data: squads },
-    { data: resultSquads },
-    { data: pageVisibility },
-  ] = await Promise.all([
-    sanityFetch({ query: SETTINGS_QUERY }),
-    sanityFetch({ query: SQUADS_NAVIGATION_QUERY }),
-    sanityFetch({ query: SQUADS_WITH_RESULTS_QUERY }),
-    sanityFetch({ query: PAGE_VISIBILITY_QUERY }),
+  // === 3. POBIERANIE DANYCH DO LAYOUTU Z TAGIEM ===
+  // Usuwamy { data: ... } bo zwykły client zwraca wynik bezpośrednio
+  const [settings, squads, resultSquads, pageVisibility] = await Promise.all([
+    client.fetch(SETTINGS_QUERY, {}, { next: { tags: ['sanity'] } }),
+    client.fetch(SQUADS_NAVIGATION_QUERY, {}, { next: { tags: ['sanity'] } }),
+    client.fetch(SQUADS_WITH_RESULTS_QUERY, {}, { next: { tags: ['sanity'] } }),
+    client.fetch(PAGE_VISIBILITY_QUERY, {}, { next: { tags: ['sanity'] } }),
   ])
 
-  // --- 3. SPRAWDZENIE CZY JESTEŚMY W TRYBIE DRAFTU ---
+  // --- 4. SPRAWDZENIE CZY JESTEŚMY W TRYBIE DRAFTU ---
   const { isEnabled: isDraftMode } = await draftMode()
 
   return (
@@ -88,6 +95,7 @@ export default async function RootLayout({
 
         <Footer settings={settings} pageVisibility={pageVisibility} />
 
+        {/* Komponenty potrzebne do obsługi podglądu Live w Sanity Studio */}
         <SanityLive />
         {isDraftMode && <VisualEditing />}
         <Analytics />
