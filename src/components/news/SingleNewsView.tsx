@@ -10,12 +10,14 @@ const components: PortableTextComponents = {
       <p className="mb-6 text-lg leading-relaxed text-gray-300">{children}</p>
     ),
     h2: ({ children }) => (
-      <h2 className="font-montserrat mt-14 mb-6 text-3xl font-bold text-white">
+      // DODANO: break-words
+      <h2 className="font-montserrat mt-14 mb-6 text-3xl font-bold break-words text-white">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="font-montserrat mt-10 mb-4 text-2xl font-bold text-emerald-400">
+      // DODANO: break-words
+      <h3 className="font-montserrat mt-10 mb-4 text-2xl font-bold break-words text-emerald-400">
         {children}
       </h3>
     ),
@@ -48,7 +50,7 @@ const components: PortableTextComponents = {
           href={value?.href}
           target={isExternal ? '_blank' : undefined}
           rel={isExternal ? 'noopener noreferrer nofollow' : undefined}
-          className="text-emerald-400 underline underline-offset-4 transition-colors hover:text-emerald-300"
+          className="break-all text-emerald-400 underline underline-offset-4 transition-colors hover:text-emerald-300"
         >
           {children}
         </a>
@@ -107,7 +109,11 @@ export default function SingleNewsView({ news }: SingleNewsViewProps) {
               {formatDate(news.publishedAt)}
             </div>
 
-            <h1 className="font-montserrat text-4xl leading-tight font-black text-white uppercase drop-shadow-lg md:text-5xl lg:text-6xl">
+            {/* DODANO: break-words hyphens-auto (Wymusza łamanie najdłuższych słów, chroniąc przed wyjazdem poza ekran) */}
+            <h1
+              className="font-montserrat text-4xl leading-tight font-black break-words hyphens-auto text-white uppercase drop-shadow-lg md:text-5xl lg:text-6xl"
+              lang="pl"
+            >
               {news.title}
             </h1>
           </div>
@@ -115,9 +121,11 @@ export default function SingleNewsView({ news }: SingleNewsViewProps) {
       </div>
 
       {/* === TREŚĆ ARTYKUŁU === */}
+      {/* === TREŚĆ ARTYKUŁU === */}
       <div className="container mx-auto mt-16 px-4">
         <div className="mx-auto max-w-3xl">
-          <div className="text-lg">
+          {/* USUNIĘTO overflow-hidden z głównego wrappera, a dodano go TYLKO do tekstu */}
+          <div className="w-full overflow-hidden text-lg break-words">
             {news.content && (
               <PortableText value={news.content} components={components} />
             )}

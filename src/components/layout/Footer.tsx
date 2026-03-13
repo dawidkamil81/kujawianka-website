@@ -142,14 +142,16 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
 
   // Bezpieczne pobranie sluga oferty (fallback 'oferta', jeśli z CMS przyjdzie pusto)
   // const offerSlug = pageVisibility?.oferta?.slug || 'oferta'
-  const clubSlug = pageVisibility?.klub100?.slug || 'klub-1946'
+  // const clubSlug = pageVisibility?.klub100?.slug || 'klub-1946'
+  const sponsorsSlug = pageVisibility?.sponsorzy?.slug || 'klub-1946'
 
   const navItems = [
     { name: 'Aktualności', href: '/aktualnosci' },
     { name: 'Wyniki i tabela', href: '/wyniki/seniorzy' },
     { name: 'Kadra zespołu', href: '/druzyny/seniorzy' },
     // { name: 'Współpraca', href: `/biznes/${offerSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
-    { name: 'Klub 1946', href: `/biznes/${clubSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    // { name: 'Klub 1946', href: `/biznes/${clubSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    { name: 'Partnerzy', href: `/biznes/${sponsorsSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
     { name: 'Przekaż 1.5%', href: '/wesprzyj' },
   ]
 
