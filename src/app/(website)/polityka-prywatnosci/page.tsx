@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
             <p className="mb-4">
               Operatorem serwisu oraz Administratorem danych osobowych jest:{' '}
               <strong>MGKS Kujawianka Izbica Kujawska</strong>, ul. Sportowa 1a,
-              87-865 Izbica Kujawska, KRS: 0000270261.
+              87-865 Izbica Kujawska, NIP: 8882901458.
             </p>
             <p className="mb-4">
               Adres kontaktowy poczty elektronicznej operatora:{' '}
