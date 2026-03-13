@@ -138,7 +138,6 @@ export default function SingleNewsView({ news }: SingleNewsViewProps) {
               Kujawianka Izbica Kujawska
             </span>
 
-            {/* Wyeksponowany przycisk udostępniania */}
             <ShareButton title={news.title} />
           </div>
         </div>
