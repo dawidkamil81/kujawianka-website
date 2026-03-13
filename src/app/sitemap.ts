@@ -3,7 +3,7 @@ import { client } from '@/sanity/lib/client'
 import { defineQuery } from 'next-sanity'
 import { PAGE_VISIBILITY_QUERY } from '@/sanity/lib/queries/pages'
 
-const BASE_URL = 'https://kujawianka-izbica.pl'
+const BASE_URL = 'https://mgkskujawianka.pl'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 1. Pobieramy wszystkie dane potrzebne do sitemapy równolegle (Wydajność!)

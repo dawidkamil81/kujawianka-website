@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
               font-src 'self' data: fonts.gstatic.com ${isDev ? 'https://fonts.gstatic.com' : ''};
               connect-src 'self' *.sanity.io *.vercel-insights.com *.vitals.vercel-insights.com;
               frame-src 'self' https://www.google.com https://maps.google.com;
-              frame-ancestors 'self' https://*.sanity.studio http://localhost:3333 http://localhost:3000;
+              frame-ancestors 'self' https://*.sanity.studio http://localhost:3333 http://localhost:3000 https://mgkskujawianka.pl https://www.mgkskujawianka.pl;
               upgrade-insecure-requests;
             `
               .replace(/\s{2,}/g, ' ')
