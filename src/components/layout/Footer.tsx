@@ -142,14 +142,16 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
 
   // Bezpieczne pobranie sluga oferty (fallback 'oferta', jeśli z CMS przyjdzie pusto)
   // const offerSlug = pageVisibility?.oferta?.slug || 'oferta'
-  const clubSlug = pageVisibility?.klub100?.slug || 'klub-1946'
+  // const clubSlug = pageVisibility?.klub100?.slug || 'klub-1946'
+  const sponsorsSlug = pageVisibility?.sponsorzy?.slug || 'klub-1946'
 
   const navItems = [
     { name: 'Aktualności', href: '/aktualnosci' },
     { name: 'Wyniki i tabela', href: '/wyniki/seniorzy' },
     { name: 'Kadra zespołu', href: '/druzyny/seniorzy' },
     // { name: 'Współpraca', href: `/biznes/${offerSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
-    { name: 'Klub 1946', href: `/biznes/${clubSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    // { name: 'Klub 1946', href: `/biznes/${clubSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
+    { name: 'Partnerzy', href: `/biznes/${sponsorsSlug}` }, // <-- ZMIENIONE NA DYNAMICZNE
     { name: 'Przekaż 1.5%', href: '/wesprzyj' },
   ]
 
@@ -358,12 +360,20 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
               Polityka Prywatności
             </Link>
             <a
-              href="https://dawidkamil.pl"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 transition-colors hover:text-[#da1818]"
+              href="mailto:steperskihubert@gmail.com"
+              className="group flex items-center gap-1.5 transition-colors"
             >
-              <Shield size={10} /> Realizacja
+              <Shield size={10} className="text-[#da1818]" />
+              <span className="text-white/60">
+                Realizacja:{' '}
+                <span className="font-semibold transition-colors duration-300 group-hover:text-white">
+                  Hubert Stęperski
+                </span>
+              </span>
+              <span className="hidden text-white/30 md:inline">|</span>
+              <span className="text-white/60 underline decoration-white/10 underline-offset-2 transition-all duration-300 group-hover:text-[#da1818] group-hover:decoration-[#da1818]/50">
+                steperskihubert@gmail.com
+              </span>
             </a>
           </div>
         </div>
