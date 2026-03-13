@@ -358,12 +358,20 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
               Polityka Prywatności
             </Link>
             <a
-              href="https://dawidkamil.pl"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 transition-colors hover:text-[#da1818]"
+              href="mailto:steperskihubert@gmail.com"
+              className="group flex items-center gap-1.5 transition-colors"
             >
-              <Shield size={10} /> Realizacja
+              <Shield size={10} className="text-[#da1818]" />
+              <span className="text-white/60">
+                Realizacja:{' '}
+                <span className="font-semibold transition-colors duration-300 group-hover:text-white">
+                  Hubert Stęperski
+                </span>
+              </span>
+              <span className="hidden text-white/30 md:inline">|</span>
+              <span className="text-white/60 underline decoration-white/10 underline-offset-2 transition-all duration-300 group-hover:text-[#da1818] group-hover:decoration-[#da1818]/50">
+                steperskihubert@gmail.com
+              </span>
             </a>
           </div>
         </div>
