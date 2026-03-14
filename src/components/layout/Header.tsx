@@ -140,7 +140,7 @@ export default function Header({
         >
           <div className="relative h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
             <Image
-              src={optimizeSanityImg(logoSrc, 200)}
+              src={logoSrc}
               alt={siteTitle}
               fill
               sizes="96px"
