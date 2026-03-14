@@ -125,7 +125,7 @@ export const squad = defineType({
     // --- UKRYTE DANE SYSTEMOWE ---
     defineField({
       name: 'lastLineup',
-      title: 'Ostatni Skład (Pamięć Systemowa)',
+      title: 'Ostatni Skład',
       type: 'array',
       of: [
         {
@@ -138,7 +138,7 @@ export const squad = defineType({
         },
       ],
 
-      hidden: true, // Ukrywamy to, bo będzie edytowane automatycznie przez nasz Panel
+      hidden: false, // Ukrywamy to, bo będzie edytowane automatycznie przez nasz Panel
       description:
         'Przechowuje listę zawodników, którzy zagrali w ostatnim meczu, aby ułatwić wypełnianie formularza.',
     }),

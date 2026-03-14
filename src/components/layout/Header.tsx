@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
 import type { SiteSettings } from '@/types'
-import { optimizeSanityImg } from '@/lib/utils'
 
 // NOWOŚĆ: Interfejs definiujący pojedynczy element nawigacji
 export interface NavItemVisibility {
