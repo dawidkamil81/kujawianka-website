@@ -30,28 +30,32 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = settings?.title || 'MGKS Kujawianka Izbica Kujawska'
   const description =
     settings?.seo?.description || 'Oficjalny serwis klubu MGKS Kujawianka.'
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mgkskujawianka.pl'
 
   return {
+    metadataBase: new URL(baseUrl), // KLUCZOWE DLA GOOGLE
     title: {
       default: title,
       template: `%s | ${title}`,
     },
     description: description,
 
-    // --- POPRAWIONY OPEN GRAPH ---
     openGraph: {
       title: title,
       description: description,
       images: settings?.ogImageUrl ? [{ url: settings.ogImageUrl }] : [],
     },
 
-    icons: settings?.faviconUrl
-      ? {
-          icon: settings.faviconUrl,
-          shortcut: settings.faviconUrl,
-          apple: settings.faviconUrl,
-        }
-      : undefined,
+    icons: {
+      icon: [
+        { url: '/favicon.ico' }, // Standard
+        { url: '/icon.png', sizes: '512x512', type: 'image/png' }, // Dla wyszukiwarek (z folderu public)
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }, // Dla iPhone (z folderu public)
+      ],
+    },
   }
 }
 
