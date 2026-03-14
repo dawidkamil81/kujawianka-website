@@ -137,8 +137,8 @@ export default function ResultsTable({
                       {/* WYNIK */}
                       <div className="flex w-[20%] items-center justify-center">
                         <div className="font-montserrat flex h-9 min-w-[50px] items-center justify-center rounded-lg border border-white/10 bg-black/40 text-base font-black text-white shadow-inner transition-colors group-hover:border-white/20 sm:min-w-[60px] sm:text-lg">
-                          {match.homeScore !== undefined &&
-                          match.awayScore !== undefined ? (
+                          {match.homeScore != null &&
+                          match.awayScore != null ? (
                             <>
                               <span
                                 className={
