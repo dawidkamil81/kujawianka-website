@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Users, RotateCw } from 'lucide-react'
 import { Player } from '@/types'
 import { StatsConfig } from '@/components/squad/SquadStatsTable'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface PlayerCardProps {
   player: Player
@@ -72,7 +73,7 @@ export default function PlayerCard({ player, statsConfig }: PlayerCardProps) {
           <div className="absolute inset-0 z-0 bg-neutral-900">
             {player.imageUrl ? (
               <Image
-                src={player.imageUrl}
+                src={optimizeSanityImg(player.imageUrl, 1400, 95)} // <-- TAK POWINNO WYGLĄDAĆ
                 alt={`${player.name} ${player.surname}`}
                 fill
                 className="object-cover transition-all duration-500 group-hover:scale-105"

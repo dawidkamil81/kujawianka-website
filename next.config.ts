@@ -3,6 +3,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -11,8 +12,8 @@ const nextConfig: NextConfig = {
         pathname: '/images/**',
       },
     ],
-    qualities: [75, 85, 95],
-    formats: ['image/avif', 'image/webp'],
+    // qualities: [75, 85, 95],
+    // formats: ['image/avif', 'image/webp'],
   },
   poweredByHeader: false,
   compiler: {

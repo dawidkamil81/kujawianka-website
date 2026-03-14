@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { NewsItem } from '@/types/index'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface HeroNewsSliderProps {
   news: NewsItem[]
@@ -76,7 +77,7 @@ export default function HeroNewsSlider({ news }: HeroNewsSliderProps) {
                   className="relative h-full w-full"
                 >
                   <Image
-                    src={currentNews.imageUrl}
+                    src={optimizeSanityImg(currentNews.imageUrl, 1200)}
                     alt={currentNews.title}
                     fill
                     className="object-cover"

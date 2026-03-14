@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 import { Sponsor } from '@/types/index'
 import SectionHeader from '@/components/ui/SectionHeader'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface StrategicSponsorsProps {
   group: {
@@ -50,7 +51,7 @@ export default function StrategicSponsors({ group }: StrategicSponsorsProps) {
                 {sponsor.logoUrl ? (
                   <div className="relative h-full w-full">
                     <Image
-                      src={sponsor.logoUrl}
+                      src={optimizeSanityImg(sponsor.logoUrl, 400)} // <-- TAK POWINNO WYGLĄDAĆ
                       alt={sponsor.name}
                       fill
                       className="object-contain transition-transform duration-500 group-hover:scale-110"

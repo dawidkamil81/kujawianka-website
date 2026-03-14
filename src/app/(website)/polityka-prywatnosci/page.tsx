@@ -37,8 +37,7 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p className="mb-4">
               Niniejsza polityka dotyczy Serwisu www, funkcjonującego pod
-              adresem url:{' '}
-              <strong>https://kujawianka-website.vercel.app</strong> (oraz
+              adresem url: <strong>https://www.mgkskujawianka.pl</strong> (oraz
               docelowej domeny klubu).
             </p>
             <p className="mb-4">
@@ -86,9 +85,8 @@ export default function PrivacyPolicyPage() {
               3. Hosting i zewnętrzni dostawcy
             </h2>
             <p className="mb-4">
-              Serwis jest hostowany (technicznie utrzymywany) oraz zarządzany
-              przy użyciu zewnętrznych dostawców usług o ugruntowanej pozycji
-              rynkowej:
+              Serwis jest hostowany oraz zarządzany przy użyciu zewnętrznych
+              dostawców usług o ugruntowanej pozycji rynkowej:
             </p>
             <ul className="mb-4 space-y-2">
               <li>
@@ -97,8 +95,8 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Sanity AS</strong> – dostawca systemu zarządzania
-                treścią (CMS), w którym przechowywane są teksty oraz pliki
-                graficzne Serwisu.
+                treścią, w którym przechowywane są teksty oraz pliki graficzne
+                Serwisu.
               </li>
             </ul>
             <p>
@@ -117,9 +115,8 @@ export default function PrivacyPolicyPage() {
             <p className="mb-4">
               Nasz Serwis dba o Twoją prywatność.{' '}
               <strong>
-                Nie wykorzystujemy inwazyjnych plików cookies (ciasteczek) w
-                celach śledzenia Użytkowników, profilowania ani reklam (brak
-                Google Analytics, Meta Pixel itp.).
+                Nie wykorzystujemy inwazyjnych plików cookies w celach śledzenia
+                Użytkowników, profilowania ani reklam.
               </strong>
             </p>
             <ol className="space-y-4">
@@ -128,15 +125,14 @@ export default function PrivacyPolicyPage() {
                 <strong>Vercel Analytics</strong>, które zostało zaprojektowane
                 zgodnie z zasadą <em>privacy-first</em> (przyjazne prywatności).
                 Narzędzie to służy wyłącznie do zbierania ogólnych, anonimowych
-                statystyk odwiedzin (np. liczba wyświetleń strony, rodzaj
-                urządzenia).
+                statystyk odwiedzin.
               </li>
               <li>
                 Vercel Analytics nie przechowuje na Twoim urządzeniu plików
                 cookies służących do śledzenia Cię pomiędzy różnymi stronami
-                internetowymi. Działanie systemu opiera się na hashowaniu
-                (kryptograficznym zabezpieczaniu) adresów IP, co uniemożliwia
-                Twoją identyfikację jako konkretnej osoby fizycznej.
+                internetowymi. Działanie systemu opiera się na kryptograficznym
+                zabezpieczaniu adresów IP, co uniemożliwia Twoją identyfikację
+                jako konkretnej osoby fizycznej.
               </li>
               <li>
                 Jeśli w Twojej przeglądarce zapiszą się jakiekolwiek pliki
@@ -163,11 +159,10 @@ export default function PrivacyPolicyPage() {
               <li>Sprzeciwu wobec przetwarzania</li>
             </ul>
             <p className="mb-4">
-              W celach technicznych (hosting, infrastruktura chmurowa),
-              zanonimizowane dane mogą być przesyłane do krajów trzecich (poza
-              teren Unii Europejskiej), jednak nasi partnerzy (Vercel, Sanity)
-              zapewniają odpowiednie mechanizmy ochrony zgodne z europejskimi
-              standardami (m.in. Standardowe Klauzule Umowne).
+              W celach technicznych, zanonimizowane dane mogą być przesyłane do
+              krajów trzecich (poza teren Unii Europejskiej), jednak nasi
+              partnerzy zapewniają odpowiednie mechanizmy ochrony zgodne z
+              europejskimi standardami.
             </p>
             <p className="mb-4">
               Twoje dane kontaktowe (np. pochodzące z wysłanej do nas

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { MapPin, Calendar, ArrowRight, Shield } from 'lucide-react'
 import { Match, Team } from '@/types/index'
+import { optimizeSanityImg } from '@/lib/utils'
 
 type ExtendedMatch = Match & {
   _id?: string
@@ -162,7 +163,7 @@ const LastMatchCard = ({
           <div className="flex w-1/3 flex-col items-center">
             <div className="relative mb-2 h-14 w-14 transition-transform duration-500 group-hover/last:scale-110">
               <Image
-                src={homeLogo}
+                src={optimizeSanityImg(homeLogo, 150, 90)}
                 alt={homeName}
                 fill
                 className="object-contain"
@@ -185,7 +186,7 @@ const LastMatchCard = ({
           <div className="flex w-1/3 flex-col items-center">
             <div className="relative mb-2 h-14 w-14 transition-transform duration-500 group-hover/last:scale-110">
               <Image
-                src={awayLogo}
+                src={optimizeSanityImg(awayLogo, 150, 90)}
                 alt={awayName}
                 fill
                 className="object-contain"
@@ -310,7 +311,7 @@ export default function MatchCenter({
                   <div className="flex flex-col items-center gap-3 md:gap-4">
                     <div className="relative h-20 w-20 drop-shadow-[0_0_25px_rgba(23,65,53,0.4)] transition-transform duration-500 group-hover:scale-110 sm:h-24 sm:w-24 md:h-32 md:w-32">
                       <Image
-                        src={nextHomeLogo}
+                        src={optimizeSanityImg(nextHomeLogo, 300, 90)}
                         alt={nextHomeName}
                         fill
                         className="object-contain"
@@ -336,7 +337,7 @@ export default function MatchCenter({
                   <div className="flex flex-col items-center gap-3 md:gap-4">
                     <div className="relative h-20 w-20 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 group-hover:scale-110 sm:h-24 sm:w-24 md:h-32 md:w-32">
                       <Image
-                        src={nextAwayLogo}
+                        src={optimizeSanityImg(nextAwayLogo, 300, 90)}
                         alt={nextAwayName}
                         fill
                         className="object-contain"

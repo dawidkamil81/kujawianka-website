@@ -3,6 +3,7 @@
 import { NewsItem } from '@/types/index'
 import HeroNewsSlider from './HeroNewsSlider'
 import Image from 'next/image'
+import { optimizeSanityImg } from '@/lib/utils'
 
 // Dodajemy typ dla danych ze strony głównej
 export interface HomePageData {
@@ -32,7 +33,7 @@ export default function HeroSection({ news, data }: HeroSectionProps) {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 z-0">
           <Image
-            src={bgImage} // <--- Podmiana zdjęcia
+            src={optimizeSanityImg(bgImage, 1920)} // <--- Podmiana zdjęcia
             alt="Tło stadionu"
             fill
             className="object-cover"

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Handshake } from 'lucide-react'
 import { Sponsor } from '@/types/index'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface SponsorsTeaserProps {
   sponsors: Sponsor[]
@@ -85,7 +86,7 @@ export default function SponsorsTeaser({
                 >
                   <div className="relative h-full w-full opacity-80 transition-all duration-500 group-hover:opacity-100">
                     <Image
-                      src={sponsor.logoUrl}
+                      src={optimizeSanityImg(sponsor.logoUrl, 500, 95)} // <-- ZMIANA (Sponsorzy Główni)
                       alt={sponsor.name}
                       fill
                       className="object-contain drop-shadow-xl"
@@ -125,7 +126,7 @@ export default function SponsorsTeaser({
                   className="relative h-[60px] w-[130px] flex-shrink-0 opacity-60 transition-all duration-300 hover:scale-110 hover:opacity-100"
                 >
                   <Image
-                    src={sponsor.logoUrl}
+                    src={optimizeSanityImg(sponsor.logoUrl, 500, 90)} // <-- ZMIANA (Karuzela)
                     alt={sponsor.name}
                     fill
                     className="object-contain"

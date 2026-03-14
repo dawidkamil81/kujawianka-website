@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Player } from '@/types/index'
 import { ArrowUp, ArrowDown, ArrowUpDown, User } from 'lucide-react'
+import { optimizeSanityImg } from '@/lib/utils'
+
 export interface StatsConfig {
   showMatches?: boolean
   showGoals?: boolean
@@ -244,7 +246,7 @@ export default function SquadStatsTable({
                   <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-neutral-900 shadow-sm">
                     {player.imageUrl ? (
                       <Image
-                        src={player.imageUrl}
+                        src={optimizeSanityImg(player.imageUrl, 200, 90)}
                         alt={player.surname}
                         fill
                         sizes="72px"
@@ -436,7 +438,7 @@ export default function SquadStatsTable({
                         <div className="relative hidden h-16 w-16 shrink-0 overflow-hidden rounded-full border border-white/10 bg-neutral-900 shadow-sm sm:block">
                           {player.imageUrl ? (
                             <Image
-                              src={player.imageUrl}
+                              src={optimizeSanityImg(player.imageUrl, 200)}
                               alt={player.surname}
                               fill
                               sizes="64px"

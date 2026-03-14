@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
 import type { SiteSettings } from '@/types'
+import { optimizeSanityImg } from '@/lib/utils'
 
 // NOWOŚĆ: Interfejs definiujący pojedynczy element nawigacji
 export interface NavItemVisibility {
@@ -139,7 +140,7 @@ export default function Header({
         >
           <div className="relative h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
             <Image
-              src={logoSrc}
+              src={optimizeSanityImg(logoSrc, 200)}
               alt={siteTitle}
               fill
               sizes="96px"

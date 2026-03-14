@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react' // <--- DODANO useCallback
 import Image from 'next/image'
 import { Trophy, ChevronDown, ChevronUp, Minus, Check, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, optimizeSanityImg } from '@/lib/utils'
 import { Match } from '@/types/index'
 
 export type TableRow = {
@@ -252,7 +252,10 @@ export default function LeagueTable({
                           <div className="flex items-center gap-3 md:gap-4">
                             <div className="relative h-8 w-8 flex-shrink-0 md:h-10 md:w-10">
                               <Image
-                                src={row.teamLogo || '/l1.png'}
+                                src={
+                                  optimizeSanityImg(row.teamLogo, 100) ||
+                                  '/l1.png'
+                                }
                                 alt={safeTeamName}
                                 fill
                                 className="object-contain"

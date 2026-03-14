@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { MapPin, Users, Calendar } from 'lucide-react'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface ClubStadiumProps {
   description: string
@@ -32,7 +33,7 @@ export default function ClubStadium({
         <div className="relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-2xl lg:aspect-[4/3]">
           {imageUrl && (
             <Image
-              src={imageUrl}
+              src={optimizeSanityImg(imageUrl, 1200)}
               alt="Stadion Miejski"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
