@@ -3,6 +3,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
   images: {
+    qualities: [75, 85, 90, 95, 100],
     unoptimized: true,
     remotePatterns: [
       {
@@ -12,7 +13,6 @@ const nextConfig: NextConfig = {
         pathname: '/images/**',
       },
     ],
-    // qualities: [75, 85, 95],
     // formats: ['image/avif', 'image/webp'],
   },
   poweredByHeader: false,
