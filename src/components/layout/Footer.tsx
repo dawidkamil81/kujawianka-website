@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { urlFor } from '@/sanity/lib/image'
 import type { PageVisibility } from './Header' // <-- DODANY IMPORT
+import { optimizeSanityImg } from '@/lib/utils'
 
 // 1. TikTok
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -172,7 +173,7 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
             >
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#174135] to-[#da1818] opacity-20 blur-2xl transition-opacity duration-500 group-hover:opacity-40" />
               <Image
-                src={logoSrc}
+                src={optimizeSanityImg(logoSrc, 200)}
                 alt="Herb Kujawianka Izbica Kujawska"
                 fill
                 sizes="96px"
@@ -191,7 +192,7 @@ export default function Footer({ settings, pageVisibility = {} }: FooterProps) {
                     className="relative block h-full w-full"
                   >
                     <Image
-                      src={footerCertificate.imageUrl}
+                      src={optimizeSanityImg(footerCertificate.imageUrl, 200)}
                       alt={footerCertificate.alt || 'Certyfikat'}
                       fill
                       sizes="96px"

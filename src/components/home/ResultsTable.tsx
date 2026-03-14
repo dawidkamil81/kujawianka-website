@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Trophy, Table2 } from 'lucide-react'
 import { LeagueTable, Match, Team, LeagueConfig } from '@/types/index'
-import { cn } from '@/lib/utils'
+import { cn, optimizeSanityImg } from '@/lib/utils'
 
 type ExtendedMatch = Match & {
   _id?: string
@@ -125,7 +125,7 @@ export default function ResultsTable({
                         </span>
                         <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300 sm:h-10 sm:w-10">
                           <Image
-                            src={homeLogo}
+                            src={optimizeSanityImg(homeLogo, 150)}
                             alt={homeName}
                             fill
                             className="object-contain"
@@ -170,7 +170,7 @@ export default function ResultsTable({
                       <div className="flex w-[40%] items-center justify-start gap-2 sm:gap-3">
                         <div className="relative h-8 w-8 flex-shrink-0 transition-all duration-300 sm:h-10 sm:w-10">
                           <Image
-                            src={awayLogo}
+                            src={optimizeSanityImg(awayLogo, 150)}
                             alt={awayName}
                             fill
                             className="object-contain"
@@ -286,9 +286,10 @@ export default function ResultsTable({
                             <div className="flex items-center gap-3">
                               <div className="relative h-6 w-6 flex-shrink-0">
                                 <Image
-                                  src={
-                                    row.teamLogo || getTeamLogo(row.teamName)
-                                  }
+                                  src={optimizeSanityImg(
+                                    row.teamLogo || getTeamLogo(row.teamName),
+                                    150,
+                                  )}
                                   alt={row.teamName}
                                   fill
                                   className="object-contain"

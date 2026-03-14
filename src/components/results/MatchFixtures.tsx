@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react' // <--- DODANY IMPORT useMemo
 import Image from 'next/image'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, optimizeSanityImg } from '@/lib/utils'
 import { Match } from '@/types/index'
 
 interface MatchFixturesProps {
@@ -168,7 +168,10 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
                   <div className="flex w-[30%] flex-col items-center gap-3">
                     <div className="relative h-14 w-14 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
                       <Image
-                        src={match.homeTeam?.logoUrl || '/l1.png'}
+                        src={
+                          optimizeSanityImg(match.homeTeam?.logoUrl, 200) ||
+                          '/l1.png'
+                        }
                         alt={safeHomeName}
                         fill
                         className="object-contain"
@@ -208,7 +211,10 @@ export default function MatchFixtures({ matches }: MatchFixturesProps) {
                   <div className="flex w-[30%] flex-col items-center gap-3">
                     <div className="relative h-14 w-14 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
                       <Image
-                        src={match.awayTeam?.logoUrl || '/l1.png'}
+                        src={
+                          optimizeSanityImg(match.awayTeam?.logoUrl, 200) ||
+                          '/l1.png'
+                        }
                         alt={safeAwayName}
                         fill
                         className="object-contain"

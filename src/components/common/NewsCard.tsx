@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Calendar } from 'lucide-react'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface NewsCardProps {
   title: string
@@ -40,7 +41,7 @@ export default function NewsCard({
 
         {imageUrl ? (
           <Image
-            src={imageUrl}
+            src={optimizeSanityImg(imageUrl, 800, 90)} // <-- TAK POWINNO WYGLĄDAĆ
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover/card:scale-110"

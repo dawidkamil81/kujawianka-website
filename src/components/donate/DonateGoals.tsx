@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Trophy, Bus, Shirt, Users, Heart, Star, Quote } from 'lucide-react'
+import { optimizeSanityImg } from '@/lib/utils'
 
 const ICONS = [Users, Shirt, Bus, Heart, Star]
 
@@ -45,7 +46,7 @@ export default function DonateGoals({
         <div className="relative aspect-[4/3] w-full shrink-0 sm:aspect-video lg:absolute lg:inset-0 lg:aspect-auto lg:h-full">
           {socialProof?.imageUrl && (
             <Image
-              src={socialProof.imageUrl}
+              src={optimizeSanityImg(socialProof.imageUrl, 800)}
               alt="Akademia Kujawianki"
               fill
               className="object-contain opacity-90 transition-all duration-700 ease-out lg:object-cover lg:opacity-50 lg:group-hover:scale-105 lg:group-hover:opacity-100"

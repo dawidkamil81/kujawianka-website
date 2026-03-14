@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Globe } from 'lucide-react'
 import { Sponsor } from '@/types/index'
 import SectionHeader from '@/components/ui/SectionHeader'
+import { optimizeSanityImg } from '@/lib/utils'
 
 interface MainSponsorsProps {
   group: {
@@ -119,7 +120,7 @@ export default function MainSponsors({ group }: MainSponsorsProps) {
                 {activeSponsor.logoUrl && (
                   <div className="pointer-events-none absolute -right-10 -bottom-10 h-[350px] w-[350px] rotate-[-15deg] opacity-5">
                     <Image
-                      src={activeSponsor.logoUrl}
+                      src={optimizeSanityImg(activeSponsor.logoUrl, 600)} // <-- TAK POWINNO WYGLĄDAĆ
                       alt=""
                       fill
                       className="object-contain"
