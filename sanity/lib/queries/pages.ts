@@ -183,13 +183,19 @@ export const HOMEPAGE_COMBINED_QUERY = defineQuery(`
         rows[] { _key, position, "teamName": team->name, "teamLogo": team->logo.asset->url, matches, points }
       },
       "config": *[_type == "competition" && squad->slug.current == "seniorzy"][0].config,
-      "lastMatches": *[_type == "fixture" && competition->squad->slug.current == "seniorzy"] {
-        "expandedMatches": matches[defined(homeScore)] {
-          "_id": _key, "homeTeam": homeTeam->{ "name": name, "logoUrl": logo.asset->url },
-          "awayTeam": awayTeam->{ "name": name, "logoUrl": logo.asset->url },
-          homeScore, awayScore, date, "round": ^.roundNumber
-        }
-      }.expandedMatches[] | order(date desc)[0...8],
+      
+      // ===== KLUCZOWA ZMIANA TUTAJ =====
+      "lastMatches": *[_type == "fixture" && competition->squad->slug.current == "seniorzy" && count(matches[defined(homeScore)]) > 0] | order(roundNumber desc)[0].matches[] {
+        "_id": _key, 
+        "homeTeam": homeTeam->{ "name": name, "logoUrl": logo.asset->url },
+        "awayTeam": awayTeam->{ "name": name, "logoUrl": logo.asset->url },
+        homeScore, 
+        awayScore, 
+        date, 
+        "round": ^.roundNumber
+      } | order(date asc),
+      // =================================
+      
       "teams": *[_type == "team"] { name, "logoUrl": logo.asset->url }
     },
     
