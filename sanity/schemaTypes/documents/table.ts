@@ -10,6 +10,7 @@ export const table = defineType({
       title: 'Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       readOnly: true,
     }),
     defineField({ name: 'season', title: 'Sezon', type: 'string' }),

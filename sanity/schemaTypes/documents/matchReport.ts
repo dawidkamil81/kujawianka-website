@@ -19,6 +19,7 @@ export const matchReport = defineType({
       title: 'Drużyna',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       readOnly: true, // Zablokuj edycję, bo to przyjdzie z folderu
       validation: (rule) => rule.required(),
     }),

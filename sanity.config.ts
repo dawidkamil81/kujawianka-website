@@ -7,6 +7,10 @@ import { presentationTool } from 'sanity/presentation'
 import { apiVersion, dataset, projectId } from './sanity/env'
 import { schema } from './sanity/schemaTypes'
 import { structure } from './sanity/structureBuilder'
+import {
+  CascadeDeleteSquadAction,
+  CascadeDeleteCompetitionAction,
+} from './sanity/actions/CascadeDeleteActions'
 
 export default defineConfig({
   basePath: '/studio',
@@ -256,4 +260,20 @@ export default defineConfig({
       },
     }),
   ],
+
+  document: {
+    actions: (prev, context) => {
+      if (context.schemaType === 'squad') {
+        return prev
+          .filter((originalAction) => originalAction.action !== 'delete')
+          .concat(CascadeDeleteSquadAction)
+      }
+      if (context.schemaType === 'competition') {
+        return prev
+          .filter((originalAction) => originalAction.action !== 'delete')
+          .concat(CascadeDeleteCompetitionAction)
+      }
+      return prev
+    },
+  },
 })

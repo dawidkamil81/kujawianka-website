@@ -129,6 +129,7 @@ export const fixture = defineType({
       title: 'Rozgrywki',
       type: 'reference',
       to: [{ type: 'competition' }],
+      weak: true,
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -158,6 +159,7 @@ export const fixture = defineType({
       title: 'Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       readOnly: true,
       hidden: true,
     }),

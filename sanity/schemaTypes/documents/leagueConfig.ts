@@ -10,6 +10,7 @@ export const leagueConfig = defineType({
       title: 'Przypisana Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       validation: (Rule) => Rule.required(),
     }),
     defineField({

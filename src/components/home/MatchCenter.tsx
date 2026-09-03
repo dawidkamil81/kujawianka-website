@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react'
 import { MapPin, Calendar, ArrowRight, Shield } from 'lucide-react'
 import { Match, Team } from '@/types/index'
 import { optimizeSanityImg } from '@/lib/utils'
@@ -47,10 +47,13 @@ const TimeBox = ({
 
 // === ZMODYFIKOWANY KOMPONENT COUNTDOWN TIMER ===
 const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
-  // Flaga sprawdzająca czy jesteśmy na kliencie (w przeglądarce)
-  const [isMounted, setIsMounted] = useState(false)
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
 
-  const calculateTimeLeft = () => {
+  const calculateTimeLeft = useCallback(() => {
     if (!targetDate) return null
 
     const difference = +new Date(targetDate) - +new Date()
@@ -62,23 +65,19 @@ const CountdownTimer = ({ targetDate }: { targetDate?: string | null }) => {
       minuty: Math.floor((difference / 1000 / 60) % 60),
       sekundy: Math.floor((difference / 1000) % 60),
     }
-  }
+  }, [targetDate])
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
   useEffect(() => {
-    // Odznaczamy flagę, gdy komponent zamontuje się w przeglądarce
-    setIsMounted(true)
-
     if (!targetDate) return
 
-    // Zmiana na setInterval (lepsze dla odliczania czasu)
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft())
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [targetDate]) // Dodana zależność
+  }, [targetDate, calculateTimeLeft])
 
   // Jeśli komponent jeszcze się nie zamontował (jest na serwerze) lub brak czasu - pokaż placeholdery
   if (!isMounted || !timeLeft) {

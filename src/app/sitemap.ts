@@ -19,8 +19,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     client.fetch(PAGE_VISIBILITY_QUERY),
   ])
 
+  interface SitemapNewsItem {
+    slug: string
+    publishedAt?: string
+  }
+
+  interface SitemapSquadItem {
+    slug: string
+    _updatedAt: string
+  }
+
   // Zabezpieczenie: (news || []) zapobiega crashowi aplikacji, gdy brak danych
-  const newsEntries: MetadataRoute.Sitemap = (news || []).map((post: any) => ({
+  const newsEntries: MetadataRoute.Sitemap = (
+    (news as SitemapNewsItem[]) || []
+  ).map((post) => ({
     url: `${BASE_URL}/aktualnosci/${post.slug}`,
     lastModified: new Date(post.publishedAt || new Date()),
     changeFrequency: 'weekly',
@@ -30,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const squadEntries: MetadataRoute.Sitemap = []
 
   // Zabezpieczenie: (squads || [])
-  ;(squads || []).forEach((squad: any) => {
+  ;((squads as SitemapSquadItem[]) || []).forEach((squad) => {
     squadEntries.push({
       url: `${BASE_URL}/druzyny/${squad.slug}`,
       lastModified: new Date(squad._updatedAt),

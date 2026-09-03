@@ -1,5 +1,6 @@
 import { Phone, Mail, User, CalendarRange } from 'lucide-react'
 import { PortableText } from '@portabletext/react'
+import type { PortableTextBlock } from 'next-sanity'
 
 // Konfiguracja stylów dla tekstu z Sanity
 const portableTextComponents = {
@@ -35,8 +36,7 @@ const portableTextComponents = {
 }
 
 interface SquadInfoBoardProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  description?: any
+  description?: PortableTextBlock[]
   coachName?: string
   coachPhone?: string
   coachEmail?: string

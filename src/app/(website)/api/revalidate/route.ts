@@ -42,8 +42,10 @@ export async function POST(req: NextRequest) {
       now: Date.now(),
       type: body._type,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : 'Wystąpił błąd webhooka'
     console.error('Błąd webhooka Sanity:', err)
-    return new Response(err.message, { status: 500 })
+    return new Response(message, { status: 500 })
   }
 }

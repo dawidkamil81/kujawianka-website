@@ -40,6 +40,7 @@ export const result = defineType({
       title: 'Przypisana Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       validation: (rule) => rule.required(),
     }),
 
