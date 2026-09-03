@@ -31,6 +31,7 @@ export const SQUAD_PAGE_QUERY = defineQuery(`
     coachPhone, 
     coachEmail, 
     description,
+    "season": *[_type == "competition" && squad._ref == ^._id][0].season,
     "statsConfig": coalesce(statsConfig, {
       "showMatches": true,
       "showGoals": true,

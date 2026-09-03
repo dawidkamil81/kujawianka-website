@@ -1,4 +1,6 @@
 import { SanityImageSource } from '@sanity/image-url/lib/types/types'
+import type { PortableTextBlock } from 'next-sanity'
+import type { StatsConfig } from '@/components/squad/SquadStatsTable'
 
 export type Player = {
   _id: string
@@ -17,6 +19,18 @@ export type Player = {
     yellowCards: number
     redCards: number
   }
+}
+
+export interface SquadPageData {
+  name: string
+  slug: string
+  coachName?: string
+  coachPhone?: string
+  coachEmail?: string
+  description?: PortableTextBlock[]
+  season?: string
+  statsConfig?: StatsConfig
+  players: Player[]
 }
 
 export interface NewsItem {

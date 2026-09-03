@@ -61,6 +61,7 @@ export const standing = defineType({
       title: 'Rozgrywki',
       type: 'reference',
       to: [{ type: 'competition' }],
+      weak: true,
       validation: (Rule) => Rule.required(),
     }),
     // Pola automatyczne (read-only w UI, ustawiane przez initialValue lub hooki)

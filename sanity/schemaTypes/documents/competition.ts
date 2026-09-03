@@ -34,6 +34,7 @@ export const competition = defineType({
       title: 'Przypisana Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       description:
         'Wybierz kadrę (np. Seniorzy, Juniorzy), która bierze udział w tych rozgrywkach.',
       validation: (Rule) => Rule.required(),

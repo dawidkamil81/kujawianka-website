@@ -93,6 +93,7 @@ export const player = defineType({
       title: 'Przypisana Kadra',
       type: 'reference',
       to: [{ type: 'squad' }],
+      weak: true,
       description: 'Wybierz grupę wiekową, do której należy ten zawodnik.',
     }),
 

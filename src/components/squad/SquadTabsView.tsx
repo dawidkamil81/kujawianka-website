@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, Suspense } from 'react'
+import { useMemo, Suspense, useSyncExternalStore } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Player } from '@/types'
 import PlayerCard from '@/components/common/PlayerCard'
@@ -27,7 +27,11 @@ function SquadTabsContent({ players, statsConfig }: SquadTabsViewProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
-  const [isMounted, setIsMounted] = useState(false)
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
 
   // 1. Grupowanie zawodników
   const squadGroups = useMemo(() => {
@@ -48,10 +52,6 @@ function SquadTabsContent({ players, statsConfig }: SquadTabsViewProps) {
   // 3. Odczytujemy aktywną zakładkę. Jeśli ktoś wpisał ?tab=stats dla drużyny bez zawodników, wymuszamy 'squad'
   const activeTab =
     searchParams.get('tab') === 'stats' && hasActualPlayers ? 'stats' : 'squad'
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   const handleTabChange = (tab: 'squad' | 'stats') => {
     const params = new URLSearchParams(searchParams.toString())
