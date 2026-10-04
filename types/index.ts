@@ -217,3 +217,18 @@ export type LeagueConfig = {
   relegationPlayoffSpots?: number
   relegationSpots?: number
 }
+
+export interface UserLog {
+  _id?: string
+  _type: 'userLog'
+  userId?: string
+  ipAddress?: string
+  city?: string
+  country?: string
+  region?: string
+  deviceType?: string
+  os?: string
+  browser?: string
+  userAgent?: string
+  loggedAt?: string
+}

@@ -32,6 +32,7 @@ import { competition } from './documents/competition'
 import { standing } from './documents/standing'
 import { fixture } from './documents/fixture'
 import { homePage } from './singletons/homePage'
+import { userLog } from './documents/userLog'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -68,5 +69,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     fixture,
     team,
     homePage,
+    userLog,
   ],
 }

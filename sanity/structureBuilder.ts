@@ -25,6 +25,7 @@ import {
   Trophy,
   ListOrdered,
   Home,
+  Activity,
 } from 'lucide-react'
 
 // --- POMOCNICZA FUNKCJA WIDOKU ROZGRYWEK (BEZ ZMIAN) ---
@@ -350,5 +351,9 @@ export const structure: StructureResolver = async (S) => {
       S.documentTypeListItem('download')
         .title('Pliki do pobrania')
         .icon(Download),
+      S.divider(),
+      S.documentTypeListItem('userLog')
+        .title('Logi')
+        .icon(Activity),
     ])
 }
