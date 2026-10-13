@@ -8,6 +8,12 @@ export const userLog = defineType({
   icon: Activity,
   fields: [
     defineField({
+      name: 'page',
+      title: 'Strona / Źródło',
+      type: 'string',
+      readOnly: true,
+    }),
+    defineField({
       name: 'userId',
       title: 'ID Użytkownika',
       type: 'string',
@@ -78,6 +84,7 @@ export const userLog = defineType({
   ],
   preview: {
     select: {
+      page: 'page',
       userId: 'userId',
       ipAddress: 'ipAddress',
       city: 'city',
@@ -86,13 +93,17 @@ export const userLog = defineType({
       os: 'os',
       loggedAt: 'loggedAt',
     },
-    prepare({ userId, ipAddress, city, country, browser, os, loggedAt }) {
+    prepare({ page, userId, ipAddress, city, country, browser, os, loggedAt }) {
       const location = [city, country].filter(Boolean).join(', ')
       const clientInfo = [browser, os].filter(Boolean).join(' / ')
       const dateStr = loggedAt ? new Date(loggedAt).toLocaleString('pl-PL') : ''
+      const pageTag = page ? `[${page}] ` : ''
+      const userText = userId
+        ? `Użytkownik: ${userId}`
+        : ipAddress || 'Anonimowy gość'
 
       return {
-        title: userId ? `Użytkownik: ${userId}` : ipAddress || 'Anonimowy gość',
+        title: `${pageTag}${userText}`,
         subtitle: [location, clientInfo, dateStr].filter(Boolean).join(' • '),
       }
     },

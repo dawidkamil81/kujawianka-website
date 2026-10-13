@@ -221,6 +221,7 @@ export type LeagueConfig = {
 export interface UserLog {
   _id?: string
   _type: 'userLog'
+  page?: string
   userId?: string
   ipAddress?: string
   city?: string
