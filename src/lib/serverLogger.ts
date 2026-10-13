@@ -12,16 +12,18 @@ export interface LogEntry {
   browser?: string
   userAgent?: string
   loggedAt?: string
+  page?: string
 }
 
 // Blokada w pamięci procesu serwera zapobiegająca natychmiastowym duplikatom (np. podwójny strzał przeglądarki/Next.js dev)
 const recentLogs = new Set<string>()
 
 function getDedupeKey(entry: LogEntry): string {
+  const pagePrefix = entry.page || 'default'
   if (entry.userId && entry.userId !== 'link-visitor') {
-    return `user:${entry.userId}`
+    return `${pagePrefix}:user:${entry.userId}`
   }
-  return `ip:${entry.ipAddress || 'unknown'}`
+  return `${pagePrefix}:ip:${entry.ipAddress || 'unknown'}`
 }
 
 export async function logUserVisit(entry: LogEntry): Promise<void> {
@@ -54,22 +56,23 @@ export async function logUserVisit(entry: LogEntry): Promise<void> {
     useCdn: false,
   })
 
-  // 2. Sprawdzenie w bazie Sanity, czy ten użytkownik lub IP już został kiedykolwiek zarejestrowany
+  // 2. Sprawdzenie w bazie Sanity, czy ten użytkownik lub IP już został kiedykolwiek zarejestrowany dla TEJ podstrony
+  const page = entry.page || 'info-2026'
   let existingLogId: string | null = null
 
   if (entry.userId && entry.userId !== 'link-visitor') {
     existingLogId = await serverClient.fetch(
-      `*[_type == "userLog" && userId == $userId][0]._id`,
-      { userId: entry.userId },
+      `*[_type == "userLog" && page == $page && userId == $userId][0]._id`,
+      { page, userId: entry.userId },
     )
   } else if (entry.ipAddress && entry.ipAddress !== 'unknown') {
     existingLogId = await serverClient.fetch(
-      `*[_type == "userLog" && ipAddress == $ipAddress][0]._id`,
-      { ipAddress: entry.ipAddress },
+      `*[_type == "userLog" && page == $page && ipAddress == $ipAddress][0]._id`,
+      { page, ipAddress: entry.ipAddress },
     )
   }
 
-  // Jeśli log dla danego usera / IP już istnieje, nie tworzymy duplikatu
+  // Jeśli log dla danego usera / IP na tej podstronie już istnieje, nie tworzymy duplikatu
   if (existingLogId) {
     return
   }
@@ -77,6 +80,7 @@ export async function logUserVisit(entry: LogEntry): Promise<void> {
   // 3. Utworzenie jednorazowego logu w Sanity
   await serverClient.create({
     _type: 'userLog',
+    page,
     userId: entry.userId || 'link-visitor',
     ipAddress: entry.ipAddress || 'unknown',
     city: entry.city || undefined,

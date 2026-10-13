@@ -74,6 +74,7 @@ export default async function Info2026Page(props: PageProps) {
           : 'link-visitor'
 
     await logUserVisit({
+      page: 'info-2026',
       userId,
       ipAddress,
       city,
