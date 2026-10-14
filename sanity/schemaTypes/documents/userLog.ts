@@ -8,10 +8,12 @@ export const userLog = defineType({
   icon: Activity,
   fields: [
     defineField({
-      name: 'page',
-      title: 'Strona / Źródło',
+      name: 'podstrona',
+      title: 'Podstrona',
       type: 'string',
       readOnly: true,
+      description:
+        'Nazwa podstrony, z której zarejestrowano log (np. klub 1946 lub info 2026)',
     }),
     defineField({
       name: 'userId',
@@ -84,7 +86,7 @@ export const userLog = defineType({
   ],
   preview: {
     select: {
-      page: 'page',
+      podstrona: 'podstrona',
       userId: 'userId',
       ipAddress: 'ipAddress',
       city: 'city',
@@ -93,17 +95,26 @@ export const userLog = defineType({
       os: 'os',
       loggedAt: 'loggedAt',
     },
-    prepare({ page, userId, ipAddress, city, country, browser, os, loggedAt }) {
+    prepare({
+      podstrona,
+      userId,
+      ipAddress,
+      city,
+      country,
+      browser,
+      os,
+      loggedAt,
+    }) {
       const location = [city, country].filter(Boolean).join(', ')
       const clientInfo = [browser, os].filter(Boolean).join(' / ')
       const dateStr = loggedAt ? new Date(loggedAt).toLocaleString('pl-PL') : ''
-      const pageTag = page ? `[${page}] ` : ''
+      const badge = podstrona ? `[${podstrona}] ` : ''
       const userText = userId
         ? `Użytkownik: ${userId}`
         : ipAddress || 'Anonimowy gość'
 
       return {
-        title: `${pageTag}${userText}`,
+        title: `${badge}${userText}`,
         subtitle: [location, clientInfo, dateStr].filter(Boolean).join(' • '),
       }
     },

@@ -19,7 +19,7 @@ export default function Club100View({ members, pageData }: Club100ViewProps) {
 
   return (
     <main className="flex min-h-screen w-full flex-col bg-[#0e0e0e] bg-[radial-gradient(circle_at_20%_20%,rgba(23,65,53,0.25),transparent_40%),linear-gradient(135deg,#0e0e0e_0%,rgba(141,16,16,0.05))] text-white">
-      <TelemetryTracker page="Klub 100" />
+      <TelemetryTracker podstrona="klub 1946" />
       {/* Ozdobny particle z Twojego oryginalnego kodu */}
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.04),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(141,16,16,0.05),transparent_40%)]" />
 
