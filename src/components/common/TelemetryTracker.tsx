@@ -3,10 +3,10 @@
 import { useEffect } from 'react'
 
 interface TelemetryTrackerProps {
-  page: string
+  podstrona: string
 }
 
-export default function TelemetryTracker({ page }: TelemetryTrackerProps) {
+export default function TelemetryTracker({ podstrona }: TelemetryTrackerProps) {
   useEffect(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search)
@@ -22,14 +22,14 @@ export default function TelemetryTracker({ page }: TelemetryTrackerProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ page, userId }),
+        body: JSON.stringify({ podstrona, userId }),
       }).catch(() => {
-        // Ignorujemy błędy sieciowe po stronie klienta, aby nie wpływać na działanie strony
+        // Ignorujemy ewentualne blokady ad-blockera
       })
     } catch {
-      // Ignorujemy błędy pobierania parametrów
+      // Ignorujemy błędy odczytu
     }
-  }, [page])
+  }, [podstrona])
 
   return null
 }

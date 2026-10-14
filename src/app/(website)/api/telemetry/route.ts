@@ -7,7 +7,12 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
-    const page = typeof body.page === 'string' ? body.page : 'Klub 100'
+    const podstrona =
+      typeof body.podstrona === 'string'
+        ? body.podstrona
+        : typeof body.page === 'string'
+          ? body.page
+          : 'klub 1946'
     const userId = typeof body.userId === 'string' ? body.userId : undefined
 
     // 1. IP klienta (z obsługą Vercel Edge / Cloudflare / localhost)
@@ -48,7 +53,7 @@ export async function POST(req: NextRequest) {
     const deviceType = ua.device.type || (ua.isBot ? 'bot' : 'desktop')
 
     await logUserVisit({
-      page,
+      podstrona,
       userId,
       ipAddress,
       city,
